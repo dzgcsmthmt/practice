@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>ui-grid</title>
+    <link rel="stylesheet" href="http://cdn.bootcss.com/angular-ui-grid/3.1.1/ui-grid.min.css"/>
+    <style>
+        .myGrid {
+            width: 100%;
+            height: 200px;
+        }
+        ul:after{
+            display: block;
+            content: '';
+            height: 0;
+            clear: both;
+        }
+        li{
+            float: left;
+            width: 20px;
+            list-style: none
+        }
+        a{
+            padding: 6px 10px;
+            border: 1px solid #333;
+            margin-right: 10px;
+        }
+
+    </style>
+    <script type="text/javascript" src="http://cdn.bootcss.com/jquery/2.2.3/jquery.min.js"></script>
+    <script type="text/javascript" src="http://cdn.bootcss.com/angular.js/1.5.5/angular.min.js"></script>
+    <script type="text/javascript" src="http://cdn.bootcss.com/angular-ui-grid/3.1.1/ui-grid.min.js"></script>
+    <!-- <script type="text/javascript" src="grid.directive.js"></script> -->
+    <script>
+        var app = angular.module('myApp',['ui.grid','ui.grid.selection']);
+        app.controller('MainCtrl',['$scope','uiGridConstants',function($scope,uiGridConstants){
+            $scope.fnSort = function(name){
+                alert(name);
+            }
+            var arr = [];
+            var data = [
+                {
+                    "firstName": "Cox",
+                    "lastName": "Carney",
+                    "company": "Enormo",
+                    "employed": true
+                },
+                {
+                    "firstName": "Lorraine",
+                    "lastName": "Wise",
+                    "company": "Comveyer",
+                    "employed": false
+                },
+                {
+                    "firstName": "Nancy",
+                    "lastName": "Waters",
+                    "company": "Fuelton",
+                    "employed": false
+                },
+                {
+                    "firstName": "Richard",
+                    "lastName": "Xu",
+                    "company": "LK",
+                    "employed": true
+                },
+                {
+                    "firstName": "Stephen",
+                    "lastName": "Zhang",
+                    "company": "NS",
+                    "employed": true
+                },
+                {
+                    "firstName": "David",
+                    "lastName": "Song",
+                    "company": "TJ",
+                    "employed": true
+                }
+            ];
+            var data1 = [
+                {
+                    "firstName": "Richard",
+                    "lastName": "Xu",
+                    "company": "LK",
+                    "employed": true
+                },
+                {
+                    "firstName": "Stephen",
+                    "lastName": "Zhang",
+                    "company": "NS",
+                    "employed": true
+                },
+                {
+                    "firstName": "David",
+                    "lastName": "Song",
+                    "company": "TJ",
+                    "employed": true
+                }
+            ];
+            angular.forEach(data[0], function (value,key) {
+                var obj = {};
+                obj['field'] = key;
+                //obj.headerCellTemplate = "<span ng-click='fnSort()'>test</span>";
+                arr.push(obj);
+            })
+            $scope.gridOptions1 = {
+                lkpaginationPageSize:2,
+                columnDefs: arr,
+                data:data,
+                lkGridId:1,
+                headerBarBtns:[1,2,3,4]
+            };
+            $scope.gridOptions2 = {
+                lkpaginationPageSize:2,
+                columnDefs: arr,
+                data:data1,
+                lkGridId:2,
+                headerBarBtns:[5,6,7]
+            };
+
+
+            console.log(JSON.stringify(arr));
+
+
+
+        }]).directive('lkGrid', ['$timeout', function ($timeout) {
+
+            var directive = {
+                scope: false,
+                compile: compile,
+                require: '?uiGrid',
+                priority: 0
+            }
+
+            function compile() {
+                return {
+                    pre: function (scope, ele, attrs, uiGridCtrl) {
+                        angular.extend(uiGridCtrl.grid.options,{
+                            useExternalSorting: true,
+                            enableColumnMenus: false,
+                            enableFiltering: false,
+                            enableRowHeaderSelection: false,
+                            //for performance concerns
+                            flatEntityAccess: uiGridCtrl.grid.options.flatEntityAccess != undefined
+                                ? uiGridCtrl.grid.options.flatEntityAccess : true,
+                            fastWatch: uiGridCtrl.grid.options.fastWatch != undefined
+                                ? uiGridCtrl.grid.options.fastWatch : true
+                        });
+
+                        var enableHeaderBar = uiGridCtrl.grid.options.enableHeaderBar;
+                    },
+                    post: function (scope, ele, attr, uiGridCtrl) {
+                        console.log(uiGridCtrl.grid.appScope == scope);
+                        var id = uiGridCtrl.grid.options.lkGridId;
+                        uiGridCtrl.grid.appScope['gridApi' + id] = uiGridCtrl.grid.api;
+                    }
+                }
+            }
+
+            return directive;
+        }]).directive('lkGridHeaderBar', ['$compile', '$filter', function ($compile, $filter) {
+            var directive = {
+                scope: false,
+                require: '?uiGrid',
+                compile: compile
+            }
+
+            function compile() {
+                return {
+                    pre: function (scope, ele, attr, uiGridCtrl) {
+                        var id = uiGridCtrl.grid.options.lkGridId;
+                        scope['gridOptions' + id] = uiGridCtrl.grid.options;
+                        var template = '<lk-grid-header-bar-directive lk-grid-id = ' + id + '></lk-grid-header-bar-directive>';
+                        var headerEle = $compile(template)(scope);
+                        $(ele).before(headerEle);
+                    }
+                }
+            }
+            return directive;
+    }]).directive('lkGridHeaderBarDirective', ['$sce', '$filter', '$timeout', function ($sce, $filter, $timeout) {
+        var directive = {
+            restrict: 'EA',
+            scope: true,
+            replace: true,
+            template: '<ul><li ng-repeat="item in btnGroup">{{item}}</li></ul>',
+            compile: compile,
+        }
+
+        function compile() {
+            return {
+                pre: function (scope, ele, attrs) {
+                    var id = attrs.lkGridId;
+                    var options = scope['gridOptions' + id];
+                    scope.btnGroup = options.headerBarBtns || [];
+                },
+                post: function (scope, ele, attrs) {
+                    var id = attrs.lkGridId;
+                    var options = scope['gridOptions' + id];
+                    setTimeout(function(){
+                        scope['gridApi' + id].selection.on.rowSelectionChanged(scope, function (row, event) {
+                            var rows = angular.copy(scope['gridApi' + id].selection.getSelectedRows());
+                            var len = scope['gridApi' + id].selection.getSelectedRows().length;
+                            console.log(rows);
+                            console.log(len);
+                        });
+                    })
+                }
+            }
+        }
+        return directive;
+    }]).directive('lkGridPagination', ['$compile', function ($compile) {
+        var directive = {
+            restrict: 'A',
+            scope: false,
+            require: '?uiGrid',
+            compile: compile
+        }
+
+        function compile() {
+            return {
+                pre: function (scope, ele, attr, uiGridCtrl) {
+                     var id = uiGridCtrl.grid.options.lkGridId;
+                        scope['gridOptions' + id] = uiGridCtrl.grid.options;
+                    var template = '<lk-grid-pagination-bar-directive lk-grid-id = ' + id + '></lk-grid-pagination-bar-directive>';
+                    var paginationEle = $compile(template)(uiGridCtrl.grid.appScope);
+                    $(ele).after(paginationEle);
+                }
+            }
+        }
+
+        return directive;
+    }]).directive('lkGridPaginationBarDirective', ['$sce', '$filter', '$timeout', function ($sce, $filter, $timeout) {
+        var directive = {
+            restrict: 'EA',
+            scope: true,
+            replace: true,
+            template: '<div><a ng-repeat="item in items" ng-click="goto($index + 1)">{{item}}</a></div>',
+            compile: compile
+        }
+
+        function compile() {
+            return {
+                post: function (scope, ele, attrs) {
+                    var id = attrs.lkGridId;
+                    var options = scope['gridOptions' + id];
+                    //初始化分页的数据
+                    scope.initPagination = function (iNow) {
+                        scope.items = [];
+                        scope.data = angular.copy(options.data);
+                        scope.pagesize = options.lkpaginationPageSize;
+                        scope.pageCount = Math.ceil(scope.data.length / scope.pagesize);
+                        getPaginationBar(iNow || 1);
+                    }
+                    scope.initPagination();
+                    //页面的跳转
+                    scope.goto = function (num) {
+                        if (num == parseInt(num, 10) && parseInt(num, 10) > 0 && parseInt(num, 10) <= scope.pageCount) {
+                            if (scope.currentPage == num) {
+                                return;
+                            }
+                            getPaginationBar(parseInt(num, 10));
+                            scope['gridApi' + id].selection.clearSelectedRows();
+                        } else {
+                            var msg = {code: 'E900014', params: {min: 1, max: scope.pageCount}};
+                            //$uiNoty.error(msg, 2000);
+                            scope.goToPage = '';
+                        }
+                    }
+
+                    //生成分页的信息
+                    function getPaginationBar(num) {
+                        //一共显示多少页
+                        var pageCount = 5;
+                        scope.currentPage = Math.min(num, scope.pageCount);
+                        options.data = scope.data.slice((scope.currentPage - 1) * scope.pagesize, scope.currentPage * scope.pagesize);
+                        if (scope.pageCount > pageCount) {
+                            var start, end, arr = [];
+                            if (num <= Math.floor(pageCount / 2 + 1)) {
+                                start = 1;
+                                end = pageCount;
+                            } else if (num > scope.pageCount - Math.floor(pageCount / 2)) {
+                                start = scope.pageCount - pageCount + 1;
+                                end = scope.pageCount;
+                            } else {
+                                start = num - Math.floor(pageCount / 2);
+                                end = num + Math.ceil(pageCount / 2 - 1);
+                            }
+                            for (var i = start; i <= end; i++) {
+                                arr.push(i);
+                            }
+                            scope.items = arr;
+                        } else {
+                            var arr = [];
+                            for (var i = 1; i <= scope.pageCount; i++) {
+                                arr.push(i);
+                            }
+                            scope.items = arr;
+                        }
+                    }
+
+                }
+            }
+
+        }
+
+        return directive;
+    }]);
+    
+    /*
+        传入不同的options可以通过属性值传入
+        在template上'<lk-grid-pagination-bar-directive lk-grid-id = ' + id + ' ></lk-grid-pagination-bar-directive>';通过添加options属性将每个options传入
+    */
+
+
+    //数据变更时如何触发initPagination
+    /*
+        1、 通过broadcast事件
+        2、 通过引用对象的方式
+            var app = angular.module("myNoteApp", []);
+            app.controller("ParentCntl", function($scope) {
+                $scope.obj = {};
+            });
+
+            app.controller("ChildCntl", function($scope) {
+                $scope.obj.get = function() {
+                        return "LOL";    
+                };
+            });
+        3、通过service ???
+    */
+
+    </script>
+</head>
+<body>
+    <div ng-controller="MainCtrl">
+        <div class="myGrid" ui-grid="gridOptions1" lk-grid ui-grid-selection lk-grid-header-bar lk-grid-pagination></div>
+        <div class="myGrid" ui-grid="gridOptions2" lk-grid ui-grid-selection lk-grid-header-bar lk-grid-pagination></div>
+    </div>
+</body>
+</html>
