@@ -53,7 +53,7 @@
 		$scope.test = true;
 		$scope.names = [];
 		$scope.files = [];
-		$scope.fileNameChanged = function(event,ele){
+		/*$scope.fileNameChanged = function(event,ele){
 			$scope.names = [];
 			$scope.files = [];
 			console.log(event.target.files);
@@ -68,7 +68,7 @@
 		}
 		$scope.del = function(index){
 			$scope.names.splice(index,1);
-		}
+		}*/
 	}]).directive("lkMultiFileSelect",function(){    
 	  	return {
 	  		restrict:"E",
