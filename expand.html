@@ -1,0 +1,170 @@
+<!DOCTYPE HTML>
+<html ng-app="myApp">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>expand</title>
+<style>
+	*{
+		padding: 0;
+		margin: 0;
+		list-style: none;
+	}
+	.lk-expand-wrapper:after{
+		content:".";display:block;height:0;clear:both;visibility:hidden;
+	}
+	.lk-expand-ul{
+		float: left;
+		width: 90%;
+		height: 24px;
+		overflow: hidden;
+	}
+	.lk-expand-li{
+		float: left;
+		width: 200px;
+		height: 24px;
+		line-height: 24px;
+		white-space:nowrap; 
+		overflow:hidden;
+		text-overflow:ellipsis;
+	}
+	.lk-expand-btn{
+		float:left;
+	}
+	.lk-expand-btn i{
+		display: inline-block;
+		width: 16px;
+		height: 16px;
+		background: red;
+	}
+	.lk-expand-btn.expanded i{
+		background: blue;
+	}
+</style>
+<script src="http://cdn.bootcss.com/underscore.js/1.8.3/underscore-min.js"></script>
+<script src="http://cdn.bootcss.com/jquery/2.2.1/jquery.min.js"></script>
+<script src="http://cdn.bootcss.com/angular.js/1.5.5/angular.min.js"></script>
+<script>
+	var m1 = angular.module("myApp",[]);
+	m1.controller('MainController',['$scope',function($scope){
+		$scope.title = '优惠券';
+		$scope.expandData = [
+			{
+				value:true,
+				name:'金卡金卡金卡金卡金卡金卡金卡金卡'
+			},
+			{
+				value:false,
+				name:'白金卡白金卡白金卡白金卡白金卡白金卡'
+			},
+			{
+				value:true,
+				name:'黑卡'
+			},
+			{
+				value:false,
+				name:'VIP卡'
+			},
+			{
+				value:true,
+				name:'铂金卡'
+			},
+			{
+				value:false,
+				name:'玫瑰卡'
+			},
+			{
+				value:true,
+				name:'什么鬼卡'
+			},
+			{
+				value:false,
+				name:'牛逼卡'
+			},
+			{
+				value:true,
+				name:'懒得起名卡'
+			},
+			{
+				value:false,
+				name:'不知道什么卡'
+			}
+		]
+		$scope.title = '活动';
+		$scope.expandData1 = [
+			{
+				value:true,
+				name:'麻将'
+			},
+			{
+				value:false,
+				name:'斗地主'
+			},
+			{
+				value:true,
+				name:'升级'
+			},
+			{
+				value:false,
+				name:'象棋'
+			}
+		]
+		$scope.test = function(){
+			console.log(_.pluck(_.filter($scope.expandData,function(data){
+				return data.value == true;
+			}),'name'));
+		}
+	}]);
+	m1.directive('lkExpand',function(){
+		return {
+			restrict: 'AE',
+			scope: {
+				title:'=',
+				expandData:'='
+			},
+			replace:true,
+			template: '<div><h2>{{title}}</h2><div class="lk-expand-wrapper">' + 
+						'<ul class="lk-expand-ul"><li class="lk-expand-li" ng-repeat="item in expandData track by $index"><label><input type="checkbox" ng-model="item.value"/>{{::item.name}}</label></li></ul>' + 
+						'<a ng-show="rowCount > 1" class="lk-expand-btn"><span>更多</span><i></i></a></div></div>',
+			link:function(scope,ele,attr){
+				console.log(scope.expandData);
+				var oBtn = ele.find('.lk-expand-btn');
+				var oUl = ele.find('.lk-expand-ul');
+				var w,len = scope.expandData.length;
+				setTimeout(function(){
+					w = ele.find('.lk-expand-li').eq(0).width();
+					h = ele.find('.lk-expand-li').eq(0).height();
+					scope.width = oUl.width();
+					scope.rowCount = Math.ceil(len / parseInt(scope.width/w));
+					scope.$digest();
+				})
+				oBtn.on('click',function(){
+					if($(this).hasClass('expanded')){
+						$(this).removeClass('expanded');
+						$(this).find('span').html('更多');
+						$(this).prev().animate({height: h + 'px'},400);
+					}else{
+						$(this).addClass('expanded');
+						$(this).find('span').html('收起');
+						$(this).prev().animate({height: h * scope.rowCount + 'px'},400);
+					}
+				})
+				$(window).on('resize',function(){
+					scope.$apply(function(){
+						scope.width = oUl.width();
+						scope.rowCount = Math.ceil(len / parseInt(scope.width/w));
+					})
+				})
+			}
+		}
+	})
+</script>
+</head>
+
+<body>
+	<div ng-controller='MainController'>
+		<lk-expand title='title' expand-data='expandData'></lk-expand>
+		<lk-expand title='title1' expand-data='expandData1'></lk-expand>
+		<div ng-click='test()' style="margin-top:50px;">点击</div>
+	</div>
+</body>
+</html>
