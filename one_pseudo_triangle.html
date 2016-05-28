@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+ 	<meta charset="utf-8">
+ 	<title>bootstrap</title>
+	<!-- <link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.min.css"> -->
+  	<style>
+	  	*{padding: 0;margin: 0;list-style: none;}
+	  	.test{
+	  		width: 200px;
+	  		margin: 50px auto;
+	  		position: relative;
+	  		border: 1px solid #333;
+	  		word-break:break-all;
+	  		background: #fff;
+	  		padding: 8px 10px;
+	  	}
+	  	.test:after{
+	  		content: '';
+	  		width: 16px;
+	  		height: 16px;
+	  		border: 1px solid #333;
+	  		border-color: #333 transparent transparent #333;
+	  		top: -9px;
+	  		left:90px;
+	  		position: absolute;
+	  		transform:rotate(45deg);
+	  		background: #fff;
+	  	}
+	</style>
+	<script type="text/javascript" src='http://cdn.bootcss.com/jquery/2.1.3/jquery.min.js'></script>
+	<script type="text/javascript">
+		$(function(){
+			$('button').on('click',function(){
+				$('.container-fluid').width("30%");
+			})
+		})	
+	</script>
+</head>
+<body>
+	<div class="container-fluid">
+	 	<div class="row">
+		  <div class="col-sm-6 col-md-4">.col-sm-6 .col-md-4</div>
+		  <div class="col-sm-6 col-md-4">.col-sm-6 .col-md-4</div>
+		  <div class="col-sm-6 col-md-4">.col-sm-6 .col-md-4</div>
+		  <div class="col-sm-6 col-md-4">.col-sm-6 .col-md-4</div>
+		  <div class="col-sm-6 col-md-4">.col-sm-6 .col-md-4</div>
+		  <div class="col-sm-6 col-md-4">.col-sm-6 .col-md-4</div>
+		</div>
+	</div>
+
+	<button>click</button>
+	<div class="test">
+		dddddddddddddddddddddddddddddddddd
+	</div>
+</body>
+</html>
