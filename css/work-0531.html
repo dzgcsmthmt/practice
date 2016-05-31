@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+ 	<meta charset="utf-8">
+ 	<title>lk-row</title>
+  	<style>
+	  	*{padding: 0;margin: 0;list-style: none;}
+	  	.fix-width{
+	  		width: 680px;
+	  		margin: 50px auto;
+	  	}
+	  	.clearfix:after { 
+			content: "." ; 
+			display: block ;
+			height: 0 ;
+			clear: both ;
+			visibility: hidden ;
+		}
+		.fix-width > div{
+			font-size: 14px;
+			line-height: 20px;
+			float: left;
+		}
+		.col-sm-13{
+			width: 13%;
+		}
+		.col-sm-20{
+			width: 20%;
+		}
+		.col-sm-37{
+			width: 37%;
+		}
+		.col-sm-50{
+			width: 50%;
+		}
+		.b-t-1{
+			border-top: 1px solid #e5e5e5;
+		}
+	  	
+	</style>
+	<script type="text/javascript" src='http://cdn.bootcss.com/jquery/2.1.3/jquery.min.js'></script>
+	<script type="text/javascript">
+		$(function(){
+			$('button').on('click',function(){
+				$('.container-fluid').width("30%");
+			})
+		})	
+	</script>
+</head>
+<body>
+	<div class="fix-width clearfix">
+	  	<div class="col-sm-13">病例号</div>
+	  	<div class="col-sm-20">R002857</div>
+	  	<div class="col-sm-13">姓名</div>
+	  	<div class="col-sm-20">许浩</div>
+	  	<div class="col-sm-13">拼音</div>
+	  	<div class="col-sm-20">wangyongxing</div>
+		<div class="col-sm-13">英文名称</div>
+	 	<div class="col-sm-20">David Xu</div>
+	 	<div class="col-sm-13">出生日期</div>
+	 	<div class="col-sm-20">2016-05-17</div>
+	 	<div class="col-sm-13">国籍</div>
+	 	<div class="col-sm-20">中国</div>
+	 	<div class="col-sm-13">渠道来源</div>
+	 	<div class="col-sm-20">活动</div>
+	 	<div class="col-sm-13">期望联系方式</div>
+	 	<div class="col-sm-20">移动电话/邮件/短信</div>
+	 	<div class="col-sm-13">邮编</div>
+	 	<div class="col-sm-20">10000</div>
+	 	<div class="col-sm-13">家庭住址</div>
+	 	<div class="col-sm-87">北京市海淀区鼎好大厦A坐3层</div>
+	</div>
+	<div class="fix-width b-t-1 clearfix">
+	  	<div class="col-sm-13">联系人姓名</div>
+	  	<div class="col-sm-20">张玉伟</div>
+	  	<div class="col-sm-13">关系</div>
+	  	<div class="col-sm-20">朋友</div>
+	  	<div class="col-sm-13">性别</div>
+	  	<div class="col-sm-20">男</div>
+		<div class="col-sm-13">国籍</div>
+	 	<div class="col-sm-20">乌兹别克斯坦</div>
+	 	<div class="col-sm-13">移动电话</div>
+	 	<div class="col-sm-20">1333333333323</div>
+	 	<div class="col-sm-13">家庭电话</div>
+	 	<div class="col-sm-20">0530-33333333</div>
+	 	<div class="col-sm-13">微信</div>
+	 	<div class="col-sm-20">ABCDEFGHIJKLMNOPQRS</div>
+	 	<div class="col-sm-13">邮箱</div>
+	 	<div class="col-sm-37">xuhao109@163.com</div>
+	</div>
+
+	<div class="fix-width b-t-1 clearfix">
+	  	<div class="col-sm-13">会员卡主</div>
+	  	<div class="col-sm-20">张玉伟</div>
+	  	<div class="col-sm-13">会员卡号</div>
+	  	<div class="col-sm-20">C96600584580235300</div>
+	  	<div class="col-sm-13">会员等级</div>
+	  	<div class="col-sm-20">LEVEL1</div>
+		<div class="col-sm-13">会员类型</div>
+	 	<div class="col-sm-20">黄金卡</div>
+	 	<div class="col-sm-13">开卡日期</div>
+	 	<div class="col-sm-20">2016-08-12</div>
+	 	<div class="col-sm-13">账户余额</div>
+	 	<div class="col-sm-20">10000.00</div>
+	 	<div class="col-sm-13">积分</div>
+	 	<div class="col-sm-20">11111111111</div>
+	 	<div class="col-sm-13">备注</div>
+	 	<div class="col-sm-50">方式发生的事故是德国是德国11111111111</div>
+	</div>
+
+	<div class="fix-width b-t-1 clearfix">
+	  	<div class="col-sm-13">保险会员号</div>
+	  	<div class="col-sm-20">200010230</div>
+	  	<div class="col-sm-13">持卡人中文名</div>
+	  	<div class="col-sm-20">宋建伟</div>
+	  	<div class="col-sm-13">拼音</div>
+	  	<div class="col-sm-20">songjianwei</div>
+		<div class="col-sm-13">持卡人英文名</div>
+	 	<div class="col-sm-20">David Song</div>
+	 	<div class="col-sm-13">保险公司</div>
+	 	<div class="col-sm-20">中国平安</div>
+	 	<div class="col-sm-13">保险联系人</div>
+	 	<div class="col-sm-20">龚秀丽</div>
+	 	<div class="col-sm-13">保险类型</div>
+	 	<div class="col-sm-20">商业保险</div>
+	 	<div class="col-sm-13">保险状态</div>
+	 	<div class="col-sm-20">已审核</div>
+	 	<div class="col-sm-13">自付比例</div>
+	 	<div class="col-sm-20">1%</div>
+	 	<div class="col-sm-13">保险有效期</div>
+	 	<div class="col-sm-50">2016-05-12 ～ 2015-06-22</div>
+	</div>
+
+	<button>click</button>
+	<div class="test">
+		dddddddddddddddddddddddddddddddddd
+	</div>
+</body>
+</html>

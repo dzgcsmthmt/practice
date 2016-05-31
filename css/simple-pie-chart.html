@@ -1,0 +1,235 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>dddfd</title>
+    <style type="text/css">
+	    *{
+	    	margin:0;
+	    	padding: 0;
+            list-style: none;
+	    }
+        .pie{
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: yellowgreen;
+            background-image: linear-gradient(to right,transparent 50%,#655 0);
+            margin: 50px auto;
+            overflow: hidden;
+        }
+        .pie:before{
+            content:'';
+            display: block;
+            margin-left: 50%;
+            height: 100%;
+            border-radius:0 100% 100% 0 / 50%; 
+           /* 
+            小于180度
+            
+            */
+            /*大于180*/
+            /*background-color: #655;*/
+            background-color: inherit;
+            transform-origin: left;
+            /*
+                animation-delay: 可以是负值，立即执行，从关键帧 value / time的阶段开始执行 
+                如执行时间30s delay -15s 从50%的状态开始执行
+                animation-timing-function新增加了step的属性
+                step-start | step-end | steps([, [ start | end ] ]?) 
+                可以分成几步执行，不是连续的动画，而且按步数一帧一帧执行
+                可以参照https://www.qianduan.net/css3-animation/
+            */
+            animation: spin 3s linear infinite,
+                        bg 6s step-end infinite;
+        }
+
+        @keyframes spin{
+            
+            to {
+                transform: rotate(180deg);
+            }
+        }
+         @keyframes bg{
+            50% {
+                background: #655;
+            }
+        }
+        
+    </style>
+ </head>
+ <body>
+    <div class="pie"></div>
+
+
+    <script type="text/javascript">
+
+ /*       for(var i = 0;i < 5;i++){
+            setTimeout(function(i){
+                return function(){
+                    console.log(i);
+                }
+            }(i),(i+1)*1000);
+        }
+
+        for(var i = 0;i < 5;i++){
+            (function(i){
+                setTimeout(function(){
+                    console.log(i);
+                },(i+1)*1000);
+            })(i);
+        }
+
+        for(var i = 0;i < 5;i++){
+            (function(){
+                var j = i;
+                setTimeout(function(){
+                    console.log(j);
+                },(j+1)*1000);
+            })();
+        }
+
+
+
+
+        var mask = document.getElementsByClassName('mask')[0];
+        var span = mask.getElementsByTagName('span')[0];
+
+        setInterval(function(){
+           mask.style.width = mask.offsetWidth + 1 + 'px';   
+           //span.style.left = -mask.offsetLeft + 1 + 'px';  
+        },30);*/
+
+
+    /*
+        var addFlag = false;
+        var old = null;
+
+        //console.log(a);
+        var a = 10;
+        function a(){
+            console.log(1);
+        }
+        a();
+
+        Array.prototype.find = function(fns){
+            for(var i = 0;i < this.length;i++){
+                if(typeof fns != 'function'){
+                    return null;
+                }else{
+                    if(typeof this[i] == 'function'){
+                        if(this[i]+"" == fns + ""){
+                            return i;
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+        
+        test.onclick = function(){
+            alert(1);
+        }
+        //添加多个事件，但是无法删除事件
+        function addEvent (obj,type,fns) {
+            if(typeof obj[type] !='function'){
+                obj[type] = fns;
+            }else{
+                var old = obj[type];
+                obj[type] = function(){
+                    old();
+                    fns();
+                }
+            }
+        }
+
+        addEvent(test,'onclick',function(){
+            alert(2);
+        })
+
+        function aa(){
+            alert(1);
+        }
+
+        function bb(){
+            alert(2);
+        }
+
+
+        var arr =[];
+        arr.push(function(){
+            alert(1);
+        });
+        arr.push(bb);
+
+        alert(arr.find(function(){
+            alert(1);
+        }));
+
+        
+
+
+
+        //添加多个事件，可以删除事件，但是只能删除自己绑定的事件
+        function addEvent2(obj,type,fns){
+            var attr = "_" + type;
+            if(!obj[attr]){
+                obj[attr] = [];
+            }
+            for (var i in obj[attr]) {
+                if(obj[attr][i] + "" == fns + ""){
+                    return false;
+                }
+            };
+            obj[attr].push(fns);
+
+             if(typeof obj[type] =='function'){
+                if(!addFlag){
+                    old = obj[type];
+                    addFlag = true;
+                }
+            }
+            obj[type] = function(){
+                if(addFlag){
+                    old();
+                }
+                for (var i = 0; i < obj[attr].length; i++) {
+                    obj[attr][i].call(null);
+                };
+            }
+
+        }
+        
+        addEvent2(test,'onclick',function(){
+            alert(3);
+        })
+        addEvent2(test,'onclick',function(){
+            alert(4);
+        })
+        addEvent2(test,'onclick',function(){
+            alert(5);
+        })
+
+        function delEvent(obj,type,fns){
+            var attr = "_" + type;
+            if(typeof obj[type] != 'function'){
+                return;
+            }else{
+                for(var i=0;i<obj[attr].length;i++){
+                     if(obj[attr][i] + "" == fns + ""){
+                        obj[attr].splice(i,1);
+                    }
+                }
+                return obj;
+            }
+        }
+
+        delEvent(test,'onclick',function(){
+            alert(3);
+        })
+        */
+    </script>
+
+
+ </body>
+ </html>
