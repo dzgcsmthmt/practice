@@ -13,11 +13,9 @@
 	var m1 = angular.module("myApp",[]);
 	m1.controller('MyController',['$scope',function($scope){
 		$scope.dto = {
-			start: '2015-06-12',
-			end: '2015-06-17'
 		}
 		
-	}]).directive('lkDateRangeCheck',['$parse',function($parse){
+	}]).directive('lkInteractiveRangeCheck',['$parse',function($parse){
 		return {
 			require:'?ngModel',
 			scope:{
@@ -25,24 +23,40 @@
 				lkMax:'='
 			},
 			link:function(scope,ele,attrs,ngModelCtrl){
-				// console.log(scope);
 				ele.on('blur',function(){
 					if(scope.lkMax){
-						if($(this).val() !== '' &&　$(this).val() > scope.lkMax){
-							alert('起始日期不能大于结束日期');
-							$(this).val('');
-							$(this).focus();
-							ngModelCtrl.$setViewValue('');
+						// 处理数字
+						if(scope.lkMax == parseInt(scope.lkMax,10)){
+							if($(this).val() !== '' &&　parseInt($(this).val(),10) > parseInt(scope.lkMax,10)){
+								alert('起始值不能大于结束值');
+								_initInputValue();
+							}
+						}else{
+							if($(this).val() !== '' &&　$(this).val() > scope.lkMax){
+								alert('起始日期不能大于结束日期');
+								_initInputValue();
+							}
 						}
 					}else if(scope.lkMin){
-						if($(this).val() !== '' && $(this).val() < scope.lkMin){
-							alert('结束日期不能小于起始日期');
-							$(this).val('');
-							$(this).focus();
-							ngModelCtrl.$setViewValue('');
+						if(scope.lkMin == parseInt(scope.lkMin,10)){
+							if($(this).val() !== '' && parseInt($(this).val(),10) < parseInt(scope.lkMin,10)){
+								alert('结束值不能小于起始值');
+								_initInputValue();
+							}
+						}else{
+							if($(this).val() !== '' && $(this).val() < scope.lkMin){
+								alert('结束日期不能小于起始日期');
+								_initInputValue();
+							}
 						}
 					}
 				})
+
+				function _initInputValue(){
+					$(ele).val('');
+					$(ele).focus();
+					ngModelCtrl.$setViewValue('');
+				}
 			}
 		}
 	}])
@@ -52,8 +66,8 @@
 
 <body>
 	<div ng-controller='MyController'>
-		<input type="text" ng-model='dto.start'  lk-date-range-check lk-max='dto.end'>
-		<input type="text" ng-model='dto.end'  lk-date-range-check lk-min='dto.start'>
+		<input type="text" ng-model='dto.start'  lk-interactive-range-check lk-max='dto.end'>
+		<input type="text" ng-model='dto.end'  lk-interactive-range-check lk-min='dto.start'>
 	</div>
 </body>
 </html>
