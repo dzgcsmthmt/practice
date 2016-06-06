@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+<html ng-app="myApp">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>expand</title>
+<style>
+	
+</style>
+
+<script src="http://cdn.bootcss.com/jquery/2.2.1/jquery.min.js"></script>
+<script src="http://cdn.bootcss.com/angular.js/1.5.6/angular.min.js"></script>
+<script>
+	var m1 = angular.module("myApp",[]);
+	m1.controller('MyController',['$scope',function($scope){
+		$scope.dto = {
+			start: '2015-06-12',
+			end: '2015-06-17'
+		}
+		
+	}]).directive('lkDateRangeCheck',['$parse',function($parse){
+		return {
+			require:'?ngModel',
+			scope:{
+				lkMin:'=',
+				lkMax:'='
+			},
+			link:function(scope,ele,attrs,ngModelCtrl){
+				// console.log(scope);
+				ele.on('blur',function(){
+					if(scope.lkMax){
+						if($(this).val() !== '' &&　$(this).val() > scope.lkMax){
+							alert('起始日期不能大于结束日期');
+							$(this).val('');
+							$(this).focus();
+							ngModelCtrl.$setViewValue('');
+						}
+					}else if(scope.lkMin){
+						if($(this).val() !== '' && $(this).val() < scope.lkMin){
+							alert('结束日期不能小于起始日期');
+							$(this).val('');
+							$(this).focus();
+							ngModelCtrl.$setViewValue('');
+						}
+					}
+				})
+			}
+		}
+	}])
+	
+</script>
+</head>
+
+<body>
+	<div ng-controller='MyController'>
+		<input type="text" ng-model='dto.start'  lk-date-range-check lk-max='dto.end'>
+		<input type="text" ng-model='dto.end'  lk-date-range-check lk-min='dto.start'>
+	</div>
+</body>
+</html>
