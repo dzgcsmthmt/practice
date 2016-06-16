@@ -1,0 +1,137 @@
+<!DOCTYPE HTML>
+<html ng-app="myApp">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>无标题文档</title>
+<style>
+	*{
+		list-style: none;
+	}
+	.clearfix:after {content:"."; display:block; height:0; visibility:hidden; clear:both; }
+	.clearfix >div{
+		float: left;
+	}
+	.clearfix >div:nth-of-type(1){
+		width: 20px;
+	}
+	.clearfix >div:nth-of-type(2){
+		width: 800px;
+	}
+	.clearfix >div:nth-of-type(3){
+		width: 300px;
+	}
+</style>
+<script src="http://cdn.bootcss.com/angular.js/1.5.6/angular.min.js"></script>
+<script>
+	var m1 = angular.module("myApp",[]);
+	m1.controller('MainController',['$scope',function($scope){
+		var typeObj = {
+			1:{
+				1:'200元',
+				2:'500元',
+				3:'800元'
+			},
+			2:{
+				1:'500元',
+				2:'800元'
+			},
+			3:{
+				1:'1000元',
+				2:'2000元'
+			}
+		}
+		$scope.items = [
+			{
+				checked:false,
+				projectName:'三服帖',
+				projectInput:'',
+				projectUnit:'',
+				projectMask:'9?9',
+				projectRadios:[],
+				priceInput:'',
+				priceUnit:'',
+				priceMask:'',
+				price:'1000元'
+			},
+			{
+				checked:false,
+				projectName:'耳声发射检查',
+				projectInput:'',
+				projectUnit:'次',
+				projectMask:'9?9',
+				projectRadios:[],
+				priceInput:'',
+				priceUnit:'',
+				priceMask:'',
+				price:'200元/次'
+			},
+			{
+				checked:false,
+				projectName:'中医膏方',
+				projectInput:'',
+				projectUnit:'',
+				projectMask:'',
+				projectRadios:[],
+				priceInput:'',
+				priceUnit:'元',
+				priceMask:'9?99',
+				price:''
+			},
+			{
+				checked:false,
+				projectName:'',
+				projectInput:'',
+				projectUnit:'',
+				projectMask:'',
+				projectRadios:[
+					{
+						value:1,
+						desc:'换药(小)'
+					},
+					{
+						value:2,
+						desc:'换药(中)'
+					},
+					{
+						value:3,
+						desc:'换药(大)'
+					}
+				],
+				projectRadiosType:'2',
+				priceInput:'',
+				priceUnit:'',
+				priceMask:'',
+				price:'500元'
+			}
+		]
+		$scope.logData = function(){
+			console.log($scope.items);
+		}
+		$scope.changeRadio = function(type,item){
+			console.log(type);
+			item.price = typeObj[type][item.projectRadiosType];
+		}
+	}]);
+</script>
+</head>
+
+<body>
+	<div ng-controller='MainController'>
+		<div class="clearfix" ng-repeat='item in items track by $index'>
+			<div><input type='checkbox' ng-model='item.checked'></div>
+			<div>
+				<span ng-if='item.projectName'>{{item.projectName}}</span> 
+				<span ng-if='item.projectUnit'><input type='text' ng-model='item.projectInput' lk-mask='{{item.projectMask}}' />{{item.projectUnit}}</span>
+				<span ng-if='item.projectRadios.length'>
+					<label ng-repeat='radio in item.projectRadios'><input type='radio' ng-model='item.projectRadiosType' ng-value='radio.value' ng-change='changeRadio(1,item)'>{{radio.desc}}</label>
+				<span>
+			</div>
+			<div>
+				<span ng-if='item.price'>{{item.price}}</span>
+				<span ng-if='item.priceUnit'><input type='text' ng-model='item.priceInput' lk-mask='{{item.priceMask}}' />{{item.priceUnit}}</span>
+			</div>
+		</div>
+		<button ng-click='logData()'>啊方式力进三氟林就是家乐福经理四级分类</button>
+	</div>
+</body>
+</html>
