@@ -1,0 +1,146 @@
+<!DOCTYPE HTML>
+<html ng-app="myApp">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>无标题文档</title>
+<style>
+	*{
+		list-style: none;
+	}
+	.clearfix:after {content:"."; display:block; height:0; visibility:hidden; clear:both; }
+	.clearfix >div{
+		float: left;
+	}
+	.clearfix >div:nth-of-type(1){
+		width: 20px;
+	}
+	.clearfix >div:nth-of-type(2){
+		width: 800px;
+	}
+	.clearfix >div:nth-of-type(3){
+		width: 300px;
+	}
+</style>
+<script src="http://cdn.bootcss.com/underscore.js/1.8.3/underscore-min.js"></script>、
+<script src="http://cdn.bootcss.com/angular.js/1.5.6/angular.min.js"></script>
+<script>
+	var m1 = angular.module("myApp",[]);
+	m1.controller('MainController',['$scope',function($scope){
+		var chooseItems = JSON.parse('[{"ctmriId":1,"name":"胸片1","nameCn":"","position":"","price":"1000"},{"ctmriId":2,"name":"胸片2","nameCn":"","position":"","price":"1000"},{"ctmriId":3,"name":"胸片2","nameCn":"","position":"11","price":600}]');
+
+		$scope.items = [
+			{
+				ctmriId: 1,
+				name:'胸片1',
+				nameCn:'',
+				position:'',
+				price:'1000'
+			},
+			{
+				ctmriId: 2,
+				name:'胸片2',
+				nameCn:'',
+				position:'',
+				price:'1000'
+			},
+			{
+				ctmriId: 3,
+				name:'胸片2',
+				nameCn:'',
+				position:'00',
+				price:''
+			}
+		];
+
+		//展示已经选择的数据
+		_convertToChooseData();
+
+		function _convertToChooseData(){
+			for (var i = 0,len = $scope.items.length;i < len; i++) {
+				for(var j = 0;j < chooseItems.length; j++){
+					if($scope.items[i].ctmriId == chooseItems[j].ctmriId){
+						$scope.items[i] =  chooseItems[j];
+						$scope.items[i].checked = true;
+					}
+				}
+			}
+		}
+
+		_convertPostoArr($scope.items);
+
+		//把position从字符串转为数组
+		function _convertPostoArr(arr){
+			for(var i = 0,len = arr.length;i < len;i++){
+				arr[i].position = arr[i].position.length ? [parseInt(arr[i].position.charAt(0),10),parseInt(arr[i].position.charAt(1),10)] : []; 
+			}
+		}
+
+		//把position从数组转为字符串
+		function _convertPostoStr(arr){
+			for(var i = 0,len = arr.length;i < len;i++){
+				arr[i].position = arr[i].position.join(''); 
+			}
+		}
+
+		$scope.logData = function(){
+			var submitArr = _.filter(angular.copy($scope.items),function(item){
+				if(item.position.length){
+					return item.checked && item.position.join('') != '00';
+				}else{
+					return item.checked;
+				}
+			})
+			_convertPostoStr(submitArr);
+			_delProperty(submitArr,'checked');
+			console.log(JSON.stringify(submitArr));
+		}
+
+		function _delProperty(arr,key){
+			for(var i = 0,len = arr.length;i < len;i++){
+				if(arr[i][key]){
+					delete arr[i][key];
+				}
+			}
+		}
+
+		$scope.getPrice = function(item){
+			if(item.position.join('') == '00'){
+				item.price = '';
+			}else if(item.position.join('') == '11'){
+				item.price = 600;
+			}else{
+				item.price = 300;
+			}
+		}
+
+		$scope.clearLR = function(item){
+			if(!item.checked){
+				if(item.position.length){
+					item.position =[0,0];
+					item.price = '';
+				}
+			}
+		}
+	}]);
+</script>
+</head>
+
+<body>
+	<div ng-controller='MainController'>
+		<div class="clearfix" ng-repeat='item in items track by $index'>
+			<div><input type='checkbox' ng-model='item.checked' ng-change='clearLR(item)'></div>
+			<div>
+				<span >{{item.name}}</span> 
+				<span ng-if='item.position.length'>
+				<label><input type='checkbox' ng-disabled='!item.checked' ng-model='item.position[0]' ng-change='getPrice(item)' ng-true-value=1 ng-false-value=0 >R</label>
+				<label><input type='checkbox' ng-disabled='!item.checked' ng-model='item.position[1]'  ng-true-value=1 ng-false-value=0 ng-change='getPrice(item)'>L</label>
+				</span>
+			</div>
+			<div>
+				{{item.price}}<span ng-if='item.price'>元</span>
+			</div>
+		</div>
+		<button ng-click='logData()'>啊方式力进三氟林就是家乐福经理四级分类</button>
+	</div>
+</body>
+</html>
