@@ -1,0 +1,124 @@
+<!DOCTYPE HTML>
+<html ng-app="myApp">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>无标题文档</title>
+<style>
+	*{
+		padding: 0;margin: 0;
+		list-style: none;
+	}
+	label{
+		float: left;
+	}
+	.MultiFilesWrapper:after{content:".";display:block;height:0;clear:both;visibility:hidden;}
+	.MultiFilesWrapper label{
+		float: left;
+		width: 40px;
+		height: 34px;
+		line-height: 34px;
+
+	}
+	.MultiFilesWrapper ul{
+		float: left;
+		width: 80%;
+	}
+	ul li{
+		position: relative;
+		float: left;
+		width: 20%;
+	}
+	li input{
+		background: #fff;
+		border-radius: 4px;
+		border: 1px solid #ddd;
+		width: 80%;
+		height: 34px;
+		line-height: 34px;
+		padding:0 20px;
+	}
+	i{
+		width: 16px;
+		height: 16px;
+		position: absolute;
+		left: calc(80% - 18px);
+		top:9px;
+		background: red;
+	}
+</style>
+<script src="http://cdn.bootcss.com/angular.js/1.5.5/angular.min.js"></script>
+<script>
+	var m1 = angular.module("myApp",[]);
+	m1.controller('MainController',['$scope',function($scope){
+		$scope.test = true;
+		$scope.file = {};
+	}]).directive("lkMultiFileSelect",function(){    
+	  	return {
+	  		restrict:"E",
+	  		scope:{
+	  			imgName:'=',
+	  			imgFile:'=',
+	  			imgPath:'='
+	  		},
+	  		replace:'true',
+	  		template:'<div class="MultiFilesWrapper"><label class="import-file"><input type="file" accept="image/*" hidden>上传</label></div>', 
+	    	link: function(scope,ele,attrs){ 
+	      		ele.find('input').bind("change", function(event){
+	      			var file,width,height,reader,path;
+	      			file = this.files[0];
+	      			if(file){
+	      				if(/^.*\.(jpg|jpeg|png)$/i.test(file.name)){
+	      					if(file.size > 2 * 1024 * 1024){
+	      						alert('图片大小不能超过2M');
+	      						return;
+	      					}else{
+	      						reader = new FileReader();
+	      						reader.onload = function(theFile) {
+	      							if(attrs.sizeLimit){
+	      								width = parseInt(attrs.sizeLimit.split('*')[0]);
+		      							height = parseInt(attrs.sizeLimit.split('*')[1]);
+							       		img = new Image();
+							       		img.onload = function () {
+								            if(this.width != width || this.height != height){
+								            	alert('请上传尺寸为' + width + '*' + height + '的图片');
+								            }else{
+								        		_setProp();
+								            }
+			      						}
+							            img.src = reader.result;
+						       		}else{
+						       			_setProp();
+						       		}
+							    };
+	      						reader.readAsDataURL(file);
+	      					}
+	      				}else{
+	      					alert('只支持图片格式jpg和png格式的图片');
+	      				}
+	      			}
+
+	      			function _setProp(){
+	      				scope.imgPath = reader.result;
+		        		scope.imgName = file.name;
+		        		scope.imgFile = file;
+		        		scope.$apply();
+	      			}
+
+	      		});
+	      	}          
+   		}        
+	})
+</script>
+</head>
+
+<body>
+	<div ng-controller='MainController'>
+		<div ng-if='test'>
+			<!-- size-limit='291*467' -->  
+			<lk-multi-file-select img-name='file.logoName' img-path='file.logoPath' img-file='file.logoFile' size-limit='200*120'></lk-multi-file-select>
+		</div>
+		{{file.logoName}}<br/>
+		<img ng-src="{{file.logoPath}}"><br/>
+	</div>
+</body>
+</html>
