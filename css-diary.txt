@@ -1,2 +1,6 @@
 background-clip:  The background-clip property specifies the painting area of the background
 background-origin: The background-origin property specifies where the background image is positioned
+---------------------------------------------------------------------------------------------------------------
+The counter-increment property increments one or more counter values.
+The counter-increment property is usually used together with the counter-reset property and the content property.
+---------------------------------------------------------------------------------------------------------------
