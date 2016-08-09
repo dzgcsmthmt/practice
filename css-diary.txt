@@ -1,0 +1,2 @@
+background-clip:  The background-clip property specifies the painting area of the background
+background-origin: The background-origin property specifies where the background image is positioned
