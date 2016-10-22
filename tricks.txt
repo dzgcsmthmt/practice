@@ -12,3 +12,11 @@ var isEdge = !isIE && !!window.StyleMedia;
 var isChrome = !!window.chrome && !!window.chrome.webstore;
     // Blink engine detection
 var isBlink = (isChrome || isOpera) && !!window.CSS;
+-------------------------------------------------------------------------------------------------
+If Chrome remembers some login/password it changes a background color to a yellow one.
+Change "white" to any color you want.
+
+input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 1000px white inset !important;
+}
+--------------------------------------------------------------------------------------------------
