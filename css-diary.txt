@@ -4,3 +4,9 @@ background-origin: The background-origin property specifies where the background
 The counter-increment property increments one or more counter values.
 The counter-increment property is usually used together with the counter-reset property and the content property.
 ---------------------------------------------------------------------------------------------------------------
+3列等高Css
+父元素：overflow：hidden
+子元素：margin-bottom:-10000px; padding-bottom:10000px;
+---------------------------------------------------------------------------------------------------------------
+
+ 
