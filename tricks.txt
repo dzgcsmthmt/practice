@@ -20,3 +20,14 @@ input:-webkit-autofill {
     -webkit-box-shadow: 0 0 0 1000px white inset !important;
 }
 --------------------------------------------------------------------------------------------------
+calculate the scrollbar's width
+function getScrollWidth() {
+    var noScroll, scroll, oDiv = document.createElement("DIV");
+    oDiv.style.cssText = "position:absolute; top:-1000px; width:100px; height:100px; overflow:hidden;";
+    noScroll = document.body.appendChild(oDiv).clientWidth;
+    oDiv.style.overflowY = "scroll";
+    scroll = oDiv.clientWidth;
+    document.body.removeChild(oDiv);
+    return noScroll-scroll;
+}
+--------------------------------------------------------------------------------------------------
