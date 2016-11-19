@@ -24,6 +24,23 @@ function f() {
 let [x = f()] = [1]; 为1不会执行f(),undefined才执行
 2、对象的解构赋值 { foo, bar } = { foo: "aaa", bar: "bbb" }; foo ==> 'aaa'
 { foo, bar } == {foo: foo,bar: bar} 利用了对对象的拓展
+3、字符串的解构赋值 const [a, b, c, d, e] = 'hello'; a ==> h  let {length : len} = 'hello'; len ==> 5
+4、数值和布尔值的解构赋值 解构赋值时，如果等号右边是数值和布尔值，则会先转为对象
+let {toString: s} = 123;
+s === Number.prototype.toString // true
+let {toString: s} = true;
+s === Boolean.prototype.toString // true
+5、函数参数的解构赋值   函数参数的解构也可以使用默认值
+function add([x, y]){
+  return x + y;
+}
+add([1, 2]); // 3
+function move({x = 0, y = 0} = {}) {
+  return [x, y];
+}
+
+move({x: 3, y: 8}); // [3, 8]
+move({x: 3}); // [3, 0]
 -----------------------------------------------------------------------------------------------------------------------
 正则的拓展
 1、ES5不允许此时使用第二个参数，添加修饰符，否则会报错，ES6改变了这种行为。如果RegExp构造函数第一个参数是一个正则对象，那么可以使用第二个参数指定修饰符。而且，返回的正则表达式会忽略原有的正则表达式的修饰符，只使用新指定的修饰符。
