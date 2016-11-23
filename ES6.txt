@@ -147,4 +147,51 @@ Math.max(...[14, 3, 77])
 尾递归
 函数调用自身，称为递归。如果尾调用自身，就称为尾递归。
 递归非常耗费内存，因为需要同时保存成千上百个调用帧，很容易发生“栈溢出”错误（stack overflow）。但对于尾递归来说，由于只存在一个调用帧，所以永远不会发生“栈溢出”错误。
+-----------------------------------------------------------------------------------------------------------------------
+对象的拓展
+1、属性的简洁表示法
+{x, y} = {x: x, y: y};
+除了属性简写，方法也可以简写。
+var o = {
+  method() {
+    return "Hello!";
+  }
+};
+2、属性名表达式
+ES6允许字面量定义对象时，用表达式作为对象的属性名，即把表达式放在方括号内。
+let propKey = 'foo';
+let obj = {
+  [propKey]: true,
+  ['a' + 'bc']: 123
+};
+3、name属性
+4、Object.is() 类似excel的exact方法
+不同之处只有两个：一是+0不等于-0，二是NaN等于自身。
+5、Object.assign() 类似于_.extend()
+bject.assign方法用于对象的合并，将源对象（source）的所有可枚举属性，复制到目标对象（target）。
+如果该参数不是对象，则会先转成对象，然后返回。
+由于undefined和null无法转成对象，所以如果它们作为参数，就会报错。
+Object.assign拷贝的属性是有限制的，只拷贝源对象的自身属性（不拷贝继承属性），也不拷贝不可枚举的属性（enumerable: false）
+Object.assign方法实行的是浅拷贝，而不是深拷贝。也就是说，如果源对象某个属性的值是对象，那么目标对象拷贝得到的是这个对象的引用。
+6、属性的遍历
+ES6一共有5种方法可以遍历对象的属性。
+（1）for...in
+for...in循环遍历对象自身的和继承的可枚举属性（不含Symbol属性）。
+（2）Object.keys(obj)
+Object.keys返回一个数组，包括对象自身的（不含继承的）所有可枚举属性（不含Symbol属性）。
+（3）Object.getOwnPropertyNames(obj)
+Object.getOwnPropertyNames返回一个数组，包含对象自身的所有属性（不含Symbol属性，但是包括不可枚举属性）。
+（4）Object.getOwnPropertySymbols(obj)
+Object.getOwnPropertySymbols返回一个数组，包含对象自身的所有Symbol属性。
+（5）Reflect.ownKeys(obj)
+Reflect.ownKeys返回一个数组，包含对象自身的所有属性，不管是属性名是Symbol或字符串，也不管是否可枚举。
+---首先遍历所有属性名为数值的属性，按照数字排序。
+---其次遍历所有属性名为字符串的属性，按照生成时间排序。
+---最后遍历所有属性名为Symbol值的属性，按照生成时间排序。
+7、__proto__属性，Object.setPrototypeOf()，Object.getPrototypeOf()
+8、Object.keys(),ES7提案 Object.values()，Object.entries() 
+
+
+
+
 
