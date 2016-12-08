@@ -1,0 +1,19 @@
+解决IE兼容性的方法
+1、条件注释法
+<!DOCTYPE html>
+<!--[if IE 8 ]> <html class="ie8" lang="en"> <![endif]-->
+<!--[if IE 9 ]> <html class="ie9" lang="en"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!-->
+<html lang="en"> <!--<![endif]--> 
+为html添加类，写样式用父子选择器
+2、属性前缀法：
+#selector{
+　　_color: red;    　　/*IE6能识别下划线"_"和星号" * "，IE7能识别星号" * "，但不能识别下划线"_"*/，
+  　*color: yellow;　　  /* [.*+<>] IE6-IE7生效 */
+　　color：blue\9;   　　/* \9 IE6-IE10都生效 */
+　　color: pink\0;  　　 /* \0 IE8-IE11生效 */
+　　color: green\9\0;　　/* \9\0 IE9和IE10生效 */ 
+}
+3、选择器前缀法：
+*+html selector{color:blue;} 　　　/* IE6能识别*html前缀  *+html前缀只支持IE7 */
+------------------------------------------------------------------------------------------------------------------------------------
