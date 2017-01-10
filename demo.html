@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Practice</title>
+        <style>
+            a{
+                float: left;
+                height: 36px;
+                line-height: 36px;
+                padding: 0 12px;
+                cursor: pointer;
+                background: lightblue;
+            }
+            a.active{
+                background: #333;
+                color: #fff;
+            }
+        </style>
+    </head>
+    <body>
+        <div style="margin-bottom:30px;"><input type="text" id='num'><button id='btn'>点击</button></div>
+        <div id='bar'></div>
+        <script type="text/javascript">
+            //总数据数
+            var totalCount = 202;
+            //显示的页数
+            var pageCount = 9;
+            //每页几条数据
+            var pageSize = 10
+            //当前页面
+            var currentPage = 4;
+            //总页数
+            var totalPage = Math.ceil(totalCount / pageSize);
+            var pageRange = Math.floor((pageCount - 2) / 2);
+
+
+            function pageHtml(currentPage,totalPage,pageCount){
+                var middlePageStart,middlePageEnd,str = '';
+                if(currentPage != 1){
+                    str += '<a>First</a><a>Prev</a>';
+                }
+                if(totalPage < pageCount){
+                    for (var i = 1; i <= totalPage; i++) {
+                        str += '<a ' + (currentPage == i ? 'class="active"' : '') + '>' + i + '</a>';
+                    }
+                }else{
+                    var middlePageStart = Math.max(1,currentPage - pageRange);
+                    var middlePageEnd = Math.min(totalPage,currentPage + pageRange);
+                    if(middlePageStart != 1){
+                        str += '<a>1</a>' + (middlePageStart != 2 ? '<a>...</a>' : '');
+                    }
+                    for (var i = middlePageStart; i <= middlePageEnd; i++) {
+                        str += '<a ' + (currentPage == i ? 'class="active"' : '') + '>' + i + '</a>';
+                    }
+                    if(middlePageEnd != totalPage){
+                        str += (middlePageEnd != (totalPage - 1) ? '<a>...</a>' : '') + '<a>' + totalPage + '</a>';
+                    }
+                }
+
+                if(currentPage != totalPage){
+                    str += '<a>Next</a><a>Last</a>';
+                }
+                return str;
+            }
+
+            bar.innerHTML = pageHtml(currentPage,totalPage,pageCount);
+
+            btn.addEventListener('click',function(ev){
+                bar.innerHTML = pageHtml(parseInt(num.value,10),totalPage,pageCount);
+            },false);
+
+            Date.prototype.format = function(fmt){
+                var o = {
+                    'M+': this.getMonth() + 1,
+                    'd+': this.getDate(),
+                    'h+': this.getHours(),
+                    'm+': this.getMinutes(),
+                    's+': this.getSeconds(),
+                    'S': this.getMilliseconds()
+                }
+
+                if(/(y+)/.test(fmt)){
+                    fmt = fmt.replace(RegExp.$1,(this.getFullYear() + '').substr(4 - RegExp.$1.length));
+                }
+
+                for (var k in o) {
+                    if (new RegExp("(" + k + ")").test(fmt)) {
+                        fmt = fmt.replace(RegExp.$1,RegExp.$1.length == 1 ? o[k] : (String(o[k]).length == 1 ? "0" + o[k] : o[k]));
+                    }
+                }
+
+                return fmt;
+            }
+
+            var d = new Date();
+
+            // console.log(d.format('yyyy-MM-dd hh:mm:ss S'));
+            // console.log(d.format('yyyy-MM-dd hh:mm:ss S'));
+            // console.log(d.format('yyyy-MM-dd hh:mm:ss S A'));
+            // console.log(d.format('yy-M-d h:m:s S'));
+
+
+            function add(num){
+                var sum = num;
+
+                function r(a){
+                    sum += a;
+                    return r;
+                }
+
+                r.toString = r.valueOf = function(){
+                    return sum;
+                }
+
+                return r;
+            }
+
+            // console.log(add(5));
+            // console.log(add(5)(5));
+            // console.log(add(5)(5)(4));
+            // console.log(add(5)(5)(4)(6));
+
+
+        </script>
+    </body>
+</html>
