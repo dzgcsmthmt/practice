@@ -67,10 +67,23 @@ console.log(a > b);      false
 console.log(a == b);     false
 console.log(a >= b);     true
 --------------------------------------------------------------------------------------------------
-
-
-
-
+功能检测，如果支持直接引入支持功能的代码，不支持的引入编译的文件
+try {
+    a = () => {};
+    ARROW_FUNCS_ENABLED = true;
+}
+catch (err) {
+    ARROW_FUNCS_ENABLED = false;
+}
+编译报错，阻塞加载
+try {
+    new Function( "( () => {} )" );
+    ARROW_FUNCS_ENABLED = true;
+}
+catch (err) {
+    ARROW_FUNCS_ENABLED = false;
+}
+--------------------------------------------------------------------------------------------------
 
 
 
