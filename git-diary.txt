@@ -34,3 +34,8 @@ git rm --cached filename
 可以通过commit id恢复操作 与3的不同是3为版本回退，checkout只能回退文件
 ----------------------------------------------------------------------------------------------
 8、分支
+git branch  查看分支
+git checkout 切换分支
+git checkout -b  新建并切换到新建分支
+git branch -d 删除分支
+git push origin :branch name 提交删除分支
