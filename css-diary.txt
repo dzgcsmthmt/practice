@@ -8,5 +8,19 @@ The counter-increment property is usually used together with the counter-reset p
 父元素：overflow：hidden
 子元素：margin-bottom:-10000px; padding-bottom:10000px;
 ---------------------------------------------------------------------------------------------------------------
-
- 
+修改placeholder的颜色
+ ::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+    color:    #909;
+}
+:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+   color:    #909;
+   opacity:  1;
+}
+::-moz-placeholder { /* Mozilla Firefox 19+ */
+   color:    #909;
+   opacity:  1;
+}
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+   color:    #909;
+}
+ ---------------------------------------------------------------------------------------------------------------
