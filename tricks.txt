@@ -91,10 +91,32 @@ for(var key in a){
         return key.split(',');
     }
 }
+有bug只能是基本数据类型,引用会调用toString()方法
 --------------------------------------------------------------------------------------------------
 对于处理大量的dom操作，可以使用setTimeout里拆成若干小块，每个小块执行后浏览器线程可以执行一些别的操作，防止长时间的卡顿
 setTimeout的延时时间设为0，以尽快重新开始dom操作
 --------------------------------------------------------------------------------------------------
-
-
+动态加载js文件 
+加载完成事件 
+!IE:  onload
+IE: onreadystatechange ==>  readyState loaded || complete maybe either one,maybe both;so unbind event
+function loadScript(url, callback){
+    var script = document.createElement ("script")
+    script.type = "text/javascript";
+    if (script.readyState){ //IE
+        script.onreadystatechange = function(){
+            if (script.readyState == "loaded" || script.readyState == "complete"){
+                script.onreadystatechange = null;
+                callback();
+            }
+        };
+    } else { //Others
+        script.onload = function(){
+            callback();
+        };
+    }
+    script.src = url;
+    document.getElementsByTagName_r("head")[0].appendChild(script);
+}
+--------------------------------------------------------------------------------------------------
 
