@@ -47,6 +47,7 @@
 ## 第五章 String and Regular Expression 字符串和正则表达式 ##
 * When concatenating numerous or large strings, array joining is the only method with reasonable performance in IE7 and earlier.
 * If you don't need to worry about IE7 and earlier, array joining is one of the slowest ways to concatenate strings.Use simple + and += operators instead, and avoid unnecessary intermediate strings.
+
 >there are 4 string concatenate methods
 >>1. the + operator  str = str + str1 + str2 faster than str += str + str2 because the second statement will create a temparory string. not for IE
 >>2. the += operator
