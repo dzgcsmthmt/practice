@@ -119,4 +119,18 @@ function loadScript(url, callback){
     document.getElementsByTagName_r("head")[0].appendChild(script);
 }
 --------------------------------------------------------------------------------------------------
-
+“innerHTML += …” vs “appendChild(txtNode)”  can also use insertAdjacentHTML()
+The former causes the browser to drop all of the old nodes in the target, re-parse all of that HTML, and build new nodes.
+to handle Dom with lots of descendants use a clone node
+var original = document.getElementById('container');
+var cloned = original.cloneNode(true);
+cloned.setAttribute('width', '50%');
+var elem, contents;
+for(var i = 0; i < textlist.length; i++) {
+	elem = document.createElement('p');
+	contents = document.createTextNode(textlist[i]);
+	elem.appendChild(contents);
+	cloned.appendChild(elem);
+}
+original.parentNode.replaceChild(cloned, original);
+--------------------------------------------------------------------------------------------------
