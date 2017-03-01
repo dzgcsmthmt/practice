@@ -134,3 +134,29 @@ for(var i = 0; i < textlist.length; i++) {
 }
 original.parentNode.replaceChild(cloned, original);
 --------------------------------------------------------------------------------------------------
+avoid repaint for background color change
+orange: #d18316;
+$yellow: #ffe42b;
+.btn {
+  background-color: $orange;
+  color: #000;
+  padding: 30px 50px;
+  display: inline-block;
+  text-decoration: none;
+  font-family: Helvetica, Arial, sans-serif;
+  position: relative;
+  span {
+    z-index: 2;
+    position: relative;
+    }
+}
+
+.btn::before {
+  content: "";position: absolute;top: 0;left: 0;bottom: 0;right: 0;z-index: 1;background-color: $yellow;
+  opacity: 1;transition: opacity 3s;
+}
+
+.btn:hover::before {
+  opacity: 0;
+}
+--------------------------------------------------------------------------------------------------
