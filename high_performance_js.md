@@ -86,7 +86,15 @@
 
 * Use Object/Array Literals
 >There are multiple ways to create objects and arrays in JavaScript, but nothing is faster than creating object and array literals.
-
+<pre>
+    var a = new Array();
+    a[0] = 77;   // Allocates
+    a[1] = 88;
+    a[2] = 0.5;   // Allocates, converts
+    a[3] = true; // Allocates, converts
+    var a = [77, 88, 0.5, true];
+because in the first example the individual assignments are performed one after another, and the assignment of a[2] causes the Array to be converted to an Array of unboxed doubles, but then the assignment of a[3] causes it to be re-converted back to an Array that can contain any values (Numbers or objects). In the second case, the compiler knows the types of all of the elements in the literal, and the hidden class can be determined up front.
+</pre>
 * Don't Repeat Work
 >1. Lazy Loading
 <pre>
