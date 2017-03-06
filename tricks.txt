@@ -160,3 +160,14 @@ $yellow: #ffe42b;
   opacity: 0;
 }
 --------------------------------------------------------------------------------------------------
+isInteger polyfill
+function isInteger(x) { return (x^0) === x; } 
+function isInteger(x) { return Math.round(x) === x; }
+
+One fairly common incorrect solution is the following:
+function isInteger(x) { return parseInt(x, 10) === x; } 
+> String(1000000000000000000000)
+'1e+21'
+> parseInt(1000000000000000000000, 10)
+1
+--------------------------------------------------------------------------------------------------
