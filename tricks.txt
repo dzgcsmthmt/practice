@@ -1,4 +1,10 @@
-    // Opera 8.0+
+how to debug a eventhandler bind by jQuery
+var clickEvents = $._data($('#foo')[0], "events").click;
+$.each(clickEvents, function(key, handlerObj) {
+    console.log(handlerObj.handler);
+})
+-------------------------------------------------------------------------------------------------
+// Opera 8.0+
 var isOpera = (!!window.opr && !!opr.addons) || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
     // Firefox 1.0+
 var isFirefox = typeof InstallTrigger !== 'undefined';
