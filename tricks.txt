@@ -178,7 +178,7 @@ function isInteger(x) { return parseInt(x, 10) === x; }
 1
 --------------------------------------------------------------------------------------------------
 函数节流（throttle）与函数去抖（debounce）
-throttle：电梯没多少秒启动一次
+throttle：电梯每多少秒启动一次
 var throttle = function(delay, action){
   var last = 0
   return function(){
