@@ -177,3 +177,27 @@ function isInteger(x) { return parseInt(x, 10) === x; }
 > parseInt(1000000000000000000000, 10)
 1
 --------------------------------------------------------------------------------------------------
+函数节流（throttle）与函数去抖（debounce）
+throttle：电梯没多少秒启动一次
+var throttle = function(delay, action){
+  var last = 0
+  return function(){
+    var curr = +new Date()
+    if (curr - last > delay){
+      action.apply(this, arguments)
+      last = curr 
+    }
+  }
+}
+debounce：每隔多少秒启动一次，有人进入，重新计时
+var debounce = function(idle, action){
+  var last
+  return function(){
+    var ctx = this, args = arguments
+    clearTimeout(last)
+    last = setTimeout(function(){
+        action.apply(ctx, args)
+    }, idle)
+  }
+}
+--------------------------------------------------------------------------------------------------
