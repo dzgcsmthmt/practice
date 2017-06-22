@@ -1,0 +1,59 @@
+html{
+    height: 100%;
+}
+body{
+    background: #fbfbfb;
+}
+.part-list{
+    margin: 1.8rem 0 0.4rem;
+    position: relative;
+    border-top: 1px solid #f4f4f4;
+}
+.part-list .vl{
+    position: absolute;
+    width: 0;
+    height: 100%;
+    left: 50%;
+    border-left: 1px solid #f4f4f4;
+}
+.part-list li{
+    float: left;
+    width: 50%;
+    box-sizing: border-box;
+    border-bottom: 1px solid #f4f4f4;
+    background: #fff;
+}
+.part-list li:nth-child(2n + 1){
+}
+.part-list li a {
+    display: block;
+    width: 100%;
+    height: 100%;
+    /*pointer-events:none;*/
+}
+.part-list li .img{
+    width: 100%;
+    height: 0;
+    position: relative;
+    padding-bottom: 100%;
+}
+.part-list li .img img{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+.part-list li .info{
+    height: 2.8rem;
+    color: #333;
+    text-align: center;
+    padding-top: 0.5rem;
+}
+.info .price{
+    color: #448cff;
+    font-size: 0.56rem;
+}
+.info .desc{
+    font-size: 0.32rem;
+}

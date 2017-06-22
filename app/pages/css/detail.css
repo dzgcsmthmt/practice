@@ -1,0 +1,74 @@
+#slider{
+    margin-top: 1.8rem;
+}
+.main{
+    margin-bottom: 2.88rem;
+}
+.price-wrapper{
+    text-align: center;
+}
+.member-price{
+    font-size: 0.72rem;
+    color:#448cff;
+    margin: 0.6rem 0 0.2rem;
+}
+.price{
+    font-size: 0.52rem;
+    color:#b4b4b4;
+}
+.is-member.price{
+    text-decoration: line-through;
+}
+.num-wrapper{
+    margin: 1.4rem 0;
+    text-align: center;
+    font-size: 0.48rem;
+}
+.produce-info{
+    margin: 0.6rem;
+    color: #999;
+    font-size: 0.36rem;
+}
+.produce-info span{
+    float: left;
+    width: 30%;
+}
+.produce-info span:nth-of-type(1){
+    text-align: left;
+    width: 40%;
+}
+.produce-info span:nth-of-type(2){
+    text-align: center;
+}
+.produce-info span:nth-of-type(3){
+    text-align: right;
+}
+.btn-wrapper{
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+    padding: 0.6rem;
+    font-size: 0;
+    box-sizing: border-box;
+    background: #fff;
+}
+.btn-wrapper a{
+    width: 28.9855%;
+}
+.btn-wrapper .btn + button{
+    width: 68.115942%;
+    margin-left: 2.89855%;
+}
+.btn-wrapper.is-member a{
+    display: none;
+}
+.btn-wrapper.is-member button{
+    width: 100%;
+    margin-left: 0;
+}
+.dialog-modal p{
+    font-size: 0.6rem;
+    line-height: 0.96rem;
+    color: #333;
+    text-align: center;
+}

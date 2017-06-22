@@ -1,0 +1,187 @@
+.dialog-overlay{
+    position: fixed;
+    z-index: 9998;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,.3);
+    -webkit-backface-visibility: hidden;
+    pointer-events:auto;
+}
+
+.dialog-overlay.fade-and-drop{
+    -webkit-transition: 100ms opacity 350ms ease;
+       -moz-transition: 100ms opacity 350ms ease;
+        -ms-transition: 100ms opacity 350ms ease;
+         -o-transition: 100ms opacity 350ms ease;
+            transition: 100ms opacity 350ms ease;
+}
+
+.dialog-overlay.dialog-open{
+    opacity: 1;
+    -webkit-transition: 100ms opacity ease;
+       -moz-transition: 100ms opacity ease;
+        -ms-transition: 100ms opacity ease;
+         -o-transition: 100ms opacity ease;
+            transition: 100ms opacity ease;
+}
+
+.dialog-modal{
+    position: fixed;
+    z-index: 9999;
+    overflow: auto;
+    top: 0%;
+    left: 50%;
+    opacity: 0;
+    -webkit-transform: translate3d(-50%, -50%, 0);
+       -moz-transform: translate3d(-50%, -50%, 0);
+        -ms-transform: translate3d(-50%, -50%, 0);
+         -o-transform: translate3d(-50%, -50%, 0);
+            transform: translate3d(-50%, -50%, 0);
+    border-radius: 4px;
+    background: #fff;
+    -webkit-transition: 350ms all  ease;
+       -moz-transition: 350ms all  ease;
+        -ms-transition: 350ms all  ease;
+         -o-transition: 350ms all  ease;
+            transition: 350ms all  ease;
+    -webkit-backface-visibility: hidden;
+}
+
+.dialog-modal.fade-and-drop.dialog-open{
+    top: 50%;
+    opacity: 1;
+}
+.dialog-modal.dialog-open.dialog-anchored{
+    top: 20px;
+    max-height: calc(100% - 40px);
+}
+/* Close Button */
+.dialog-close{
+    font-family: Helvetica,Arial,sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 12px;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    padding: 5px 7px 7px;
+    cursor: pointer;
+    color: #fff;
+    border: 0;
+    outline: none;
+    background: #e74c3c;
+}
+.dialog-close:hover{
+    background: #c0392b;
+}
+.dialog-header{
+    height: 1.8rem;
+    line-height: 1.8rem;
+    border-bottom: 1px solid rgb(242, 242, 242);
+    text-align: center;
+    color: #333;
+    font-size: 0.6rem;
+    font-weight: bold;
+}
+.dialog-content{
+    padding: 1rem 0.6rem;
+    color: #333;
+}
+.dialog-footer{
+    padding: 0 0.6rem 0.6rem;
+}
+.swipe {
+    overflow: hidden;
+    visibility: hidden;
+    position: relative;
+}
+.swipe-wrap {
+    overflow: hidden;
+    position: relative;
+}
+.swipe-wrap > div {
+    float:left;
+    width:100%;
+    position: relative;
+}
+.swipe-wrap > div img{
+    width: 100%;
+}
+.test{
+    height: 500px;
+}
+.swipe-banner{
+    position: absolute;
+    width: 100%;
+    bottom: 0.6rem;
+    text-align: center;
+    font-size: 0;
+}
+.swipe-circle{
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 7px;
+    background: rgba(0, 0, 0, 0.3);
+}
+.swipe-circle.active{
+    background: #448cff;
+}
+.swipe-circle + span{
+    margin-left: 0.28rem;
+}
+
+.select-overlay{
+    position: fixed;
+    z-index: 9998;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,.3);
+    -webkit-backface-visibility: hidden;
+    pointer-events: auto;
+}
+.select-modal{
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background: #fff;
+    -webkit-backface-visibility: hidden;
+}
+.select-modal select{
+    display: none;
+}
+.select-header{
+    height: 1.8rem;
+    line-height: 1.8rem;
+    font-size: 0.6rem;
+    color: #333;
+    padding: 0 0.6rem;
+    background: #fafafa;
+    position: relative;
+}
+.select-header button{
+    font-size: 0.6rem;
+    border: none;
+    background: none;
+    color: #448CFF;
+    height: 1.8rem;
+    line-height: 1.8rem;
+    position: absolute;
+    top: 0;
+    left: 0.6rem;
+}
+.select-header button:nth-last-of-type(1){
+    left: auto;
+    right: 0.6rem;
+}
+.select-header span{
+    display: block;
+    text-align: center;
+}

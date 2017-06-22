@@ -1,0 +1,100 @@
+html{
+    height: 100%;
+}
+body{
+    background: #fbfbfb;
+}
+#order{
+    margin-top: 1.8rem;
+    height: 1.8rem;
+    line-height: 1.8rem;
+    color:#333;
+    padding-left: 0.6rem;
+    font-size: 0.56rem;
+}
+#no{
+    margin-left: 0.4rem;
+    color: #8f8f8f;
+    font-size: 0.48rem;
+}
+#address{
+    font-size: 0.4rem;
+    color: #909090;
+    padding: 0.6rem;
+    background: #fff;
+    border-top: 1px solid #f4f4f4;
+    border-bottom: 1px solid #f4f4f4;
+}
+#address .total-price{
+    color: #448CFF;
+    font-size: 0.6rem;
+    margin: 0.2rem 0 0.6rem;
+    font-weight: bold;
+}
+#address .user{
+    color: #333;
+    font-size: 0.44rem;
+    margin-bottom: 0.28rem;
+}
+#address .mail,#address .deliver{
+    margin-top: 0.36rem;
+}
+#pay{
+    border-top: 1px solid #f4f4f4;
+    border-bottom: 1px solid #f4f4f4;
+    background: #fff;
+}
+#pay > div{
+    width: 50%;
+    height: 0;
+    padding-bottom: 50%;
+    position: relative;
+    float: left;
+    border-right: 1px solid #f4f4f4;
+    box-sizing: border-box;
+    text-align: center;
+    font-size: 0.32rem;
+}
+#pay .wrapper{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate3d(-50%,-50%,0);
+    -webkit-transform: translate3d(-50%,-50%,0);
+}
+#pay p{
+    margin-top: 0.3rem;
+}
+
+.weChat,.aliPay{
+    border-bottom: 1px solid #f4f4f4;
+}
+.icon-pay{
+    width: 1.58rem;
+    height: 1.58rem;
+}
+.icon-wechat{
+    background: url('../img/wechat.png') no-repeat;
+    background-size: contain;
+}
+.icon-alipay{
+    background: url('../img/alipay.png') no-repeat;
+    background-size: contain;
+}
+.icon-bank{
+    background: url('../img/offline.png') no-repeat;
+    background-size: contain;
+}
+.icon-visa{
+    background: url('../img/online.png') no-repeat;
+    background-size: contain;
+}
+.dialog-modal p{
+    font-size: 0.54rem;
+    line-height: 0.8rem;
+}
+.dialog-modal p.em{
+    font-weight: bold;
+    text-align: center;
+    margin: 0.4rem 0;
+}

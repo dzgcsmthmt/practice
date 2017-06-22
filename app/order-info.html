@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="renderer" content="webkit">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+        <meta name="format-detection"content="telephone=no, email=no" />
+        <meta http-equiv="pragma" content="no-cache">
+        <meta http-equiv="cache-control" content="no-cache">
+        <meta http-equiv="expires" content="0">
+        <meta name="HandheldFriendly" content="true">
+        <meta name="MobileOptimized" content="320">
+        <meta name="screen-orientation" content="portrait">
+        <meta name="x5-orientation" content="portrait">
+        <!-- <meta name="full-screen" content="yes"> -->
+        <meta name="x5-fullscreen" content="true">
+        <meta name="msapplication-tap-highlight" content="no">
+        <title>订单信息-OKAY商城</title>
+        <script>
+			(function(){
+				var html = document.documentElement;
+				var htmlWidth = html.getBoundingClientRect().width;
+				html.style.fontSize = htmlWidth / 15 +"px";
+			})();
+		</script>
+        <link rel="stylesheet" href="common/css/common.css">
+        <link rel="stylesheet" href="common/css/ui.css">
+        <link rel="stylesheet" href="common/css/drum.css">
+        <link rel="stylesheet" href="pages/css/header.css">
+        <link rel="stylesheet" href="pages/css/order-info.css">
+    </head>
+    <body>
+        <header>
+            <a href="javascript:;" class="back"><i class="icon icon-back"></i></a>
+            <h1 class="h1">订单信息</h1>
+        </header>
+        <div class="wrapper">
+            <div id="address"></div>
+            <div id="member" class="dn clearfix">
+                <div class="fl icon-wrapper">
+                    <p>成为会员可以享受会员价</p>
+                    <p>快来申请吧</p>
+                </div>
+                <div class="fr">
+                    <button class="btn btn-primary btn-sm">申请会员</button>
+                </div>
+            </div>
+            <div id="page-list">
+                <ul class='order-list'>
+                </ul>
+            </div>
+            <div class="item invoice clearfix">
+                <div class="select fl">
+                    <span class="type">备注</i>
+                </div>
+                <div class="input fl">
+                    <input type="text" placeholder="请输入备注信息,100字以内" id="invoice-title" maxlength="100"/>
+                </div>
+            </div>
+            <div class="item clearfix">
+                <span class="fl">配送</span>
+                <span class="fr">送货上门</span>
+            </div>
+        </div>
+        <div id="footer" class="clearfix">
+            <span id="total-price">合计：0.00</span>
+            <span id="submit">提交订单</span>
+        </div>
+        <div class="loading-overlay">
+            <div class="loading-img-wrapper">
+                <img src="common/img/loading.gif" />
+            </div>
+        </div>
+
+        <script type="text/javascript" src="common/js/jquery.min.js"></script>
+        <script type="text/javascript" src="common/js/jquery.mobile-events.min.js"></script>
+        <script type="text/javascript" src="common/js/util.js"></script>
+        <script type="text/javascript" src="common/js/pop-tip.js"></script>
+        <script type="text/javascript" src="common/js/ajax.js"></script>
+        <script type="text/javascript" src="pages/js/order-info.js"></script>
+        <script type="text/javascript">
+            order.init();
+        </script>
+    </body>
+</html>

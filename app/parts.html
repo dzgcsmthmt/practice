@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="renderer" content="webkit">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+        <meta name="format-detection"content="telephone=no, email=no" />
+        <meta http-equiv="pragma" content="no-cache">
+        <meta http-equiv="cache-control" content="no-cache">
+        <meta http-equiv="expires" content="0">
+        <meta name="HandheldFriendly" content="true">
+        <meta name="MobileOptimized" content="320">
+        <meta name="screen-orientation" content="portrait">
+        <meta name="x5-orientation" content="portrait">
+        <!-- <meta name="full-screen" content="yes"> -->
+        <meta name="x5-fullscreen" content="true">
+        <meta name="msapplication-tap-highlight" content="no">
+        <title>配件-OKAY商城</title>
+        <script>
+			(function(){
+				var html = document.documentElement;
+				var htmlWidth = html.getBoundingClientRect().width;
+				html.style.fontSize = htmlWidth / 15 +"px";
+			})();
+		</script>
+        <link rel="stylesheet" href="common/css/common.css">
+        <link rel="stylesheet" href="common/css/ui.css">
+        <link rel="stylesheet" href="pages/css/header.css">
+        <link rel="stylesheet" href="pages/css/parts.css">
+    </head>
+    <body>
+        <header>
+            <a href="javascript:;" id="theme"><i class="icon icon-menu"></i></a>
+            <h1>OKAY商城</h1>
+            <a href="cart.html" class="dn" id="cart"><i class="icon icon-cart"></i><span class="num">0</span></a><a href="javascript:;" id="user"><i class="icon icon-portrait"></i></a>
+        </header>
+        <ul id="menu" class="menu-list">
+            <header>
+                <span id="close"><i class="icon icon-close"></i></span>
+                <h1>OKAY商城</h1>
+            </header>
+            <li>
+                <a data-href="index.html" href="javascript:;"><i class="icon icon-homepage"></i><span>首页</span></a>
+            </li>
+            <li>
+                <a data-href="index.html" href="javascript:;"><i class="icon icon-s4"></i><span>e学派 s4.0</span></a>
+            </li>
+            <li>
+                <a data-href="index.html" href="javascript:;"><i class="icon icon-s3"></i><span>e学派 s3.0</span></a>
+            </li>
+            <li>
+                <a data-href="index.html" href="javascript:;"><i class="icon icon-s2"></i><span>e学派 s2.2</span></a>
+            </li>
+            <li>
+                <a data-href="index.html" href="javascript:;"><i class="icon icon-t1"></i><span>e学派 t1.0</span></a>
+            </li>
+            <li>
+                <a data-href="parts.html" href="javascript:;"><i class="icon icon-spare"></i><span>配件</span></a>
+            </li>
+            <li>
+                <a data-href="http://m.okzhihui.cn/#/" href="javascript:;"><i class="icon icon-offcial"></i><span>官网</span></a>
+            </li>
+        </ul>
+        <ul class="part-list clearfix"></ul>
+        <footer>
+            <div class="phone-number">
+                <a href="tel:400-996-0175"><img src="pages/img/phone.png" alt=""></a>
+            </div>
+            <div class="app-download dn"><a href="http://parent-app.webview.okjiaoyu.cn/downApp.html">OKAY+ APP下载</a></div>
+            <div class="copy-right">&copy;2005-2017 OKAYSHOP版权所有，并保留所有权利。</div>
+        </footer>
+        <div id='to-top' class="dn"></div>
+        <div class="loading-overlay">
+            <div class="loading-img-wrapper">
+                <img src="common/img/loading.gif" />
+            </div>
+        </div>
+        <div id="func">
+            <a id='counsel' href="https://kefu.easemob.com/webim/im.html?tenantId=2782&emgroup=OKAY%E5%95%86%E5%9F%8E"></a>
+        </div>
+        <script type="text/javascript" src="common/js/jquery.min.js"></script>
+        <script type="text/javascript" src="common/js/jquery.mobile-events.min.js"></script>
+        <script type="text/javascript" src="common/js/util.js"></script>
+        <script type="text/javascript" src="common/js/pop-tip.js"></script>
+        <script type="text/javascript" src="common/js/ajax.js"></script>
+        <script type="text/javascript" src="pages/js/part.js"></script>
+        <script type="text/javascript">
+
+            part.init();
+
+        </script>
+    </body>
+</html>
