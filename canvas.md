@@ -1,4 +1,4 @@
-<code>
+<pre>
 canvas.onmousedown = function(e){
     var startX = e.pageX - canvas.offsetLeft;
     var startY = e.pageY - canvas.offsetTop;
@@ -22,4 +22,4 @@ canvas.onmousedown = function(e){
 
     }
 }
-</code>
+</pre>
