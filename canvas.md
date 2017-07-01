@@ -1,4 +1,4 @@
-###贝塞尔曲线
+###贝塞尔曲线 ###
 <pre>
 canvas.onmousedown = function(e){
     var startX = e.pageX - canvas.offsetLeft;
