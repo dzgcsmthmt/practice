@@ -25,3 +25,64 @@ canvas.onmousedown = function(e){
 }
 </pre>
 ***
+# 贝塞尔三次曲线求坐标 #
+<pre>
+<canvas id="canvas" width="500" height="300"></canvas>
+
+<script type="text/javascript">
+    var canvas  = document.getElementById("canvas");
+    var ctx = canvas.getContext('2d');
+
+    ctx.moveTo(100,100);
+    ctx.bezierCurveTo(200,250,300,0,400,100);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(0,150);
+    ctx.lineTo(500,150);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(175,0);
+    ctx.lineTo(175,300);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(400,0);
+    ctx.lineTo(400,300);
+    ctx.stroke();
+
+    function BezierCubicXY(p0, p1, p2, p3, t) {
+        var ret = {};
+        var coords = ['x', 'y'];
+        var i, k;
+
+        for (i in coords) {
+            k = coords[i];
+            ret[k] = Math.pow(1 - t, 3) * p0[k] + 3 * Math.pow(1 - t, 2) * t * p1[k] + 3 * (1 - t) * Math.pow(t, 2) * p2[k] + Math.pow(t, 3) * p3[k];
+        }
+
+        return ret;
+    }
+
+    var obj = BezierCubicXY({x:100,y:100},{x:200,y:250},{x:300,y:0},{x:400,y:100},0.6);
+    console.log(obj);
+
+    ctx.beginPath();
+    // ctx.moveTo(obj.x,obj.y);
+    ctx.arc(obj.x,obj.y,5,0,2*Math.PI);
+    ctx.strokeStyle = 'red';
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(obj.x,0);
+    ctx.lineTo(obj.x,300);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(0,obj.y);
+    ctx.lineTo(500,obj.y);
+    ctx.stroke();
+
+</script>
+</pre>
