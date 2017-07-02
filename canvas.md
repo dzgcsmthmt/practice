@@ -86,3 +86,31 @@ canvas.onmousedown = function(e){
 
 </script>
 </pre>
+***
+# 添加事件#
+<pre>
+ function addEvent(ctx,type,data,cb){
+    this.ctx = ctx;
+    this.type = type;
+    this.data = data;
+    this.cb = cb;
+    this.redraw();
+}
+
+addEvent.prototype.redraw = function(){
+    var params = this.data.split(',');
+    this.ctx.beginPath();
+    if(this.type == 'arc'){
+        this.ctx.arc(params[0],params[1],params[2],params[3],params[4]);
+    }else if(this.type == 'rect'){
+        this.ctx.rect(params[0],params[1],params[2],params[3]);
+    }
+    this.ctx.stroke();
+}
+
+addEvent.prototype.isIn = function(x,y){
+    if(this.ctx.isPointInPath(x,y)){
+        this.cb();
+    }
+}   
+</pre>
