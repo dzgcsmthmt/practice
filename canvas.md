@@ -87,6 +87,7 @@ canvas.onmousedown = function(e){
 </script>
 </pre>
 ***
+
 # 添加事件 #
 <pre>
 function addEvent(ctx,type,data,cb){
