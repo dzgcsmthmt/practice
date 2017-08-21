@@ -1,4 +1,3 @@
-<pre>
 /*
         function DemoPromise(){
             this.promiseState = 'pending';
@@ -173,4 +172,3 @@
             // dp.resolve('abc');
             dp.reject('abc');
         },1000);
-</pre>
