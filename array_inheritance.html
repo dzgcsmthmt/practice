@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>test</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1.0,user-scalable=no" />
+    <style media="screen">
+        html{
+            font-size: 12px;
+        }
+        .icon-code,.icon-pwd,.icon-pwd2,.icon-pwd1,.icon-phone{
+            width: 100px;
+            height: 100px;
+        }
+        .canvas{
+            margin: 0 auto;
+            width: 400px;
+            height: 400px;
+            border-bottom: 1px dashed #999;
+            position: relative;
+        }
+        .left{
+            position: absolute;
+            width: 40px;
+            height: 100px;
+            bottom: 0;
+            left: 100px;
+            background: linear-gradient(90deg,lightblue,rgb(6,100,197));
+            transform: skew(0deg, 45deg);
+            transform-origin: left bottom;
+        }
+        .right{
+            position: absolute;
+            width: 40px;
+            height: 100px;
+            bottom: 0;
+            left: 140px;
+            background: linear-gradient(90deg, rgb(6,100,197),lightblue);
+            transform: skew(0deg, -45deg);
+            transform-origin: right bottom;
+        }
+        .top{
+            position: absolute;
+            width: 56.5685424949238px;
+            height: 56.5685424949238px;
+            bottom: 71px;
+            left: 111px;
+            background: linear-gradient(0deg, lightblue,rgb(6,100,197));
+            transform: rotate(45deg);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="canvas">
+        <div class="left"></div>
+        <div class="right"></div>
+        <div class="top"></div>
+    </div>
+    <canvas id="canvas" width="300" height="300"></canvas>
+
+    <script type="text/javascript">
+
+        function myArray(){
+            this.array = [];
+            Array.prototype.push.apply(this.array,arguments);
+        }
+        Object.defineProperties(myArray.prototype,{
+            size: {
+                get: function(){
+                    var size = 0;
+                    for (var i = 0; i < this.array.length; i++) {
+                        if(i in this.array){
+                            size++;
+                        }
+                    }
+                    return size;
+                },
+            },
+            length: {
+                get: function(){
+                    return this.array.length;
+                },
+                set: function(len){
+                    this.array.length = len;
+                }
+            }
+        });
+
+        myArray.prototype.get = function(index){
+            return this.array[index];
+        };
+
+        myArray.prototype.set = function(index,value){
+            return this.array[index] = value;
+        };
+
+        ['toString', 'pop','unshift','shift'].forEach(function (key) {
+            myArray.prototype[key] = function () {
+                return Array.prototype[key].apply(this.array, arguments);
+            }
+        });
+
+        var a = new myArray(1,2);
+        // console.log(a.size);
+        console.log(a.length);
+        a.length = 4;
+        console.log(a.size);
+        console.log(a.length);
+        a.set(0,'a');
+        a.pop();
+        a.pop();
+        a.unshift(1);
+        a.unshift(3);
+        console.log(a.toString());
+        console.log(a.size);
+        console.log(a.length);
+
+        class Person {
+            constructor() {
+
+            }
+        }
+
+        class Employee extends Person {
+            constructor() {
+                super();
+            }
+        }
+
+        var target = {foo:234};
+        var handler = {
+            get(target,propName,receiver){
+                console.log('get ' + propName);
+                console.log(receiver);
+                return 123;
+            }
+        }
+
+        // var proxy = new Proxy(target,handler);
+        // console.log(proxy.foo);
+        //
+        // var obj = {
+        //     a: null,
+        //     b: 2
+        // }
+        //
+        // var result;
+        // for (var key in obj) {
+        //     if (result = obj.hasOwnProperty(key)) {
+        //         console.log(result);
+        //     }
+        // }
+
+        // class CountDown{
+        //     constructor(counter,action){
+        //         Object.assign(this,{
+        //             dec(){
+        //                 if(counter < 1) return;
+        //                 counter--;
+        //                 if(counter == 0){
+        //                     action();
+        //                 }
+        //             }
+        //         })
+        //     }
+        // }
+
+        // var _counter = new WeakMap();
+        // var _action = new WeakMap();
+        //
+        // class CountDown{
+        //     constructor(counter,action){
+        //         _counter.set(this,counter);
+        //         _action.set(this,action);
+        //     }
+        //     dec(){
+        //         let counter = _counter.get(this);
+        //         if(counter < 1) return;
+        //         counter--;
+        //         _counter.set(this,counter);
+        //         if(counter == 0){
+        //             _action.get(this)();
+        //         }
+        //     }
+        // }
+
+        // var _counter = Symbol('counter');
+        // var _action = Symbol('action');
+        //
+        // class CountDown {
+        //     constructor(counter,action) {
+        //         this[_counter] = counter;
+        //         this[_action] = action;
+        //     }
+        //     dec(){
+        //         if(this[_counter] < 1) return;
+        //         this[_counter]--;
+        //         if(this[_counter] == 0){
+        //             this[_action]();
+        //         }
+        //     }
+        // }
+        //
+        //
+        // var cd = new CountDown(2,() => console.log('done'));
+        // cd.dec();
+        // cd.dec();
+
+
+    </script>
+</body>
+
+</html>
