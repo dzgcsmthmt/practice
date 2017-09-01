@@ -1,6 +1,6 @@
 exec match 没有g的情况下一样，返回匹配值和分组
 当 RegExpObject 是一个全局正则表达式时，exec() 的行为就稍微复杂一些。它会在 RegExpObject 的 lastIndex 属性指定的字符处开始检索字符串 string。
-当 exec() 找到了与表达式相匹配的文本时，在匹配后，它将把 RegExpObject 的 lastIndex 属性设置为匹配文本的最后一个字符的下一个位置。
+当 exec() 找到了与表达式相匹配的文本时，在匹配后，在flag为g的情况下它将把 RegExpObject 的 lastIndex 属性设置为匹配文本的最后一个字符的下一个位置。也可以直接修改RegExpObject.lastIndex,无g没效果
 可以通过反复调用 exec() 方法来遍历字符串中的所有匹配文本。当 exec() 再也找不到匹配的文本时，它将返回 null，并把 lastIndex 属性重置为 0。
 match 全局正则表达式返回所有匹配结果，无视分组
 replace的第二个参数如果为函数，参数为match匹配的结果
