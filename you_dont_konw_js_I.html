@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>test</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1.0,user-scalable=no" />
+    <style media="screen">
+        html{
+            font-size: 12px;
+        }
+        .icon-code,.icon-pwd,.icon-pwd2,.icon-pwd1,.icon-phone{
+            width: 100px;
+            height: 100px;
+        }
+        .canvas{
+            margin: 0 auto;
+            width: 400px;
+            height: 400px;
+            border-bottom: 1px dashed #999;
+            position: relative;
+        }
+        .left{
+            position: absolute;
+            width: 40px;
+            height: 100px;
+            bottom: 0;
+            left: 100px;
+            background: linear-gradient(90deg,lightblue,rgb(6,100,197));
+            transform: skew(0deg, 45deg);
+            transform-origin: left bottom;
+        }
+        .right{
+            position: absolute;
+            width: 40px;
+            height: 100px;
+            bottom: 0;
+            left: 140px;
+            background: linear-gradient(90deg, rgb(6,100,197),lightblue);
+            transform: skew(0deg, -45deg);
+            transform-origin: right bottom;
+        }
+        .top{
+            position: absolute;
+            width: 56.5685424949238px;
+            height: 56.5685424949238px;
+            bottom: 71px;
+            left: 111px;
+            background: linear-gradient(0deg, lightblue,rgb(6,100,197));
+            transform: rotate(45deg);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="canvas">
+        <div class="left"></div>
+        <div class="right"></div>
+        <div class="top"></div>
+    </div>
+    <canvas id="canvas" width="300" height="300"></canvas>
+
+    <script type="text/javascript">
+        
+
+
+
+        /*
+        * 使用new调用函数时，会自动执行以下步骤
+        * 1、创建一个新对象
+        * 2、这个新对象执行原型连接
+        * 3、绑定this到新对象
+        * 4、没有返回其他对象，则返回新对象
+        */
+
+        //bind绑定在使用new操作符时绑定的thisValue会被忽略
+        //call、apply在非严格模式下绑定null或者undefined默认到全局变量，严格模式下不会
+        //不关心this指向的情况下可以绑定到一个空对象上 Object.create(null);
+
+        var a = 2;
+        (function (){
+            'use strict'
+
+            function test(){
+                console.log(this.a);
+            }
+
+            // test.call(Object.create(null));
+
+
+        })();
+
+        //如果在 [[Prototype]] 链上层存在 foo ，但是它被标记为只读（ writable:false ） ，那么
+        //无法修改已有属性或者在 myObject 上创建屏蔽属性。如果运行在严格模式下，代码会
+        //抛出一个错误。否则，这条赋值语句会被忽略。总之，不会发生屏蔽。
+        /*
+            如果在 [[Prototype]] 链上层存在 foo 并且它是一个 setter，那就一定会调用这个 setter。
+            foo 不会被添加到（或者说屏蔽于） myObject ，也不会重新定义 foo 这个 setter
+        */
+
+        (function(){
+            // 'use strict'
+            // var obj = {};
+            //
+            // Object.defineProperty(obj,'foo',{
+            //     value: 2,
+            //     configurable: true,
+            //     enumerable: true,
+            //     writable: false
+            // });
+
+            var obj = {
+                _foo: 2,
+                get foo(){
+                    return this._foo;
+                },
+                set foo(value){
+                    console.log('dddd');
+                    return this._foo = value
+                }
+            }
+
+            var foo = Object.create(obj);
+
+            // console.log(foo.foo);
+
+            // Object.defineProperty(obj,'foo',{
+            //     value: 3,
+            //     configurable: true,
+            //     enumerable: true,
+            //     writable: true
+            // });
+            foo.foo = 3;
+            // console.log(foo.foo);
+            // console.log(foo);
+            // console.log(obj._foo);
+            // console.log(foo.hasOwnProperty('foo'));
+
+        })();
+
+
+        function foo(something){
+            this.something = something;
+        }
+
+        var obj1 = {}
+
+        var bar = foo.bind(obj1);
+        bar(2);
+        // console.log(obj1.something);
+
+        var baz = new bar(3);
+        // console.log(obj1.something);
+        // console.log(baz instanceof bar);
+        // console.log(baz instanceof foo);
+
+        //js 词法作用域而不是动态作用域（this）
+        /*var a = 2;
+
+        function foo(){
+            console.log(a);
+        }
+
+        function bar(){
+            var a = 3;
+            foo();
+        }
+
+        bar();
+
+        var MyModules = (function manager(){
+            var modules = {};
+
+            function define(name,deps,impl){
+                for (var i = 0; i < deps.length; i++) {
+                    deps[i] = modules[deps[i]];
+                }
+                modules[name] = impl.apply(impl,deps);
+            }
+
+            function get(name){
+                return modules[name];
+            }
+
+            return {
+                define: define,
+                get: get
+            }
+
+        })();
+
+
+        MyModules.define('bar',[],function(){
+
+            function hello(who){
+                return 'let me introduce ' + who;
+            }
+
+            return {
+                hello: hello
+            }
+
+        });
+
+        MyModules.define('foo',['bar'],function(bar){
+            var hungry = 'hippo';
+
+            function awesome(){
+                console.log(bar.hello(hungry).toUpperCase());
+            }
+
+            return {
+                awesome: awesome
+            }
+
+        });
+
+        var bar = MyModules.get('bar');
+        var foo = MyModules.get('foo');
+
+        foo.awesome();
+*/
+
+    </script>
+</body>
+
+</html>
