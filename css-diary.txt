@@ -42,4 +42,5 @@ The counter-increment property is usually used together with the counter-reset p
  img srcset 的w 代表的屏幕宽度 ×　window.devicePixelRatio　取一个比较近的值
  <img srcset="img/h5_title@2x.png 1240w, img/h5_title@3x.png 1243w" src="img/h5_title@2x.png" alt="世界物流网博览会智慧教育峰会" />
  Iphone６ plus下加载的 3x,1243改成1245就加载2x
+ 单位2x 3x 代表devicePixelRatio
  ---------------------------------------------------------------------------------------------------------------
