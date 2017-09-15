@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>HashAndDictionary</title>
+    </head>
+    <body>
+        <script type="text/javascript">
+            function Dictionary(){
+                this.items = {};
+            }
+
+            Dictionary.prototype = {
+                constructor: Dictionary,
+                set: function(key,value){
+                    this.items[key] = value;
+                },
+                remove: function(key){
+                    if(this.has(key)){
+                        delete this.items[key];
+                        return true;
+                    }
+                    return false;
+                },
+                has: function(key){
+                    return this.items.hasOwnProperty(key);
+                },
+                get: function(key){
+                    if(this.has(key)){
+                        return this.items[key];
+                    }
+                    return undefined;
+                },
+                clear: function(){
+                    this.items = {};
+                },
+                size: function(){
+                    return this.keys().length;
+                },
+                keys: function(){
+                    var values = [];
+                    for (var key in this.items) {
+                        if (this.has(key)) {
+                            values.push(key);
+                        }
+                    }
+                    return values;
+                },
+                values: function(){
+                    var values = [];
+                    for (var key in this.items) {
+                        if (this.has(key)) {
+                            values.push(this.items[key]);
+                        }
+                    }
+                    return values;
+                },
+                getItems: function(){
+                    return this.items;
+                }
+            }
+
+
+            function HashTable(){
+                this.table = [];
+            }
+
+            HashTable.prototype = {
+                put: function(key,value){
+                    var position = this.loseloseHashCode(key);
+                    this.table[position] = value;
+                },
+                get: function(key){
+                    var position = this.loseloseHashCode(key);
+                    return this.table[position];
+                },
+                remove: function(key){
+                    var position = this.loseloseHashCode(key);
+                    this.table[position] = undefined;
+                },
+                loseloseHashCode: function(key){
+                    var hash = 0;
+                    for (var i = 0; i < key.length; i++) {
+                        hash += key.charCodeAt(i);
+                    }
+                    return hash % 37;
+                }
+            }
+
+            var hashTable = new HashTable();
+
+            hashTable.put('ab','ab');
+            hashTable.put('bc','bc');
+            console.log(hashTable);
+
+        </script>
+    </body>
+</html>

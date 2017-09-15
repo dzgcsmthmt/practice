@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Collection</title>
+    </head>
+    <body>
+        <script type="text/javascript">
+            function Set(){
+                this.items = {};
+            }
+
+            Set.prototype = {
+                constructor: Set,
+                add: function(value){
+                    if(!this.has(value)){
+                        this.items[value] = value;
+                    }
+                    return false;
+                },
+                remove: function(value){
+                    if(this.has(value)){
+                        delete this.items[value];
+                        return true;
+                    }
+                    return false;
+                },
+                has: function(value){
+                    return this.items.hasOwnProperty(value);
+                },
+                clear: function(){
+                    this.items = {};
+                },
+                size: function(){
+                    return this.values().length;
+                },
+                values: function(){
+                    var keys = [];
+                    for(var key in this.items){
+                        if(this.has(key)){
+                            keys.push(key);
+                        }
+                    }
+                    return keys;
+                },
+                union: function(anotherSet){
+                    var unionSet = new Set();
+                    var values = this.values();
+                    for (var i = 0; i < values.length; i++) {
+                        unionSet.add(values[i]);
+                    }
+                    values = anotherSet.values();
+                    for (var i = 0; i < values.length; i++) {
+                        unionSet.add(values[i]);
+                    }
+                    return unionSet;
+                },
+                intersection: function(anotherSet){
+                    var intersectionSet = new Set();
+                    var values = this.values();
+                    for (var i = 0; i < values.length; i++) {
+                        if(anotherSet.has(values[i])){
+                            intersectionSet.add(values[i]);
+                        }
+                    }
+                    return intersectionSet;
+                },
+                difference: function(anotherSet){
+                    var differenceSet = new Set();
+                    var values = this.values();
+                    for (var i = 0; i < values.length; i++) {
+                        if(!anotherSet.has(values[i])){
+                            differenceSet.add(values[i]);
+                        }
+                    }
+                    return differenceSet;
+                },
+                subSet: function(anotherSet){
+                    if(this.size() > anotherSet.size()){
+                        return false;
+                    }
+                    for (var i = 0,values = this.values(); i < values.length; i++) {
+                        if(!anotherSet.has(values[i])){
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+            }
+
+
+            var set = new Set();
+            var set2 = new Set();
+
+            set.add(2);
+            set2.add(3);
+            set2.add(2);
+
+            var union = set.subSet(set2);
+
+            console.log(union);
+
+
+
+        </script>
+    </body>
+</html>

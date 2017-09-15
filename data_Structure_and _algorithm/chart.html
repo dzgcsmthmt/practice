@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Graph</title>
+    </head>
+    <body>
+        <script type="text/javascript">
+            function Dictionary(){
+                this.items = {};
+            }
+
+            Dictionary.prototype = {
+                constructor: Dictionary,
+                set: function(key,value){
+                    this.items[key] = value;
+                },
+                remove: function(key){
+                    if(this.has(key)){
+                        delete this.items[key];
+                        return true;
+                    }
+                    return false;
+                },
+                has: function(key){
+                    return this.items.hasOwnProperty(key);
+                },
+                get: function(key){
+                    if(this.has(key)){
+                        return this.items[key];
+                    }
+                    return undefined;
+                },
+                clear: function(){
+                    this.items = {};
+                },
+                size: function(){
+                    return this.keys().length;
+                },
+                keys: function(){
+                    var values = [];
+                    for (var key in this.items) {
+                        if (this.has(key)) {
+                            values.push(key);
+                        }
+                    }
+                    return values;
+                },
+                values: function(){
+                    var values = [];
+                    for (var key in this.items) {
+                        if (this.has(key)) {
+                            values.push(this.items[key]);
+                        }
+                    }
+                    return values;
+                },
+                getItems: function(){
+                    return this.items;
+                }
+            }
+
+            function Graph(){
+                this.vertices = [];
+                this.adjList = new Dictionary();
+            }
+
+            Graph.prototype = {
+                constructor: Graph,
+                addVertex: function(v){
+                    this.vertices.push(v);
+                    this.adjList.set(v,[]);
+                },
+                addEdge: function(v,w){
+                    this.adjList.get(v).push(w);
+                    this.adjList.get(w).push(v);
+                },
+                toString: function(){
+                    var str = '';
+                    for (var i = 0; i < this.vertices.length; i++) {
+                        str += this.vertices[i] + '-> ';
+                        var neighbours = this.adjList.get(this.vertices[i]);
+                        for (var j = 0; j < neighbours.length; j++) {
+                            str += neighbours[j] + " ";
+                        }
+                        str += '\n';
+                    }
+                    return str;
+                },
+                initializeColor: function(){
+                    var color = {};
+                    for (var i = 0; i < this.vertices.length; i++) {
+                        color[this.vertices[i]] = 'white';
+                    }
+                    return color;
+                },
+                bfs: function(v,callback){            //广度优先搜索
+                    var color = this.initializeColor(),
+                    queue = new Queue();
+                    queue.enqueue(v);
+                    while(!queue.isEmpty()){
+                        var u = queue.dequeue();
+                        var neighbours = this.adjList.get(u);
+                        color[u] = 'grey';
+                        for (var i = 0; i < neighbours.length; i++) {
+                            var w = neighbours[i];
+                            if(color[w] == 'white'){
+                                color[w] == 'grey';
+                                queue.enqueue(w);
+                            }
+                        }
+                        color[u] = 'black';
+                        if(callback){
+                            callback(u);
+                        }
+                    }
+                }，
+                dfs: function(v,callback){        //深度优先搜索
+                    var color = this.initializeColor();
+                    for (var i = 0; i < this.vertices.length; i++) {
+                        if(color[this.vertices[i]] == 'white'){
+                            dfsVisit(this.vertices[i],color,callback);
+                        }
+                    }
+
+                    function dfsVisit(u,color,callback){
+                        color[u] = 'grey';
+                        if(callback){
+                            callback(u);
+                        }
+                        var neighbours = this.adjList.get(u);
+                        for (var i = 0; i < neighbours.length; i++) {
+                            var w = neighbours[i];
+                            if(color(w) == 'white'){
+                                dfsVisit(w,color,callback);
+                            }
+                        }
+                        color[u] = 'black';
+                    }
+
+                }
+            }
+
+            var graph = new Graph();
+            var myVertices = ['A','B','C','D','E','F','G','H','I'];
+            myVertices.forEach(function(value,index,arr){
+                graph.addVertex(value);
+            });
+
+            graph.addEdge('A', 'B'); //{9}
+            graph.addEdge('A', 'C');
+            graph.addEdge('A', 'D');
+            graph.addEdge('C', 'D');
+            graph.addEdge('C', 'G');
+            graph.addEdge('D', 'G');
+            graph.addEdge('D', 'H');
+            graph.addEdge('B', 'E');
+            graph.addEdge('B', 'F');
+            graph.addEdge('E', 'I');
+
+            console.log(graph.toString());
+
+
+        </script>
+    </body>
+</html>

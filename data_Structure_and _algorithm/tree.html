@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Tree</title>
+    </head>
+    <body>
+        <script type="text/javascript">
+
+            function Node(key){
+                this.key = key;
+                this.left = null;
+                this.right = null;
+            }
+
+            function BinarySearchTree(){
+                this.root = null;
+            }
+
+            BinarySearchTree.prototype = {
+                insert: function(key){
+                    function insertNode(node,newNode){
+                        if(newNode.key < node.key){
+                            if(node.left === null){
+                                node.left = newNode;
+                            }else{
+                                insertNode(node.left,newNode);
+                            }
+                        }else{
+                            if(node.right === null){
+                                node.right = newNode;
+                            }else{
+                                insertNode(node.right,newNode);
+                            }
+                        }
+                    }
+
+                    var newNode = new Node(key);
+                    if(!this.root){
+                        this.root = newNode;
+                    }else{
+                        insertNode(this.root,newNode);
+                    }
+                },
+                inOrderTraverse: function(callback){
+                    function inOrderTraverseNode(node,callback){
+                        if(node !== null){
+                            inOrderTraverseNode(node.left,callback);
+                            callback(node.key);
+                            inOrderTraverseNode(node.right,callback);
+                        }
+                    }
+                    inOrderTraverseNode(this.root,callback);
+
+                },
+                preOrderTraverse: function(callback){
+                    function preOrderTraverseNode(node,callback){
+                        if(node !== null){
+                            callback(node.key);
+                            preOrderTraverseNode(node.left,callback);
+                            preOrderTraverseNode(node.right,callback);
+                        }
+                    }
+                    preOrderTraverseNode(this.root,callback);
+                },
+                postOrderTraverse: function(callback){
+                    function postOrderTraverseNode(node,callback){
+                        if(node !== null){
+                            postOrderTraverseNode(node.left,callback);
+                            postOrderTraverseNode(node.right,callback);
+                            callback(node.key);
+                        }
+                    }
+                    postOrderTraverseNode(this.root,callback);
+                },
+                search: function(key){
+                    function searchNode(node,key){
+                        if(node === null){
+                            return false;
+                        }
+                        if(key < node.key){
+                            return searchNode(node.left,key);
+                        }else if(key > node.key){
+                            return searchNode(node.right,key);
+                        }else{
+                            return true;
+                        }
+                    }
+
+                    return searchNode(this.root,key);
+                },
+                min: function(){
+                    function minNode(node){
+                        if(node){
+                            while(node && node.left !== null){
+                                node = node.left;
+                            }
+                            return node.key;
+                        }
+                        return null;
+                    }
+                    return minNode(this.root);
+                },
+                max: function(){
+                    function maxNode(node){
+                        if(node){
+                            while(node && node.right !== null){
+                                node = node.right;
+                            }
+                            return node.key;
+                        }
+                        return null;
+                    }
+                    return maxNode(this.root);
+                },
+                remove: function(key){
+
+                    function findMinNode(node){
+                        if(node){
+                            while(node && node.left !== null){
+                                node = node.left;
+                            }
+                            return node;
+                        }
+                        return null;
+                    }
+
+                    function removeNode(node,key){
+                        if(node === null){
+                            return null;
+                        }
+
+                        if(key < node.key){    //向左查找
+                            node.left = removeNode(node.left,key);
+                            return node;
+                        }else if(key > node.key){            //向右查找
+                            node.right = removeNode(node.right,key);
+                            return node;
+                        }else{       //找到了
+                            if(node.left === null && node.right === null){     //叶子节点
+                                node = null;
+                                return node;
+                            }
+                            if(node.left === null){    //只有左侧子节点
+                                node = node.right;
+                                return node;
+                            }else if(node.right === null){    //只有右侧子节点
+                                node = node.left;
+                                return node;
+                            }
+
+                            //有两个节点
+                            var aux = findMinNode(node.right);
+                            node.key = aux.key;
+                            node.right = removeNode(node.right,node.key);
+                            return node;
+
+                        }
+
+
+                    }
+
+                    this.root = removeNode(root,key);
+                }
+            }
+
+            var tree = new BinarySearchTree();
+            tree.insert(11);
+            tree.insert(7);
+            tree.insert(15);
+            tree.insert(5);
+            tree.insert(3);
+            tree.insert(9);
+            tree.insert(8);
+            tree.insert(10);
+            tree.insert(13);
+            tree.insert(12);
+
+            // tree.postOrderTraverse(function(value){
+            //     console.log(value + '\r\n');
+            // })
+            console.log(tree.search(23));
+
+        </script>
+    </body>
+</html>
