@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>symbol</title>
+    </head>
+    <body>
+        <script type="text/javascript">
+            'use strict'
+
+            // function factorial(n){
+            //     if(n == 1){
+            //         return n;
+            //     }else{
+            //         return n * factorial(n - 1);
+            //     }
+            // }
+
+            function factorial(n) {
+                return facRec(n, 1);
+            }
+            function facRec(x, acc) {
+                if (x <= 1) {
+                    return acc;
+                } else {
+                    return facRec(x-1, x*acc); // (A)
+                }
+            }
+
+            function forEach(arr, callback, start = 0) {
+                if (0 <= start && start < arr.length) {
+                    callback(arr[start], start, arr);
+                    return forEach(arr, callback, start+1); // tail call
+                }
+            }
+            forEach(['a', 'b'], (elem, i) => console.log(`${i}. ${elem}`));
+
+
+            //no optimization
+            var start = performance.now();
+            console.log(factorial(500));
+            console.log(performance.now() - start);
+
+
+            const MY_KEY = Symbol('property');
+            var obj = {
+                [Symbol.iterator](){
+                    var step = 0;
+                    return {
+                        next(){
+                            if(step <= 2){
+                                step++;
+                            }
+                            if(step == 1){
+                                return {value: 'hello',done: false}
+                            }else if(step == 2){
+                                return {value: 'world',done: false}
+                            }else{
+                                return {value: void 0,done: true}
+                            }
+                        }
+                    };
+                }
+            };
+
+            obj[MY_KEY] = [1,2,3];
+
+
+            // console.log(Object.keys(obj));
+            // for (let key in obj) {
+            //     console.log(key);
+            // }
+            // console.log(Object.getOwnPropertyNames(obj));
+            // console.log(Object.getOwnPropertySymbols(obj));
+            // console.log(Reflect.ownKeys(obj));
+            //
+            // for (let key of obj) {
+            //     console.log(key);
+            // }
+
+            // function objectEntries(obj){
+            //     var count = 0;
+            //     var arr = Reflect.ownKeys(obj);
+            //     var temp;
+            //
+            //     return {
+            //         [Symbol.iterator](){
+            //             return this;
+            //         },
+            //         next(){
+            //             if(count < arr.length){
+            //                 temp = {value: [arr[count],obj[arr[count]]],done: false};
+            //                 count++;
+            //                 return temp;
+            //             }else{
+            //                 return {value:void 0,done:true};
+            //             }
+            //         }
+            //     }
+            //
+            // }
+
+            function id(x) {
+                return x; // (A)
+            }
+            function f(a) {
+                const b = a + 1;
+                return id(b); // (B)
+            }
+            // console.log(f(2)); // (C)
+
+            function objectEntries(obj){
+                let iter = Reflect.ownKeys(obj)[Symbol.iterator]();
+                return {
+                    [Symbol.iterator](){
+                        return this;
+                    },
+                    next(){
+                        let {done,value: key} = iter.next();
+                        if(done){
+                            return {done: true};
+                        }
+                        return {value: [key,obj[key]]};
+                    }
+                }
+            }
+
+            var obj1 = { first: 'Jane', last: 'Doe',length: 0,func: function(){console.log(1)},arr:[234,434],obj:{a:1} };
+            // for (const [key,value] of objectEntries(obj1)) {
+            //     console.log(`${key}: ${value}`);
+            // }
+
+
+            var _counter = Symbol('counter');
+            var _action = Symbol('action');
+
+            class CountDown{
+                constructor(counter,action){
+                    this[_counter] = counter;
+                    this[_action] = action;
+                }
+                dec(){
+                    let counter = this[_counter];
+                    if(counter < 1){
+                        return;
+                    }
+                    counter--;
+                    this[_counter] = counter;
+                    if(counter == 0){
+                        this[_action]();
+                    }
+                    return this;
+                }
+            }
+
+            var cd = new CountDown(5,function(){alert(1)});
+
+            // console.log(Object.keys(cd));
+            // console.log(Object.getOwnPropertyNames(cd));
+            // console.log(Object.getOwnPropertySymbols(cd));
+            // console.log(Reflect.ownKeys(cd));
+            // cd.dec().dec().dec().dec();
+
+            var arr = 123 + '';
+            // arr[10] = 10;
+            var iterator = arr[Symbol.iterator]();
+            // console.log(iterator);
+
+            // var first = iterator.next();
+            // console.log(first);
+            // iterator.next();
+            // iterator.next();
+            // var a = iterator.next();
+            // console.log(a);
+            // var b = iterator.next();
+            // console.log(b);
+
+        </script>
+    </body>
+</html>
