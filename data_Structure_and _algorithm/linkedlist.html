@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Linked List</title>
+    </head>
+    <body>
+        <script type="text/javascript">
+            'use strict'
+
+            function LinkedList(){
+                this.length = 0;
+                this.head = null;
+            }
+
+            LinkedList.prototype = {
+                append: function(ele){
+                    var node = new Node(ele),current;
+
+                    if(this.head == null){
+                        this.head = node;
+                    }else{
+                        current = this.head;
+                        while(current.next){
+                            current = current.next;
+                        }
+                        current.next = node;
+                    }
+                    this.length++;
+                },
+                insert: function(position,ele){
+                    var node = new Node(ele);
+                    var current = this.head,previous,index = 0;
+
+                    if(position > -1 && position < this.length){
+                        if(position == 0){
+                            node.next = current;
+                            this.head = node;
+                        }else{
+                            while(index++ < position){
+                                previous = current;
+                                current = current.next;
+                            }
+                            previous.next = node;
+                            node.next = current;
+                            this.length++;
+                            return true;
+                        }
+
+                    }else{
+                        return false;
+                    }
+
+                },
+                removeAt: function(position){
+                    var current = this.head,previous,index = 0;
+
+                    if(position > -1 && position < this.length){
+                        if(position == 0){
+                            this.head = current.next;
+                        }else{
+                            while(index++ < position){
+                                previous = current;
+                                current = current.next;
+                            }
+                            previous.next = current.next;
+                        }
+                        this.length--;
+                        return current.element;
+                    }else{
+                        return null;
+                    }
+
+                },
+                remove: function(ele){
+                    var index = this.indexOf(ele);
+                    return this.removeAt(index);
+                },
+                indexOf: function(ele){
+                    var current = this.head,index = 0;
+
+                    while(current){
+                        if(current.element == ele){
+                            return index;
+                        }
+                        index++;
+                        current = current.next;
+                    }
+
+                    return -1;
+
+                },
+                isEmpty: function(){
+                    return this.length == 0;
+                },
+                size: function(){
+                    return this.length;
+                },
+                toString: function(){
+                    var current = this.head,str = "";
+
+                    while(current){
+                        str += current.element;
+                        current = current.next;
+                    }
+
+                    return str;
+
+                }
+            }
+
+            Object.defineProperty(LinkedList.prototype,'constructor',{
+                value: LinkedList,
+                configurable: true,
+                writable: true
+            });
+
+
+            function Node(element){
+                this.element = element;
+                this.next = null;
+            }
+
+
+            function DoubledLinkedList(){
+                this.length = 0;
+                this.head = null;
+                this.tail = null;
+            }
+
+            DoubledLinkedList.prototype = {
+                insert: function(position,ele){
+                    var current = this.head,index = 0,previous = null;
+                    var node = new DoubledNode(ele);
+                    if(position > -1 && position < this.length){
+                        if(index == 0){
+                            if(!this.head){
+                                this.head = node;
+                                this.tail = node;
+                            }else{
+                                this.head = node;
+                                node.next = current;
+                                node.prev = null;
+                                current.prev = node;
+                            }
+                        }else if(position == this.length){
+                            current = this.tail;
+                            current.next = node;
+                            node.prev = current;
+                            this.tail = node;
+                        }
+                        else{
+                            while(index++ < position){
+                                previous = current;
+                                current = current.next;
+                            }
+                            previous.next = node;
+                            node.prev = previous;
+                            node.next = current;
+                            current.prev = node;
+                        }
+                        this.length++;
+                        return true;
+                    }else{
+                        return false;
+                    }
+                },
+                removeAt: function(position){
+                    var current = this.head;
+                    var index = 0,previous = null;
+
+                    if(position == 0){
+                        this.head = current.next;
+                        if(this.length == 1){
+                            this.tail == null;
+                        }else{
+                            this.head.prev = null;
+                        }
+                    }else if(position == length - 1){
+                        current = this.tail;
+                        this.tail = current.prev;
+                        this.tail.next = null;
+
+                    }else{
+                        while(index++ < position){
+                            previous = current;
+                            current = current.next;
+                        }
+                        previous.next = current.next;
+                        current.next.prev = previous;
+                    }
+
+                    this.length--;
+                    return current.element;
+
+                }
+
+            }
+
+            function DoubledNode(element){
+                this.element = element;
+                this.prev = null;
+                this.next = null;
+            }
+
+
+
+
+
+
+            var linked = new LinkedList();
+            var arr = [1,2,3];
+
+            linked.append(arr);
+            linked.append([4,5,6]);
+            linked.append([7]);
+            linked.append([8,9]);
+
+            // console.log(linked.remove(arr));
+            // console.log(linked.head);
+
+            // console.log(linked.size());
+            // console.log(linked.insert(2,[222]));
+            // console.log(linked.head);
+            // console.log(linked.size());
+            // console.log(linked.toString());
+
+
+        </script>
+    </body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Set</title>
+    </head>
+    <body>
+        <script type="text/javascript">
+            'use strict'
+
+            function MySet(){
+                this.values = Array.isArray(arguments[0]) ? arguments[0] : [];
+                this.size = this.values.length;
+            }
+
+            MySet.prototype = {
+                constructor: MySet,
+                add: function(item){
+                    var arr = this.values,flag;
+                    for (var i = 0,len = arr.length; i < len; i++) {
+                        if(Object.is(arr[i],item)){
+                            flag = true;
+                            break;
+                        }
+                    }
+                    if(!flag){
+                        this.values.push(item);
+                        this.size++;
+                    }
+                    return this;
+                },
+                clear: function(){
+                    this.values.length = 0;
+                    this.size = 0;
+                    return this;
+                },
+                has: function(item){
+                    var arr = this.values;
+                    for (var i = 0,len = arr.length; i < len; i++) {
+                        if(Object.is(item,arr[i])){
+                            return true;
+                        }
+                    }
+                    return false;
+                },
+                delete: function(item){
+                    var arr = this.values;
+                    for (var i = 0,len = arr.length; i < len; i++) {
+                        if(Object.is(item,arr[i])){
+                            arr.splice(i,1);
+                            this.size--;
+                            return true;
+                        }
+                    }
+                    return false;
+                },
+                forEach: function(fn){
+                    var arr = this.values;
+                    for (var i = 0,len = arr.length; i < len; i++) {
+                        fn(i,arr[i],this);
+                    }
+                }
+            }
+
+            MySet.prototype[Symbol.iterator] = function(){
+                var index = 0,obj;
+                var arr = this.values;
+                return {
+                    next: function(){
+                        if(index < arr.length){
+                            obj = {value: arr[index],done: false};
+                            index++;
+                            return obj;
+                        }else{
+                            return {done: true,value: undefined}
+                        }
+                    }
+                }
+            }
+
+
+            var set = new MySet([1,2,3]);
+
+            set.add(NaN);
+            set.add(-0);
+            set.forEach(function(i,item,context){
+                console.log(i + ',' + item);
+            })
+
+            for (let value of set) {
+                console.log(value);
+            }
+
+        </script>
+    </body>
+</html>
