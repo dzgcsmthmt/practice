@@ -208,4 +208,13 @@ function S4() {
 function guid() {
    return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
 }
+--------------------------------------------------------------------------------------------------
+js 判断window对象
+在ie6-8下使用Object.prototype.toString(call) 返回 '[Object Object]';
+可以使用一个技巧 window == document --> true / document == window --> false
+return obj == document && document != obj;
+--------------------------------------------------------------------------------------------------
+
+
+
 
