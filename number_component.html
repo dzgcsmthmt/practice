@@ -78,7 +78,107 @@
         <input type="tel" class="num" value="1" maxlength="5">
         <i class="icon icon-plus"></i> -->
     </div>
+    <br>
+    <br>
+    <div class="num-wrapper">
+    </div>
     <script>
+
+        function NumCom(options){
+            this.options = {
+                MIN: 1,
+                MAX: 99999,
+                step: 1,
+                initValue: 1,
+                wrapper: document.body
+            }
+            Object.assign(this.options,options);
+            this.init();
+        }
+
+        NumCom.prototype.init = function(){
+            this.render();
+            this.bindEvent();
+        }
+
+        NumCom.prototype.render = function(){
+            var fragment = document.createDocumentFragment();
+            this.oI1 = document.createElement('i');
+            this.oI1.className = 'icon icon-minus disabled';
+            fragment.appendChild(this.oI1);
+            this.oInput = document.createElement('input');
+            this.oInput.setAttribute('type','tel');
+            this.oInput.setAttribute('value',this.options.initValue);
+            this.oInput.setAttribute('maxlength',String(this.options.MAX).length);
+            this.oInput.className = 'num';
+            fragment.appendChild(this.oInput);
+            this.oI2 = document.createElement('i');
+            this.oI2.className = 'icon icon-plus';
+            fragment.appendChild(this.oI2);
+            this.options.wrapper.appendChild(fragment);
+            this.oI1.relateEle = this.oInput;
+            this.oI2.relateEle = this.oInput;
+        }
+
+        NumCom.prototype.bindEvent = function(){
+            var option = this.options;
+            var self = this;
+            this.oInput.addEventListener('input',function(ev){
+                var val = this.value;
+                val = val.replace(/[^\d]/g,'');
+                this.value = val;
+            },false);
+
+            this.oInput.addEventListener('blur',function(ev){
+                var val = this.value;
+                if(!isInRange(val)){
+                    val = option.MIN;
+                }
+                this.value = val;
+                option.initValue = +val;
+                toggleDisabled(val);
+                if(option.cb && typeof option.cb == 'function'){
+                    option.cb(option);
+                }
+            },false);
+
+            this.oI1.addEventListener('click',function(){handler(this);},false);
+
+            this.oI2.addEventListener('click',function(){handler(this,true);},false);
+
+            function handler(context,flag){
+                var val = option.initValue;
+                if(!isInRange(val)){
+                    val = option.MIN;
+                    context.relateEle.value = val;
+                    option.initValue = option.value = val;
+                }else{
+                    if((!flag && val >= option.MIN + option.step) || (flag && val <= option.MAX - option.step)){
+                        val = flag ? val + option.step : val - option.step;
+                        context.relateEle.value = val;
+                        option.initValue = +val;
+                        toggleDisabled(val);
+                        if(option.cb && typeof option.cb == 'function'){
+                            option.cb(option);
+                        }
+                    }
+                }
+            }
+
+            function isInRange(x) {
+                x = Number(x);
+                if (x !== x){
+                    return false;
+                }
+                return (x^0) === x && x >= option.MIN && x <= option.MAX;
+            }
+
+            function toggleDisabled(val){
+                self.oI1.classList[val < option.MIN + option.step ? 'add' : 'remove']('disabled');
+                self.oI2.classList[val > option.MAX - option.step ? 'add' : 'remove']('disabled');
+            }
+
+        }
 
         var plugin = {
             options:{
@@ -110,8 +210,6 @@
                 this.options.wrapper.appendChild(fragment);
                 this.oI1.relateEle = this.oInput;
                 this.oI2.relateEle = this.oInput;
-                this.oInput.prevEle = this.oI1;
-                this.oInput.nextEle = this.oI2;
             },
             bindEvent: function(){
                 var option = this.options;
@@ -174,9 +272,18 @@
             }
         }
 
-        plugin.init({
+        new NumCom({
             id: 3,
             wrapper:document.querySelector('.num-wrapper'),
+            cb:function(obj){
+                console.log(obj.id,obj.initValue);
+            }
+        });
+
+        new NumCom({
+            id: 4,
+            wrapper:document.querySelectorAll('.num-wrapper')[1],
+            initValue: 2,
             cb:function(obj){
                 console.log(obj.id,obj.initValue);
             }
