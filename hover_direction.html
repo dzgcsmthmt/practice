@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>test</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1.0,user-scalable=no" />
+    <script>
+		// (function(){
+		// 	var html = document.documentElement;
+		// 	var htmlWidth = html.getBoundingClientRect().width;
+		// 	html.style.fontSize = htmlWidth / 15 +"px";
+		// })();
+	</script>
+    <style media="screen">
+        html,body{
+            margin: 0;
+            padding: 0;
+            height:100%;
+            font-size: 12px;
+        }
+        #header{
+            height: 100px;
+            font-family: 'Monospace';
+            text-align: center;
+            line-height: 1;
+        }
+        #modal{
+            width: 800px;
+            height: 600px;
+            margin: 100px auto;
+            background: #f00;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="header">
+        <span>abcde</span>
+    </div>
+    <div id="modal">
+
+    </div>
+    <script>
+        var oBody = document.querySelector('body');
+        var oDiv = document.getElementById("modal");
+        oBody.addEventListener("mousemove", getMouseDirection, false);
+        oDiv.addEventListener('mouseenter',enter,false);
+        oDiv.addEventListener('mouseleave',leave,false);
+
+        var oldX = 0;
+        var oldY = 0;
+
+        function getMouseDirection(e) {
+            oldX = e.pageX;
+            oldY = e.pageY;
+            // console.log(oldX + '-------' + oldY);
+        }
+
+        function enter(e){
+            // console.log(e.pageX);
+            var l = this.offsetLeft;
+            var r = this.offsetLeft + this.offsetWidth;
+            var t = this.offsetTop;
+            if(oldX < l){
+                console.log('from left');
+            }else if(oldX > r){
+                console.log('from right');
+            }else{
+                if(oldY < t){
+                    console.log('from top');
+                }else{
+                    console.log('from bottom');
+                }
+            }
+        }
+
+        function leave(e){
+            var l = this.offsetLeft;
+            var r = this.offsetLeft + this.offsetWidth;
+            var t = this.offsetTop;
+            if(e.pageX < l){
+                console.log('out left');
+            }else if(e.pageX > r){
+                console.log('out right');
+            }else{
+                if(e.pageY < t){
+                    console.log('out top');
+                }else{
+                    console.log('out bottom');
+                }
+            }
+        }
+
+    </script>
+</body>
+
+</html>
