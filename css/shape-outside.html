@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>CSS Mastery</title>
+        <style media="screen">
+            html,body,p,input{
+                margin: 0;
+                padding: 0;
+            }
+            .wrapper{
+                width: 800px;
+                margin: 50px auto;
+            }
+            .main {
+              width: 500px;
+            }
+
+            .left,
+            .right {
+              width: 40%;
+              height: 12ex;
+              background-color: lightgray;
+            }
+
+            .left {
+              shape-outside: polygon(0 0, 100% 100%, 0 100%);
+              /*shape-outside: ellipse();*/
+              float: left;
+              clip-path: polygon(0 0, 100% 100%, 0 100%);
+              /*clip-path: ellipse();*/
+            }
+
+            .right {
+              -webkit-shape-outside: polygon(100% 0, 100% 100%, 0 100%);
+              shape-outside: polygon(100% 0, 100% 100%, 0 100%);
+              float: right;
+              -webkit-clip-path: polygon(100% 0, 100% 100%, 0 100%);
+              clip-path: polygon(100% 0, 100% 100%, 0 100%);
+              /*shape-outside: inset(20px 30px round 10px);
+              clip-path: inset(20px 30px round 50px);*/
+              /*border-radius: 50%;
+              shape-outside: border-box;*/
+
+            }
+
+            p {
+              text-align: center;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="wrapper">
+            <div class="main">
+                <div class="left"></div>
+                <div class="right"></div>
+                <p>
+                    Sometimes a web page's text content appears to be
+                    is your attention towards a spot on the page
+                    to drive you to follow a particular link. Sometimes
+                    you don't notice.
+                </p>
+            </div>
+        </div>
+    </body>
+</html>

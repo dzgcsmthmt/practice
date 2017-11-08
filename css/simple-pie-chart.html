@@ -23,20 +23,20 @@
             display: block;
             margin-left: 50%;
             height: 100%;
-            border-radius:0 100% 100% 0 / 50%; 
-           /* 
+            border-radius:0 100% 100% 0 / 50%;
+           /*
             小于180度
-            
+
             */
             /*大于180*/
             /*background-color: #655;*/
             background-color: inherit;
             transform-origin: left;
             /*
-                animation-delay: 可以是负值，立即执行，从关键帧 value / time的阶段开始执行 
+                animation-delay: 可以是负值，立即执行，从关键帧 value / time的阶段开始执行
                 如执行时间30s delay -15s 从50%的状态开始执行
                 animation-timing-function新增加了step的属性
-                step-start | step-end | steps([, [ start | end ] ]?) 
+                step-start | step-end | steps([, [ start | end ] ]?)
                 可以分成几步执行，不是连续的动画，而且按步数一帧一帧执行
                 可以参照https://www.qianduan.net/css3-animation/
             */
@@ -45,7 +45,7 @@
         }
 
         @keyframes spin{
-            
+
             to {
                 transform: rotate(180deg);
             }
@@ -55,11 +55,99 @@
                 background: #655;
             }
         }
-        
+
+        #fan{
+            width:0;
+            height:0;
+            border-radius:100px;
+            border-width:100px;
+            border-style:solid;
+            border-color:red transparent transparent transparent;
+            line-height:99em;
+            overflow:hidden;
+            cursor:pointer;
+            margin: 30px auto;
+        }
+        .shanxing{
+            position: relative;
+            width: 200px;
+            height: 200px;
+            border-radius: 100px;
+            background-color: yellow;
+        }
+        .sx1{
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            transform: rotate(0deg);
+            clip: rect(0px,100px,200px,0px); /*这个clip属性用来绘制半圆，在clip的rect范围内的内容显示出来，使用clip属性，元素必须是absolute的 */
+            border-radius: 100px;
+            background-color: #f00;
+            /*-webkit-animation: an1 2s infinite linear; */
+        }
+
+
+        .sx2{
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            transform: rotate(0deg);
+            clip: rect(0px,100px,200px,0px);
+            border-radius: 100px;
+            background-color: #f00;
+            /*-webkit-animation: an2 2s infinite linear;*/
+        }
+        /*绘制一个60度扇形*/
+        .shanxing1 .sx1{transform: rotate(-30deg);}
+        .shanxing1 .sx2{transform: rotate(-150deg);}
+
+        /*绘制一个85度扇形*/
+        .shanxing2 .sx1{transform: rotate(-45deg);}
+        .shanxing2 .sx2{transform: rotate(-140deg);}
+
+        /*绘制一个向右扇形，90度扇形*/
+        .shanxing3 .sx1{transform: rotate(45deg);}
+        .shanxing3 .sx2{transform: rotate(-45deg);}
+
+        /*绘制一个颜色扇形 */
+        .shanxing4 .sx1{transform: rotate(45deg);background-color: #fff;}
+        .shanxing4 .sx2{transform: rotate(-45deg);background-color: #fff;}
+
+        /*绘制一个不同颜色半圆夹角 */
+        .shanxing5 .sx1{transform: rotate(45deg);background-color: #f00;}
+        .shanxing5 .sx2{transform: rotate(-45deg);background-color: #0f0;}
+
     </style>
  </head>
  <body>
     <div class="pie"></div>
+    <div id="fan"></div>
+
+    <div class="shanxing shanxing1">
+        <div class="sx1"></div>
+        <div class="sx2"></div>
+    </div>
+    <p>/*绘制一个85度扇形*/</p>
+    <div class="shanxing shanxing2">
+        <div class="sx1"></div>
+         <div class="sx2"></div>
+    </div>
+    <p>/*绘制一个向右扇形，90度扇形*/</p>
+    <div class="shanxing shanxing3">
+        <div class="sx1"></div>
+         <div class="sx2"></div>
+    </div>
+    <p>/*绘制一个颜色扇形 */</p>
+    <div class="shanxing shanxing4">
+        <div class="sx1"></div>
+         <div class="sx2"></div>
+    </div>
+
+    <p>/*绘制一个不同颜色半圆夹角 */</p>
+    <div class="shanxing shanxing5">
+        <div class="sx1"></div>
+         <div class="sx2"></div>
+    </div>
 
 
     <script type="text/javascript">
@@ -96,8 +184,8 @@
         var span = mask.getElementsByTagName('span')[0];
 
         setInterval(function(){
-           mask.style.width = mask.offsetWidth + 1 + 'px';   
-           //span.style.left = -mask.offsetLeft + 1 + 'px';  
+           mask.style.width = mask.offsetWidth + 1 + 'px';
+           //span.style.left = -mask.offsetLeft + 1 + 'px';
         },30);*/
 
 
@@ -126,7 +214,7 @@
             }
             return null;
         }
-        
+
         test.onclick = function(){
             alert(1);
         }
@@ -166,7 +254,7 @@
             alert(1);
         }));
 
-        
+
 
 
 
@@ -199,7 +287,7 @@
             }
 
         }
-        
+
         addEvent2(test,'onclick',function(){
             alert(3);
         })
