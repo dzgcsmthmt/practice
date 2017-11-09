@@ -1,0 +1,178 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>dddfd</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1.0,user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection"content="telephone=no, email=no" />
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="cache-control" content="no-cache">
+    <meta http-equiv="expires" content="0">
+    <meta name="HandheldFriendly" content="true">
+    <meta name="MobileOptimized" content="320">
+    <meta name="screen-orientation" content="portrait">
+    <meta name="x5-orientation" content="portrait">
+    <!-- <meta name="full-screen" content="yes"> -->
+    <meta name="x5-fullscreen" content="true">
+    <meta name="msapplication-tap-highlight" content="no">
+    <style type="text/css">
+	    *{
+	    	margin:0;
+	    	padding: 0;
+            list-style: none;
+	    }
+        .pie{
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: yellowgreen;
+            background-image: linear-gradient(to right,transparent 50%,#655 0);
+            margin: 50px auto;
+            overflow: hidden;
+            position: relative;
+        }
+        .switch{
+            position: absolute;
+            left: 4px;
+            top: 4px;
+            width: 92px;
+            height: 92px;
+            background: yellowgreen;
+            border-radius: 46px;
+            text-align: center;
+            line-height: 92px;
+        }
+        .fan{
+            content:'';
+            display: block;
+            margin-left: 50%;
+            height: 100%;
+            border-radius:0 100% 100% 0 / 50%;
+           /*
+            小于180度
+
+            */
+            /*大于180*/
+            /*background-color: #655;*/
+            background-color: inherit;
+            -webkit-transform-origin: left;
+            transform-origin: left;
+            /*transform: rotate(200deg);*/
+            /*
+                animation-delay: 可以是负值，立即执行，从关键帧 value / time的阶段开始执行
+                如执行时间30s delay -15s 从50%的状态开始执行
+                animation-timing-function新增加了step的属性
+                step-start | step-end | steps([, [ start | end ] ]?)
+                可以分成几步执行，不是连续的动画，而且按步数一帧一帧执行
+                可以参照https://www.qianduan.net/css3-animation/
+            */
+            /*animation: spin 3s linear infinite,
+                        bg 6s step-end infinite;*/
+
+
+        }
+
+        @keyframes spin{
+            to {
+                transform: rotate(180deg);
+            }
+        }
+         @keyframes bg{
+            50% {
+                background: #655;
+            }
+        }
+
+        #test{
+            height: 100px;
+            background: #f0f;
+        }
+
+        @supports (transform-origin: 5% 5%){
+            #test{
+                height: 200px;
+                background: #f00;
+            }
+        }
+    </style>
+ </head>
+ <body>
+     <div id="test"></div>
+    <div class="pie">
+        <div class="fan"></div>
+        <div class="switch" id="btn">播放</div>
+    </div>
+
+    <audio src="one_sweet_day.mp3" controls id="audio">
+    </audio>
+
+    <script type="text/javascript">
+        var oBtn = document.getElementById('btn');
+        var tap = 'ontouchstart' in window ? 'touchstart' : 'click';
+        var oAudio = document.getElementById('audio');
+        var oFan = document.querySelector('.fan');
+        var duration;
+        console.log(oAudio.duration);
+        var status = 'paused';
+        var halfFlag;
+        // var isShared = true;
+        var isShared = false;
+
+        oBtn.addEventListener(tap,function(){
+            if(status == 'paused'){
+                oAudio.play();
+                status = 'playing';
+                this.textContent = '暂停';
+                duration = oAudio.duration;
+                console.log(duration);
+            }else{
+                oAudio.pause();
+                status = 'paused';
+                this.textContent = '播放';
+            }
+        },false);
+
+        oAudio.addEventListener('timeupdate',function(){
+            // console.log(oAudio.currentTime);
+            var ratio = oAudio.currentTime / (isShared ? 180 : duration);
+            var degree = 360 * ratio;
+            if(degree >= 180){
+                if(!halfFlag){
+                    halfFlag = true;
+                    oFan.style.backgroundColor = '#655';
+                }
+                oFan.style.WebkitTransform = 'rotate(' + (degree - 180) + 'deg)';
+                oFan.style.transform = 'rotate(' + (degree - 180) + 'deg)';
+            }else{
+                oFan.style.WebkitTransform = 'rotate(' + degree + 'deg)';
+                oFan.style.transform = 'rotate(' + degree + 'deg)';
+            }
+
+            if(isShared && degree >= 360){
+                reset();
+                oAudio.currentTime = 0;
+                oAudio.pause();
+            }
+
+        },false);
+
+        oAudio.addEventListener('ended',function(){
+            reset();
+        },false);
+
+        function reset(){
+            status = 'paused';
+            oBtn.textContent = '播放';
+            oFan.style.backgroundColor = 'inherit';
+            oFan.style.WebkitTransform = 'rotate(0deg)';
+            oFan.style.transform = 'rotate(0deg)';
+        }
+
+    </script>
+
+ </body>
+ </html>
