@@ -30,3 +30,15 @@ console.log(q.children[0].parent.data); // 1
 //纯数据
 
 var cloned = JSON.parse(JSON.stringify(objectToClone));
+
+
+//简易版
+function copy(aObject) {
+  var bObject, v, k;
+  bObject = Array.isArray(aObject) ? [] : {};
+  for (k in aObject) {
+    v = aObject[k];
+    bObject[k] = (v === null) ? null : (typeof v === "object") ? copy(v) : v;
+  }
+  return bObject;
+}
