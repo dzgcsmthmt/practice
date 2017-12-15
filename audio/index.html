@@ -274,7 +274,7 @@
 
         timer = setInterval(function(){
             var bufferedTime = oAudio.buffered.length && oAudio.buffered.end(0);
-            console.log(bufferedTime);
+            // console.log(bufferedTime);
             // document.getElementById('state').textContent = oAudio.readyState;
             document.getElementById('buffer').textContent = bufferedTime;
             if(bufferedTime == duration){
@@ -425,6 +425,51 @@
             return /IOS|iPad|iPhone|iPod/i.test(navigator.userAgent) && !window.MSStream
         }
 
+    </script>
+    <script type="text/javascript">
+        var hidden, visibilityChange;
+        if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and later support
+            hidden = "hidden";
+            visibilityChange = "visibilitychange";
+        } else if (typeof document.msHidden !== "undefined") {
+            hidden = "msHidden";
+            visibilityChange = "msvisibilitychange";
+        } else if (typeof document.webkitHidden !== "undefined") {
+            hidden = "webkitHidden";
+            visibilityChange = "webkitvisibilitychange";
+        }
+
+        var audioEle = document.getElementById("audio");
+
+        // If the page is hidden, pause the video;
+        // if the page is shown, play the video
+        function handleVisibilityChange() {
+            if (document[hidden]) {
+                audioEle.pause();
+            } else {
+                audioEle.play();
+            }
+        }
+
+        // Warn if the browser doesn't support addEventListener or the Page Visibility API
+        if (typeof document.addEventListener === "undefined" || typeof document.hidden === "undefined") {
+        console.log("This demo requires a browser, such as Google Chrome or Firefox, that supports the Page Visibility API.");
+        } else {
+            // Handle page visibility change
+            document.addEventListener(visibilityChange, handleVisibilityChange, false);
+
+            // When the video pauses, set the title.
+            // This shows the paused
+            audioEle.addEventListener("pause", function(){
+                document.title = 'Paused';
+            }, false);
+
+            // When the video plays, set the title.
+            audioEle.addEventListener("play", function(){
+                document.title = 'Playing';
+            }, false);
+
+        }
     </script>
 
 </body>
