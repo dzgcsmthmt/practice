@@ -1,0 +1,43 @@
+.App {
+  text-align: center;
+}
+.errorMsg{
+    color: red;
+}
+.table{
+    width: 1200px;
+    margin: 50px auto;
+}
+.td{
+    display: inline-block;
+    width: 50%;
+    text-align: center;
+    margin: 10px 0;
+}
+button + button{
+    margin-left: 10px;
+}
+
+.App-logo {
+  animation: App-logo-spin infinite 20s linear;
+  height: 80px;
+}
+
+.App-header {
+  background-color: #222;
+  padding: 20px;
+  color: white;
+}
+
+.App-title {
+  font-size: 1.5em;
+}
+
+.App-intro {
+  font-size: large;
+}
+
+@keyframes App-logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
