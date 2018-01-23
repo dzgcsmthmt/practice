@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Css Grid</title>
+        <style media="screen">
+            *{
+                margin: 0;
+                padding: 0;
+            }
+            html,body{
+                height: 100%;
+            }
+            .grid{
+                height: 100%;
+                display: grid;
+                background: lightyellow;
+                grid-template-columns: 1fr 1fr 2fr 1fr;
+                grid-template-rows: auto;
+                grid-template-areas:
+                    "header header header header"
+                    "main main . sidebar"
+                    "footer footer footer footer";
+                grid-gap: 10px 15px;
+                /* justify-items: start;
+                align-items: start; */
+                /* justify-content: space-around; */
+                /* align-content: center; */
+            }
+            .item-a {
+                grid-area: header;
+                background: lightgreen;
+                justify-self: center;
+            }
+            .item-b {
+                grid-area: main;
+                background: lightpink;
+            }
+            .item-c {
+                grid-area: sidebar;
+                background: red;
+            }
+            .item-d {
+                grid-area: footer;
+                background: lightblue;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="grid">
+            <div class="item-a">
+                <p>1</p>
+                <p>2</p>
+                <p>3</p>
+            </div>
+            <div class="item-b">b</div>
+            <div class="item-c">c</div>
+            <div class="item-d">d</div>
+        </div>
+    </body>
+</html>
