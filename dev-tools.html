@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>test</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1.0,user-scalable=no" />
+    <script>
+		(function(){
+			var html = document.documentElement;
+			var htmlWidth = html.getBoundingClientRect().width;
+			// html.style.fontSize = htmlWidth / 15 +"px";
+		})();
+	</script>
+    <style media="screen">
+        html,body{
+            margin: 0;
+            padding: 0;
+        }
+        ul,li{
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        #main{
+            /* width: 800px; */
+            margin: 100px auto;
+            background: lightblue;
+        }
+        li{
+            width: 100%;
+            height: 20px;
+            line-height: 20px;
+            text-align: center;
+            border-bottom: 1px solid #aaa;
+        }
+        .wrapper{
+            width: 60%;
+            margin: 0 auto;
+        }
+        .responsive{
+            float: left;
+            background: red;
+            width: calc((480px - 100%) * 480000);
+            height: 300px;
+            min-width: 50%;
+            max-width: 100%;
+        }
+        .responsive:last-child{
+            background: green;
+        }
+        .clearfix:after{content:"";display:block;height:0;clear:both;visibility:hidden}
+    </style>
+    <link rel="prefetch" href="http://hotfix.cms.xk12.cn/themes/okayofficeweb/Public/assets/css/common.css?v=1801082017" >
+    <link rel="preload" as="style" href="http://hotfix.cms.xk12.cn/themes/okayofficeweb/Public/assets/css/role.css">
+    <script type="text/javascript" src="http://hotfix.cms.xk12.cn/themes/okayofficeweb/Public/assets/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="http://hotfix.cms.xk12.cn/themes/okayofficeweb/Public/assets/js/ios-parallax.js"></script>
+</head>
+
+<body>
+    <div id="main">
+        <div id="test" style="word-wrap: break-word;"></div>
+        <ul id="list">
+
+        </ul>
+    </div>
+
+    <div class="clearfix wrapper">
+        <div class="responsive"></div>
+        <div class="responsive"></div>
+    </div>
+
+
+    <button id="button">反转</button>
+    <button id='dom'>创造Node</button>
+    <button id='obj'>创造Object</button>
+    <button id='attr'>改变属性</button>
+    <button id='layout'>innerHTML</button>
+    <button id='layout2'>string</button>
+
+    <script type="text/javascript">
+        const target = {};
+        const handler = {
+            get(target, propKey, receiver) {
+                console.log('get ' + propKey);
+                return 123;
+            }
+        };
+        const proxy = new Proxy(target, handler);
+
+    </script>
+
+    <script type="text/javascript">
+        class Animal{
+            static bark(){
+                console.log('wuwwwwwwwwwwuwwwuuuu');
+            }
+            fertile(){
+                console.log('give babies');
+            }
+        }
+
+        class Dog extends Animal{
+
+        }
+        Dog.bark();
+
+        var d = new Dog();
+
+        function A(){
+
+        }
+
+        A.prototype.say = function () {
+            console.log('ddid');
+        }
+
+        function B(){
+
+        }
+
+        function F(){
+
+        }
+        F.prototype = A.prototype;
+        var f = new F();
+        B.prototype = f;
+
+
+
+        console.log(Animal.isPrototypeOf(Dog));
+        console.log(Animal.prototype.isPrototypeOf(Dog.prototype));
+        console.log(A.isPrototypeOf(B));
+        console.log(A.prototype.isPrototypeOf(B.prototype));
+
+    </script>
+
+    <script type="text/javascript">
+        var arr = [];
+        dom.addEventListener('click',function(){
+            for (var i = 0; i < 500; i++) {
+                var oLi = document.createElement('li');
+                var oText = document.createTextNode('1111');
+                oLi.appendChild(oText);
+                list.appendChild(oLi);
+            }
+        },false);
+
+        obj.addEventListener('click',function(){
+            for (var i = 0; i < 10000; i++) {
+                arr.push(new Animal());
+            }
+        },false);
+
+        attr.addEventListener('click',() => {
+            list.style.width = 900 + 'px';
+        },false);
+
+        layout.addEventListener('click',() => {
+            for (var i = 0; i < 1000; i++) {
+                test.innerHTML = 1 + test.innerHTML;
+            }
+        },false);
+
+        layout2.addEventListener('click',() => {
+            var str = "";
+            for (var i = 0; i < 1000; i++) {
+                str += 1;
+            }
+            test.innerHTML = str;
+        },false);
+
+
+    </script>
+
+    <script type="text/javascript">
+        var data = [
+            {name: '张三'},
+            {name: '李四'},
+            {name: '王五'},
+            {name: '赵六'},
+            {name: '田七'},
+            {name: '千把'},
+            {name: '许多'},
+        ];
+
+        createList(data);
+
+        function createList(data){
+            var str = '';
+            for (var i = 0; i < data.length; i++) {
+                str += '<li>' + data[i].name + '</li>';
+            }
+
+            list.innerHTML = str;
+        }
+
+        function reverseNode(){
+            var eles = list.children;
+            var len = eles.length - 1;
+            var i = 0;
+
+            while(len){
+                list.insertBefore(eles[eles.length - 1],eles[i++]);
+                len--;
+            }
+        }
+
+        function cloneNode(){
+            var clone = list.cloneNode(false);
+            var eles = list.children;
+            var len = eles.length-1;
+
+            while(len >= 0){
+                clone.appendChild(eles[len--]);
+            }
+            list.parentNode.replaceChild(clone,list);
+        }
+
+        button.addEventListener('click',function(){
+            var arr = data.reverse();
+            // createList(arr);
+            reverseNode();
+            // cloneNode();
+        },false);
+
+        [].slice.call(list.children).map(function(ele){
+            ele.addEventListener('click',function(e){
+                alert(this.textContent);
+            },false);
+        });
+
+        function objectEntries(obj){
+            var iter = Reflect.ownKeys(obj)[Symbol.iterator]();
+            // var arr = Reflect.ownKeys(obj);
+            // var count = 0,len = arr.length;
+            // var temp;
+
+            return {
+                [Symbol.iterator](){
+                    return this;
+                },
+                next(){
+                    let {done,value: key} = iter.next();
+                    if(done){
+                        return {done: true};
+                    }else{
+                        return {value: [key,obj[key]]};
+                    }
+                    // if(count < len){
+                    //     temp = {done: false,value: [arr[count],obj[arr[count]]]};
+                    //     count++;
+                    //     return temp;
+                    // }else{
+                    //     return {done: true}
+                    // }
+                }
+            }
+        }
+
+        var obj = {a: 1,b: 2,c:[3,4],d:{length: 0},e:/dd/g};
+
+        var iterObj = objectEntries(obj);
+
+        for (var key of iterObj) {
+            // console.log(key);
+        }
+
+    </script>
+
+
+
+</body>
+
+</html>
