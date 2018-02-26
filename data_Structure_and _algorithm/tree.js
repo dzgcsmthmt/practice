@@ -72,6 +72,29 @@ BinarySearchTree.prototype = {
         }
         postOrderTraverseNode(this.root,cb);
     },
+    levelOrderTraverse: function(){
+        if(this.root == null){
+            return null;
+        }
+
+        var result = [],queue = new Queue(),node;
+
+        queue.enqueue(this.root);
+
+        while(queue.size()){
+            node = queue.dequeue();
+            result.push(node.key);
+            if(node.left){
+                queue.enqueue(node.left);
+            }
+            if(node.right){
+                queue.enqueue(node.right);
+            }
+        }
+
+        return result;
+
+    },
     min: function(){
         function minNode(node){
             if(node){
@@ -95,6 +118,20 @@ BinarySearchTree.prototype = {
             return null;
         }
         return maxNode(this.root);
+    },
+    maxHeight: function(node = this.root){
+       if(!node) return 0;
+       var leftHeight = this.maxHeight(node.left);
+       var rightHeight = this.maxHeight(node.right);
+
+       return Math.max(leftHeight, rightHeight) + 1;
+    },
+    minHeight: function(node = this.root){
+       if(!node) return 0;
+       var leftHeight = this.minHeight(node.left);
+       var rightHeight = this.minHeight(node.right);
+
+       return Math.min(leftHeight, rightHeight) + 1;
     },
     remove: function(key){
         function removeNode(node,key){
@@ -174,6 +211,8 @@ tree.insert(6);
 tree.inOrderTraverse(function(node){
     // console.log(node.key);
 });
+console.log(tree.minHeight());
+// console.log(tree.maxHeight());
 // console.log(tree.max());
 // console.log(tree.search(1));
 // console.log(tree.search(10));
