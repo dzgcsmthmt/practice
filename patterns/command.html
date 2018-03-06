@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Command Design Pattern in Javascript</title>
+        <style media="screen">
+            canvas{
+                border: 1px solid #e1e1e1;
+                background: lightblue;
+            }
+        </style>
+    </head>
+    <body>
+
+        <script type="text/javascript">
+            function MoveCommand(cursor,direction){
+                this.cursor = cursor;
+                this.direction = direction;
+            }
+
+            MoveCommand.prototype.execute = function(){
+                if(this.direction == 'up'){
+                    this.cursor.move(0,-10);
+                }else if(this.direction == 'down'){
+                    this.cursor.move(0,10);
+                }else if(this.direction == 'right'){
+                    this.cursor.move(10,0);
+                }else if(this.direction == 'left'){
+                    this.cursor.move(-10,0);
+                }
+            }
+            MoveCommand.prototype.undo = function(){
+                if(this.direction == 'up'){
+                    this.cursor.move(0,10);
+                }else if(this.direction == 'down'){
+                    this.cursor.move(0,-10);
+                }else if(this.direction == 'right'){
+                    this.cursor.move(-10,0);
+                }else if(this.direction == 'left'){
+                    this.cursor.move(10,0);
+                }
+            }
+
+            function Cursor(width,height,parent){
+                this.width = width;
+                this.height = height;
+                this.commandStack = [];
+
+                this.canvas = document.createElement('canvas');
+                this.canvas.width = this.width;
+                this.canvas.height = this.height;
+                parent.appendChild(this.canvas);
+
+                this.ctx = this.canvas.getContext('2d');
+                this.ctx.fillStyle = '#cc0000';
+                this.move(0,0);
+            }
+
+            Cursor.prototype.move = function(x,y){
+                var that = this;
+                this.commandStack.push(function(){
+                    that.lineTo(x,y);
+                });
+                this.executeCommands();
+
+            }
+
+            Cursor.prototype.lineTo = function(x,y){
+                this.position.x += x;
+                this.position.y += y;
+                this.ctx.lineTo(this.position.x,this.position.y);
+            }
+
+            Cursor.prototype.executeCommands = function(){
+                this.position = {x: this.width / 2,y: this.height / 2};
+                this.ctx.clearRect(0,0,this.width,this.height);
+                this.ctx.beginPath();
+                this.ctx.moveTo(this.position.x,this.position.y);
+                for (var i = 0; i < this.commandStack.length; i++) {
+                    this.commandStack[i]();
+                }
+                this.ctx.stroke();
+            }
+
+            Cursor.prototype.undo = function(){
+                this.commandStack.pop();
+                this.executeCommands();
+            }
+
+            function UndoDecrator(command,undoStack){
+                this.command = command;
+                this.undoStack = undoStack || [];
+            }
+
+            UndoDecrator.prototype.execute = function(){
+                this.undoStack.push(this.command);
+                this.command.execute();
+            }
+
+            UndoDecrator.prototype.undo = function(){
+                this.command.undo();
+            }
+
+            function CommandBtn(label,command,parent){
+                this.element = document.createElement('button');
+                this.element.textContent = label;
+                parent.appendChild(this.element);
+
+                this.element.addEventListener('click',function(){
+                    command.execute();
+                },false);
+            }
+
+            function UndoButton(label,parent,cursor){
+                this.element = document.createElement('button');
+                this.element.textContent = label;
+                parent.appendChild(this.element);
+
+                this.element.addEventListener('click',function(){
+                    cursor.undo();
+                },false);
+            }
+
+
+            var oBody = document.body;
+            var cursor = new Cursor(400,400,oBody);
+
+            var upCommand = new MoveCommand(cursor,'up');
+            var downCommand = new MoveCommand(cursor,'down');
+            var leftCommand = new MoveCommand(cursor,'left');
+            var rightCommand = new MoveCommand(cursor,'right');
+
+            var upBtn = new CommandBtn('Up',upCommand,oBody);
+            var downBtn = new CommandBtn('Down',downCommand,oBody);
+            var leftBtn = new CommandBtn('Left',leftCommand,oBody);
+            var rightBtn = new CommandBtn('Right',rightCommand,oBody);
+            var updoButton = new UndoButton('Undo',oBody,cursor);
+        </script>
+
+        <!-- version 2 nonreversible actions -->
+        <!-- <script type="text/javascript">
+            function MoveUp(cursor){
+                this.cursor = cursor;
+            }
+
+            MoveUp.prototype.execute = function(){
+                this.cursor.move(0,-10);
+            }
+            MoveUp.prototype.undo = function(){
+                this.cursor.move(0,10);
+            }
+
+            function MoveDown(cursor){
+                this.cursor = cursor;
+            }
+
+            MoveDown.prototype.execute = function(){
+                this.cursor.move(0,10);
+            }
+            MoveDown.prototype.undo = function(){
+                this.cursor.move(0,-10);
+            }
+
+            function MoveLeft(cursor){
+                this.cursor = cursor;
+            }
+
+            MoveLeft.prototype.execute = function(){
+                this.cursor.move(-10,0);
+            }
+            MoveLeft.prototype.undo = function(){
+                this.cursor.move(10,0);
+            }
+
+            function MoveRight(cursor){
+                this.cursor = cursor;
+            }
+
+            MoveRight.prototype.execute = function(){
+                this.cursor.move(10,0);
+            }
+            MoveRight.prototype.undo = function(){
+                this.cursor.move(-10,0);
+            }
+
+
+            function Cursor(width,height,parent){
+                this.width = width;
+                this.height = height;
+                this.commandStack = [];
+
+                this.canvas = document.createElement('canvas');
+                this.canvas.width = this.width;
+                this.canvas.height = this.height;
+                parent.appendChild(this.canvas);
+
+                this.ctx = this.canvas.getContext('2d');
+                this.ctx.fillStyle = '#cc0000';
+                this.move(0,0);
+            }
+
+            Cursor.prototype.move = function(x,y){
+                var that = this;
+                this.commandStack.push(function(){
+                    that.lineTo(x,y);
+                });
+                this.executeCommands();
+
+            }
+
+            Cursor.prototype.lineTo = function(x,y){
+                this.position.x += x;
+                this.position.y += y;
+                this.ctx.lineTo(this.position.x,this.position.y);
+            }
+
+            Cursor.prototype.executeCommands = function(){
+                this.position = {x: this.width / 2,y: this.height / 2};
+                this.ctx.clearRect(0,0,this.width,this.height);
+                this.ctx.beginPath();
+                this.ctx.moveTo(this.position.x,this.position.y);
+                for (var i = 0; i < this.commandStack.length; i++) {
+                    this.commandStack[i]();
+                }
+                this.ctx.stroke();
+            }
+
+            Cursor.prototype.undo = function(){
+                this.commandStack.pop();
+                this.executeCommands();
+            }
+
+            function UndoDecrator(command,undoStack){
+                this.command = command;
+                this.undoStack = undoStack || [];
+            }
+
+            UndoDecrator.prototype.execute = function(){
+                this.undoStack.push(this.command);
+                this.command.execute();
+            }
+
+            UndoDecrator.prototype.undo = function(){
+                this.command.undo();
+            }
+
+            function CommandBtn(label,command,parent){
+                this.element = document.createElement('button');
+                this.element.textContent = label;
+                parent.appendChild(this.element);
+
+                this.element.addEventListener('click',function(){
+                    command.execute();
+                },false);
+            }
+
+            function UndoButton(label,parent,cursor){
+                this.element = document.createElement('button');
+                this.element.textContent = label;
+                parent.appendChild(this.element);
+
+                this.element.addEventListener('click',function(){
+                    cursor.undo();
+                },false);
+            }
+
+
+            var oBody = document.body;
+            var cursor = new Cursor(400,400,oBody);
+
+            var upCommand = new MoveUp(cursor);
+            var downCommand = new MoveDown(cursor);
+            var leftCommand = new MoveLeft(cursor);
+            var rightCommand = new MoveRight(cursor);
+
+            var upBtn = new CommandBtn('Up',upCommand,oBody);
+            var downBtn = new CommandBtn('Down',downCommand,oBody);
+            var leftBtn = new CommandBtn('Left',leftCommand,oBody);
+            var rightBtn = new CommandBtn('Right',rightCommand,oBody);
+            var updoButton = new UndoButton('Undo',oBody,cursor);
+        </script> -->
+
+        <!--Version 1 -->
+        <!-- <script type="text/javascript">
+            function MoveUp(cursor){
+                this.cursor = cursor;
+            }
+
+            MoveUp.prototype.execute = function(){
+                this.cursor.move(0,-10);
+            }
+            MoveUp.prototype.undo = function(){
+                this.cursor.move(0,10);
+            }
+
+            function MoveDown(cursor){
+                this.cursor = cursor;
+            }
+
+            MoveDown.prototype.execute = function(){
+                this.cursor.move(0,10);
+            }
+            MoveDown.prototype.undo = function(){
+                this.cursor.move(0,-10);
+            }
+
+            function MoveLeft(cursor){
+                this.cursor = cursor;
+            }
+
+            MoveLeft.prototype.execute = function(){
+                this.cursor.move(-10,0);
+            }
+            MoveLeft.prototype.undo = function(){
+                this.cursor.move(10,0);
+            }
+
+            function MoveRight(cursor){
+                this.cursor = cursor;
+            }
+
+            MoveRight.prototype.execute = function(){
+                this.cursor.move(10,0);
+            }
+            MoveRight.prototype.undo = function(){
+                this.cursor.move(-10,0);
+            }
+
+
+            function Cursor(width,height,parent){
+                this.width = width;
+                this.height = height;
+                this.position = {x: width / 2,y: height / 2};
+
+                this.canvas = document.createElement('canvas');
+                this.canvas.width = this.width;
+                this.canvas.height = this.height;
+                parent.appendChild(this.canvas);
+
+                this.ctx = this.canvas.getContext('2d');
+                this.ctx.fillStyle = '#cc0000';
+                this.move(0,0);
+            }
+
+            Cursor.prototype.move = function(x,y){
+                this.position.x += x;
+                this.position.y += y;
+
+                this.ctx.clearRect(0,0,this.width,this.height);
+                this.ctx.fillRect(this.position.x,this.position.y,5,5);
+
+            }
+
+            function UndoDecrator(command,undoStack){
+                this.command = command;
+                this.undoStack = undoStack || [];
+            }
+
+            UndoDecrator.prototype.execute = function(){
+                this.undoStack.push(this.command);
+                this.command.execute();
+            }
+
+            UndoDecrator.prototype.undo = function(){
+                this.command.undo();
+            }
+
+            function CommandBtn(label,command,parent){
+                this.element = document.createElement('button');
+                this.element.textContent = label;
+                parent.appendChild(this.element);
+
+                this.element.addEventListener('click',function(){
+                    command.execute();
+                },false);
+            }
+
+            function UndoButton(label,parent,undoStack){
+                this.element = document.createElement('button');
+                this.element.textContent = label;
+                parent.appendChild(this.element);
+
+                this.element.addEventListener('click',function(){
+                    var lastCommand;
+                    if(undoStack.length){
+                        lastCommand = undoStack.pop();
+                        lastCommand.undo();
+                    }
+                },false);
+            }
+
+
+            var oBody = document.body;
+            var cursor = new Cursor(400,400,oBody);
+            var undoStack = [];
+
+            var upCommand = new UndoDecrator(new MoveUp(cursor),undoStack);
+            var downCommand = new UndoDecrator(new MoveDown(cursor),undoStack);
+            var leftCommand = new UndoDecrator(new MoveLeft(cursor),undoStack);
+            var rightCommand = new UndoDecrator(new MoveRight(cursor),undoStack);
+
+            var upBtn = new CommandBtn('Up',upCommand,oBody);
+            var downBtn = new CommandBtn('Down',downCommand,oBody);
+            var leftBtn = new CommandBtn('Left',leftCommand,oBody);
+            var rightBtn = new CommandBtn('Right',rightCommand,oBody);
+            var updoButton = new UndoButton('Undo',oBody,undoStack);
+        </script> -->
+    </body>
+</html>
