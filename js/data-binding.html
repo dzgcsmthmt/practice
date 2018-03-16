@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title>two way bind</title>
+    </head>
+    <body>
+        <label>
+            <span>姓名：</span>
+            <input type="text" ng-model='name'>
+        </label>
+        <div ng-model='name'></div>
+        <label>
+            <span>年龄：</span>
+            <input type="text" ng-model='age'>
+        </label>
+        <div ng-model='age'></div>
+
+        <script type="text/javascript">
+            var scope = {};
+            var models = document.querySelectorAll('[ng-model]');
+            var watchers = document.querySelectorAll('input[ng-model]')
+            var keys = [];
+            var key;
+
+            for (var i = 0; i < models.length; i++) {
+                key = models[i].getAttribute('ng-model')
+                if(keys.indexOf(key) == -1){
+                    keys.push(key);
+                }
+            }
+
+            for (var i = 0; i < watchers.length; i++) {
+                watchers[i].addEventListener('keyup',function(ev){
+                    scope[this.getAttribute('ng-model')] = ev.target.value;
+                    scope['_' + this.getAttribute('ng-model')] = ev.target.value;
+                },false);
+            }
+
+            for (var i = 0; i < keys.length; i++) {
+                (function(i){
+                    Object.defineProperty(scope, keys[i], {
+                        get: function(){
+                            return scope['_' + keys[i]];
+                        },
+                        set: function(newValue) {
+                            var listeners;
+                            listeners = document.querySelectorAll('[ng-model=' + keys[i] + ']');
+                            for (var j = 0; j < listeners.length; j++) {
+                                if(listeners[j].getAttribute('type') == 'text'){
+                                    listeners[j].value = newValue;
+                                }else{
+                                    listeners[j].innerHTML = newValue;
+                                }
+                            }
+                        },
+                    });
+                })(i)
+            }
+
+
+
+
+        </script>
+    </body>
+</html>
