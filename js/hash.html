@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>hash</title>
+        <style media="screen">
+
+        </style>
+    </head>
+    <body>
+        <div id="number">1</div>
+        <a href="" id="forward">go forward</a>
+
+        <script type="text/javascript">
+            (function(){
+                var routes = [];
+
+                function addRoute(route,callback,scope){
+                    var routeObj = {
+                        route: route,
+                        callback: callback,
+                        scope: scope
+                    }
+                    routes(routeObj);
+                }
+
+                function handleRoute(path,noHistory){
+                    var len = routes.length,scope;
+
+                    for(var i = 0;i < len;i++){
+                        if(path.match(routes[i].route)){
+                            scope = routes[i].scope || window;
+                            if(!noHistory){
+                                window.history.pushState({},null,path);
+                            }
+                            routes[i].callback.call(scope,path);
+                            return true;
+                        }
+                    }
+
+                    return false;
+
+                }
+
+                window.addEventListener('popstate',function(){
+                    handleRoute(window.location.href,true);
+                },false);
+
+                window.router = {
+                    addRoute: addRoute,
+                    handleRoute: handleRoute
+                }
+
+            })();
+
+        </script>
+    </body>
+</html>
