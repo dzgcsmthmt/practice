@@ -45,6 +45,7 @@
                         },
                         set: function(newValue) {
                             var listeners;
+                            scope['_' + keys[i]] = newValue;
                             listeners = document.querySelectorAll('[ng-model=' + keys[i] + ']');
                             for (var j = 0; j < listeners.length; j++) {
                                 if(listeners[j].getAttribute('type') == 'text'){
