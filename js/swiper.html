@@ -1,0 +1,104 @@
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0,minimum-scale=1.0,user-scalable=0">
+	<title>swiper</title>
+	<style type="text/css">
+		html,body,ul,li{
+			margin: 0;
+			padding: 0;
+			list-style: none;
+		}
+		.slide-wrapper{
+			width: 350px;
+			margin: 50px auto;
+			overflow: hidden;
+		}
+		ul{
+			width: 1500px;
+		}
+		ul li{
+			width: 300px;
+			height: 180px;
+			line-height: 180px;
+			font-size: 40px;
+			text-align: center;
+			float: left;
+		}
+		.transition{
+			-webkit-transition: 200ms ease-out;
+			transition: 200ms ease-out;
+		}
+		.clearfix:after{
+			content: '';
+			display: block;
+			height: 0;
+			visibility: hidden;
+			clear: both;
+		}
+	</style>
+</head>
+<body>
+
+	<div class="slide-wrapper">
+		<ul class="clearfix" id="slider">
+			<li style="background:red">1</li>
+			<li style="background:blue">2</li>
+			<li style="background:green">3</li>
+			<li style="background:yellow">4</li>
+			<li style="background:purple">5</li>
+		</ul>
+	</div>
+
+	<script type="text/javascript">
+		var oUl = document.getElementById('slider');
+		var x = 0;
+		var currentIndex = 1;
+		var translateX = 0;
+
+		oUl.ontouchstart = function(ev){
+			var touch = ev.changedTouches[0];
+			x = touch.pageX;
+			oUl.className = oUl.className.replace(/\btransition\b/g,'').replace(/\s+/g,' ');
+			oUl.ontouchmove = function(ev){
+				var touch = ev.changedTouches[0];
+				var offsetX = touch.pageX - x;
+				if((translateX + offsetX) > 0 || (translateX + offsetX) <= -1200){
+					this.style.transform = 'translateX(' +  (translateX + offsetX / 3) + 'px)';
+					this.style.webkitTransform = 'translateX(' +  (translateX + offsetX / 3) + 'px)';
+				}else{
+					this.style.transform = 'translateX(' +  (translateX + offsetX) + 'px)';
+					this.style.webkitTransform = 'translateX(' +  (translateX + offsetX) + 'px)';
+				}
+			}
+
+			oUl.ontouchend = function(ev){
+				var touch = ev.changedTouches[0];
+				var offsetX = touch.pageX - x;
+				oUl.className += ' transition';
+				if(offsetX > 0){
+					if(currentIndex > 1){
+						currentIndex--;
+						translateX +=300;
+					}
+				}else{
+					if(currentIndex < 5){
+						currentIndex++;
+						translateX -=300;
+					}
+				}
+				this.style.transform = 'translateX(' +  (translateX) + 'px)';
+				this.style.webkitTransform = 'translateX(' +  (translateX) + 'px)';
+				oUl.ontouchmove = null;
+				oUl.ontouchend = null;
+			}
+
+		}
+
+		document.ontouchmove = function(ev){
+			ev.preventDefault();
+		}
+
+	</script>
+</body>
+</html>
