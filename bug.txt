@@ -6,3 +6,8 @@
 
 1 使用fastclick，这个可以非常完美的解决点穿问题。
 2 在touchend事件回调中加入preventDefault, 并在下一层中加上pointer-events:none。
+------------------------------------------------------------------------------------------------------------
+IE8下 a标签绝对定位100%覆盖点击区域bug
+a{
+  background: url("data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7") 0 0 repeat;
+}
