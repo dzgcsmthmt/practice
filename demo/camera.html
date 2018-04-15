@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title>Media Capture and Streams</title>
+        <style scoped>
+            /* video { transform: scaleX(-1); } */
+            p{ text-align: center; }
+            .video{
+                width: 640px;
+                height: 480px;
+                margin: 0 auto;
+                position: relative;
+            }
+            #camera_rect{
+                width: 100%;
+                height: 100%;
+                position: absolute;
+                top: 0;
+                left: 0;
+                z-index: 100;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Snapshot</h1>
+        <section id="splash">
+            <p id="errorMessage">Loading...</p>
+        </section>
+        <section id="app" hidden>
+            <div class="video">
+                <video id="monitor" autoplay width="640" height="480"></video>
+                <div id='camera_rect'></div>
+            <div>
+            <p>
+                <input type=button value="&#x1F4F7;" id="camera_snap">
+                <input type=button value="clear" onclick="clear_snapshot()">
+            </p>
+            <p>
+                <canvas id="photo"></canvas>
+            </p>
+        </section>
+        <script src="https://cdn.bootcss.com/jquery/2.1.2/jquery.min.js"></script>
+        <script type="text/javascript">
+            var video = document.getElementById('monitor');
+            var canvas = document.getElementById('photo');
+            var context = canvas.getContext('2d');
+
+            navigator.mediaDevices.getUserMedia({
+                video: true
+            }).then(function (stream) {
+                video.srcObject = stream;
+                video.onloadedmetadata = function () {
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    document.getElementById('splash').hidden = true;
+                    document.getElementById('app').hidden = false;
+                };
+            }).catch(function (reason) {
+                document.getElementById('errorMessage').textContent = 'No camera available.';
+            });
+
+            //clip video
+            $("#camera_rect").on('mousedown',function(event){
+                var self = $(this);
+                self.empty();
+                var x =  event.pageX ;
+                var y =  event.pageY;
+                var left =  x - self.offset().left;
+                var top =  y - self.offset().top;
+                self.append('<div></div>');
+                self.find('div').css({position:'absolute',left: left,top: top,border:'2px solid blue',cursor:'pointer'});
+                $(document).on('mousemove',function(e){
+                    var maxWidth = self.width() - left - 4;
+                    var maxHeight = self.height() - top - 4;
+                    var w = Math.min(e.pageX - x,maxWidth);
+                    var h = Math.min(e.pageY - y,maxHeight);
+                    self.find('div').css({width:w,height:h});
+                });
+
+                $(document).on("mouseup",function(){
+                    $(document).unbind('mousemove');
+                    $(document).unbind('mouseup');
+                    self.find('div').on('mousedown',function(event){
+                        event.stopPropagation();
+                        var drag = $(this);
+                        var x =  event.pageX - drag.position().left;
+                        var y =  event.pageY - drag.position().top;
+                        $(document).on('mousemove',function(event){
+                            var left = Math.max(event.pageX - x,0);
+                            left = Math.min(left,self.width() - drag.width() - 4);
+                            var top = Math.max(event.pageY - y,0);
+                            top = Math.min(top,self.height() - drag.height() - 4);
+                            drag.css({left:left,top:top});
+                        });
+                         $(document).on("mouseup",function(){
+                            $(document).unbind('mousemove');
+                            $(document).unbind('mouseup');
+                        })
+                    })
+                })
+                return false;
+            })
+
+            $("#camera_snap").on("click", function(){
+                var l = 0,t = 0,w = video.width,h = video.height;
+                if($("#camera_rect").find('div').length){
+                    l = $("#camera_rect").find('div').position().left;
+                    t = $("#camera_rect").find('div').position().top;
+                    w = $("#camera_rect").find('div').width();
+                    h = $("#camera_rect").find('div').height();
+                }
+                canvas.width = w;
+                canvas.height = h;
+				context.drawImage(video,l,t,w,h,0,0,w,h);
+                $("#camera_rect").empty();
+			});
+
+            function clear_snapshot(){
+                context.clearRect(0, 0, canvas.width, canvas.height);
+            }
+        </script>
+    </body>
+</html>
