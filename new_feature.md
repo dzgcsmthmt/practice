@@ -1,3 +1,6 @@
+## Object.observe
+参考：[github](https://github.com/luokuning/blogs/issues/1)
+---
 ## Spread operator(拓展运算符)
 参考：[mdn](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax)
 ---
