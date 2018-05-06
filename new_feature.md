@@ -1,3 +1,6 @@
+## Object.observe
+参考：[github](https://github.com/luokuning/blogs/issues/1)
+---
 ## Spread operator(拓展运算符)
 参考：[mdn](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax)
 ---
@@ -10,6 +13,8 @@
     // Object { foo: "bar", x: 42 }
     var mergedObj = { ...obj1, ...obj2 };
     // Object { foo: "baz", x: 42, y: 13 }
+    var obj = { a: 1, b: 2, c: 3 };
+    var {a,...noA} = obj; 
 </pre>
 
 <em>在 ECMAScript 5 严格模式的代码中， 重复的属性名会被当做SyntaxError。引入计算的属性名以后，属性名会在运行时出现重复。ECMAScript 2015 移除了这个限制</em>  
