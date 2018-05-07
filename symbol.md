@@ -22,7 +22,7 @@
 参考：[Subclassing Arrays in ES2015](https://thejsguy.com/2017/09/21/subclassing-arrays-in-es2015.html)
 
 ---
-
+## Symbol.toPrimitive
 <pre>
     0 == []
     false == []
@@ -36,7 +36,7 @@
 
 ??? toPrimitive ??? 一脸懵逼.png
 
-参考：[ECMA-262](https://www.ecma-international.org/ecma-262/6.0/index.html#sec-toprimitive)
+参考：[ECMAScript-262 edition 3](https://www.ecma-international.org/ecma-262/6.0/index.html#sec-toprimitive)
 
 #### ToPrimitive(input [, PreferredType])
 
@@ -115,7 +115,7 @@
     new Date() + 3;
 </pre>
 
-## Symbol.toPrimitive
+#### Symbol.toPrimitive
 
 The function is called with a string argument hint, which specifies the preferred type of the result primitive value. The hint argument can be one of "number", "string", and "default"
 
@@ -171,7 +171,7 @@ console.log(obj2 + ''); // "true" -- hint is "default"
 
     > +obj
 
-    > obj * 1
+    > obj * 1 /1 ~~
 
 3. default
 
@@ -191,6 +191,7 @@ try obj.valueOf() and obj.toString(), whatever exists.
 
 test
 <pre>
+
     let user = {
         name: "John",
         money: 1000,
@@ -208,3 +209,216 @@ test
 
 ---
 ## Symbol.toStringTag
+
+<pre>
+    ({}).toString.call({});
+    ({}).toString.call([]);
+    ({}).toString.call(1);
+    ({}).toString.call(new Number(1));
+    ({}).toString.call(document.createElement('span'));
+    class ValidatorClass {}
+    ({}).toString.call(new ValidatorClass());
+</pre>
+
+The Symbol.toStringTag well-known symbol is a string valued property that is used in the creation of the default string description of an object. It is accessed internally by the Object.prototype.toString() method
+
+<pre>
+    class ValidatorClass {
+        get [Symbol.toStringTag]() {
+            return 'Validator';
+        }
+    }
+    ({}).toString.call(new ValidatorClass());
+
+    var obj = {
+    	get [Symbol.toStringTag](){
+    		return 'foo';
+    	}
+    }
+    ({}).toString.call(obj);
+</pre>
+
+---
+## instanceOf
+
+<pre>
+    new String('a') instanceof String
+
+    function Foo(){}
+    var foo = new Foo();
+    console.log(foo instanceof Foo)
+
+    function Aoo(){}
+    function Foo(){}
+    Foo.prototype = new Aoo();
+    var foo = new Foo();
+    console.log(foo instanceof Foo)
+    console.log(foo instanceof Aoo)
+
+    //精彩的来了
+    console.log(Object instanceof Object);//true
+    console.log(Function instanceof Function);//true
+    console.log(Number instanceof Number);//false
+    console.log(String instanceof String);//false
+
+    console.log(Function instanceof Object);//true
+
+    console.log(Foo instanceof Function);//true
+    console.log(Foo instanceof Foo);//false
+
+</pre>
+
+ECMAScript-262 edition 3 中instanceof 运算符的定义
+
+11.8.6 The instanceof operator<br />
+The production RelationalExpression:<br />
+RelationalExpression instanceof ShiftExpression is evaluated as follows:
+
+ 1. Evaluate RelationalExpression.
+ 2. Call GetValue(Result(1)).
+ 3. Evaluate ShiftExpression.
+ 4. Call GetValue(Result(3)).
+ 5. If Result(4) is not an object, throw a TypeError exception.
+ 6. If Result(4) does not have a [[HasInstance]] method,throw a TypeError exception.
+ 7. Call the [[HasInstance]] method of Result(4) with parameter Result(2).
+ 8. Return Result(7).
+
+15.3.5.3 [[HasInstance]] (V)<br/>
+Assume F is a Function object.<br/>
+When the [[HasInstance]] method of F is called with value V,the following steps are taken:
+
+ 1. If V is not an object, return false.
+ 2. Call the [[Get]] method of F with property name "prototype".
+ 3. Let O be Result(2).
+ 4. If O is not an object, throw a TypeError exception.
+ 5. Let V be the value of the [[Prototype]] property of V.//V = V.[[Prototype]]
+ 6. If V is null, return false.
+ 7. If O and V refer to the same object or if they refer to objects joined to each other (section 13.1.2), return true.
+ 8. Go to step 5.
+
+翻译成JavaScript 代码
+<pre>
+    function instance_of(L, R) {//L 表示左表达式，R 表示右表达式
+        var O = R.prototype;// 取 R 的显示原型
+        L = L.__proto__;// 取 L 的隐式原型
+        while (true) {
+            if (L === null)
+                return false;
+            if (O === L)// 这里重点：当 O 严格等于 L 时，返回 true
+                return true;
+            L = L.__proto__;
+        }
+    }
+
+    Object instanceof Object
+    // 为了方便表述，首先区分左侧表达式和右侧表达式
+    ObjectL = Object, ObjectR = Object;
+    // 下面根据规范逐步推演
+    O = ObjectR.prototype = Object.prototype
+    L = ObjectL.__proto__ = Function.prototype
+    // 第一次判断
+    O != L
+    // 循环查找 L 是否还有 __proto__
+    L = Function.prototype.__proto__ = Object.prototype
+    // 第二次判断
+    O == L
+    // 返回 true
+
+    Function instanceof Function
+    // 为了方便表述，首先区分左侧表达式和右侧表达式
+    FunctionL = Function, FunctionR = Function;
+    // 下面根据规范逐步推演
+    O = FunctionR.prototype = Function.prototype
+    L = FunctionL.__proto__ = Function.prototype
+    // 第一次判断
+    O == L
+    // 返回 true
+
+    Foo instanceof Foo
+    // 为了方便表述，首先区分左侧表达式和右侧表达式
+    FooL = Foo, FooR = Foo;
+    // 下面根据规范逐步推演
+    O = FooR.prototype = Foo.prototype
+    L = FooL.__proto__ = Function.prototype
+    // 第一次判断
+    O != L
+    // 循环再次查找 L 是否还有 __proto__
+    L = Function.prototype.__proto__ = Object.prototype
+    // 第二次判断
+    O != L
+    // 再次循环查找 L 是否还有 __proto__
+    L = Object.prototype.__proto__ = null
+    // 第三次判断
+    L == null
+    // 返回 false
+</pre>
+
+---
+## Symbol.HasInstance
+
+The Symbol.hasInstance well-known symbol is used to determine if a constructor object recognizes an object as its instance. The instanceof operator's behavior can be customized by this symbol.
+
+<pre>
+class Array1 {
+    static [Symbol.hasInstance](instance) {
+        return Array.isArray(instance);
+    }
+}
+
+console.log([] instanceof Array1);
+
+class MyObject{
+	static [Symbol.hasInstance](instance){
+		return ({}).toString.call(instance) == '[object Object]';
+	}
+}
+
+</pre>
+
+---
+## Symbol.species
+The well-known symbol Symbol.species specifies a function-valued property that the constructor function uses to create derived objects
+<pre>
+class Array1 extends Array {
+    static get [Symbol.species]() { return Array; }
+}
+
+const a = new Array1(1, 2, 3);
+const mapped = a.map(x => x * x);
+
+console.log(mapped instanceof Array1);
+// expected output: false
+
+console.log(mapped instanceof Array);
+// expected output: true
+</pre>
+
+---
+## Symbol.iterator
+The Symbol.iterator well-known symbol specifies the default iterator for an object. Used by for...of.
+
+<pre>
+var iter = 'abc'[Symbol.iterator]();
+iter = [1,2,3][Symbol.iterator]();
+iter = new Set([1,2,3])[Symbol.iterator]();
+
+function getIterableObj(obj){
+    var iter = Object.values(obj)[Symbol.iterator]();
+    return {
+        [Symbol.iterator](){
+            return this;
+        },
+        next(){
+            let {value,done} = iter.next();
+            return {value,done};
+        }
+    }
+}
+
+var obj = {a: 1,b: 2};
+obj = getIterableObj(obj);
+for(var val of obj){
+	console.log(val)
+}
+
+</pre>
