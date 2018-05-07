@@ -171,7 +171,7 @@ element {
     background-color: var(--main-bg-color);
 }
 </pre>
-* 继承(支持继承)
+* google homepage
 ---
 ## Grid && Flexbox
 参考：[grid](https://css-tricks.com/snippets/css/complete-guide-grid/#grid-introduction)
