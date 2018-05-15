@@ -1,5 +1,101 @@
 ## Object.observe
 参考：[github](https://github.com/luokuning/blogs/issues/1)
+
+语法
+> Object.observe(obj, callback[, acceptList])
+
+>obj 被监控的对象.   
+
+>callback当对象被修改时触发的回调函数，其参数为: changes一个数组，其中包含的每一个对象代表一个修改行为。每个修改行为的对象包含:
+1. name: 被修改的属性名称。
+2. object: 修改后该对象的值。
+3. type: 表示对该对象做了何种类型的修改，可能的值为"add", "update", or "delete"。  
+4. oldValue: 对象修改前的值。该值只在"update与"delete"有效。             
+
+> acceptList 在给定对象上给定回调中要监视的变化类型列表。如果省略， ["add", "update", "delete", "reconfigure", "setPrototype", "preventExtensions"] 将会被使用。
+
+<pre>
+var obj = {
+    foo: 0,
+    bar: 1
+};
+
+Object.observe(obj, function(changes) {
+    console.log(changes);
+});
+
+obj.baz = 2;
+// [{name: 'baz', object: <obj>, type: 'add'}]
+
+obj.foo = 'hello';
+// [{name: 'foo', object: <obj>, type: 'update', oldValue: 0}]
+
+delete obj.baz;
+// [{name: 'baz', object: <obj>, type: 'delete', oldValue: 2}]
+</pre>
+
+---
+## JavaScript Decorator
+stage 2 proposal
+
+<pre>
+function doSomething(name) {
+    console.log('Hello, ' + name);
+}
+
+function loggingDecorator(wrapped) {
+    return function() {
+        console.log('Starting');
+        const result = wrapped.apply(this, arguments);
+        console.log('Finished');
+        return result;
+    }
+}
+
+const wrapped = loggingDecorator(doSomething);
+
+doSomething('Graham');
+// Hello, Graham
+
+wrapped('Graham');
+// Starting
+// Hello, Graham
+// Finished
+
+class Example {
+    @log('some tag')
+    sum(a, b) {
+        return a + b;
+    }
+}
+
+function log(name) {
+  return function decorator(target, name, descriptor) {
+    const original = descriptor.value;
+    if (typeof original === 'function') {
+      descriptor.value = function(...args) {
+        console.log(`Arguments for ${name}: ${args}`);
+        try {
+          const result = original.apply(this, args);
+          console.log(`Result from ${name}: ${result}`);
+          return result;
+        } catch (e) {
+          console.log(`Error from ${name}: ${e}`);
+          throw e;
+        }
+      }
+    }
+    return descriptor;
+  };
+
+
+const e = new Example();
+e.sum(1, 2);
+// Arguments for some tag: 1,2
+// Result from some tag: 3
+
+</pre>
+
 ---
 ## Spread operator(拓展运算符)
 参考：[mdn](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax)
@@ -14,7 +110,7 @@
     var mergedObj = { ...obj1, ...obj2 };
     // Object { foo: "baz", x: 42, y: 13 }
     var obj = { a: 1, b: 2, c: 3 };
-    var {a,...noA} = obj; 
+    var {a,...noA} = obj;
 </pre>
 
 <em>在 ECMAScript 5 严格模式的代码中， 重复的属性名会被当做SyntaxError。引入计算的属性名以后，属性名会在运行时出现重复。ECMAScript 2015 移除了这个限制</em>  
