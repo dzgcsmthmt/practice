@@ -1,6 +1,7 @@
-## Array high order method
+## Array
 ```
 ['1','2','3'].map(parseInt)
+['1','2','3'].map(parseFloat)
 "1 2 3".replace(/\d/g, parseInt)
 [3,2,1].reduce(Math.pow)
 [].reduce(Math.pow)
@@ -35,6 +36,7 @@ var a = new Date("2014-03-19"),
 var a = 111111111111111110000,
     b = 1111;
 a + b;
+//https://www.youtube.com/watch?v=MqHDDtVYJRI
 valueA + valueB(!= 0) === valueA;
 function foo() { }
 var oldName = foo.name;
@@ -121,6 +123,29 @@ alert(a)
 a=6;
 a();
 //1
+var a = 1;
+function b() {
+    a = 10;
+    return;
+    function a() {}
+}
+b();
+console.log(a);
+//1
+function fn(a) {
+  console.log(a);
+  var a = 2;
+  function a() {}
+  console.log(a);
+}
+
+fn(1);
+//1
+if('a' in window) {
+  var a = 10;
+}
+alert(a);
+//1
 function Foo() {
     getName = function () { alert (1); };
     return this;
@@ -154,4 +179,76 @@ var obj = {
 };
 
 obj.method(fn, 1);
+```
+### event loop
+```
+async function async1(){
+	console.log('async1 start')
+	await async2()
+	console.log('async1 end')
+}
+async function async2(){
+	console.log('async2')
+}
+console.log('script start')
+setTimeout(function(){
+	console.log('setTimeout')
+},0)  
+async1();
+new Promise(function(resolve){
+	console.log('promise1')
+	resolve();
+}).then(function(){
+	console.log('promise2')
+})
+console.log('script end')
+```
+### eval
+```
+var y = 1;
+if (function f(){}) {
+    y += typeof f;
+}
+console.log(y);
+```
+### 作用域
+```
+//1
+for(var i = 0; i < 10; i++) {
+    setTimeout(function() {
+      console.log(i);  
+    }, 10);
+}
+//2
+var value = 1;
+function foo() {
+    console.log(value);
+}
+function bar() {
+    var value = 2;
+    foo();
+}
+bar();
+//3
+var a = 10;
+function f1(){
+  console.log(a);
+}
+
+(function(f2){
+  var a = 30;
+  f2();
+}(f1));
+//1
+function fun(n,o) {
+  console.log(o)
+  return {
+    fun:function(m){
+      return fun(m,n);
+    }
+  };
+}
+var a = fun(0);  a.fun(1);  a.fun(2);  a.fun(3);
+var b = fun(0).fun(1).fun(2).fun(3);
+var c = fun(0).fun(1); c.fun(2); c.fun(3);
 ```
