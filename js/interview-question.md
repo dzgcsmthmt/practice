@@ -16,6 +16,7 @@ if ([0]) {
 }
 '5' + 3
 '5' - 3
+++[[]][+[]]+[+[]]
 add(2)(3)(5)(10) = 20
 ```
 ## 流氓题
@@ -25,23 +26,36 @@ var a = Function.length,
 a === b
 Object.getOwnPropertyDescriptor(Function,'length')
 new Function('a', 'b', 'return a + b').length
+
 var min = Math.min(), max = Math.max()
 min < max
+
 var a = new Date("2014-03-19"),
     b = new Date(2014, 03, 19);
 [a.getDay() === b.getDay(), a.getMonth() === b.getMonth()]
+
 3.toString()
 3..toString()
 3...toString()
+
 var a = 111111111111111110000,
     b = 1111;
 a + b;
 //https://www.youtube.com/watch?v=MqHDDtVYJRI
 valueA + valueB(!= 0) === valueA;
+
 function foo() { }
 var oldName = foo.name;
 foo.name = "bar";
 [oldName, foo.name]
+
+function a(x){
+    return function b(y){
+        return y+x++
+    }
+}
+var a1 = a(10)
+a1(10);
 ```
 ## 变量提升
 ```
@@ -251,4 +265,25 @@ function fun(n,o) {
 var a = fun(0);  a.fun(1);  a.fun(2);  a.fun(3);
 var b = fun(0).fun(1).fun(2).fun(3);
 var c = fun(0).fun(1); c.fun(2); c.fun(3);
+
+//1
+falseStr = "false";
+
+if(true){
+  var falseStr;
+
+  if(falseStr){
+   console.log("false" == true);
+   console.log("false" == false);
+  }
+}
+```
+### 赋值
+```
+var a = { n : 1};    
+var b = a;    
+a.x = a = {n:  2};    
+console.log(a.x);
+console.log(b.x);
+https://stackoverflow.com/questions/49000564/whats-the-result-of-this-javascript-code-snippet-and-why
 ```
