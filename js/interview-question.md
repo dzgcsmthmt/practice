@@ -24,6 +24,7 @@ add(2)(3)(5)(10) = 20
 var a = Function.length,
     b = new Function().length
 a === b
+
 Object.getOwnPropertyDescriptor(Function,'length')
 new Function('a', 'b', 'return a + b').length
 
@@ -193,6 +194,27 @@ var obj = {
 };
 
 obj.method(fn, 1);
+
+//2
+function fn() {
+    this.a = 0;
+    this.b = function() {
+        alert(this.a)
+    }
+}
+fn.prototype = {
+    b: function() {
+        this.a = 20;
+        alert(this.a);
+    },
+    c: function() {
+        this.a = 30;
+        alert(this.a);
+    }
+}
+var myfn = new fn();
+myfn.b();
+myfn.c();
 ```
 ### event loop
 ```
