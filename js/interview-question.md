@@ -39,11 +39,17 @@ var a = new Date("2014-03-19"),
 3..toString()
 3...toString()
 
+var a = (1, 5 - 1) * 2;
+
+2 in [1,2]
+
 var a = 111111111111111110000,
     b = 1111;
 a + b;
-//https://www.youtube.com/watch?v=MqHDDtVYJRI
 valueA + valueB(!= 0) === valueA;
+0.1 + 0.2 == 0.3
+Number.MAX_VALUE
+//https://www.youtube.com/watch?v=MqHDDtVYJRI
 
 function foo() { }
 var oldName = foo.name;
@@ -137,6 +143,8 @@ var a=function(){
 alert(a)
 a=6;
 a();
+```
+```
 //1
 var a = 1;
 function b() {
@@ -146,6 +154,8 @@ function b() {
 }
 b();
 console.log(a);
+```
+```
 //1
 function fn(a) {
   console.log(a);
@@ -155,11 +165,15 @@ function fn(a) {
 }
 
 fn(1);
+```
+```
 //1
 if('a' in window) {
   var a = 10;
 }
 alert(a);
+```
+```
 //1
 function Foo() {
     getName = function () { alert (1); };
@@ -255,6 +269,7 @@ for(var i = 0; i < 10; i++) {
       console.log(i);  
     }, 10);
 }
+
 //2
 var value = 1;
 function foo() {
@@ -265,6 +280,7 @@ function bar() {
     foo();
 }
 bar();
+
 //3
 var a = 10;
 function f1(){
@@ -275,7 +291,8 @@ function f1(){
   var a = 30;
   f2();
 }(f1));
-//1
+
+//4
 function fun(n,o) {
   console.log(o)
   return {
@@ -288,7 +305,7 @@ var a = fun(0);  a.fun(1);  a.fun(2);  a.fun(3);
 var b = fun(0).fun(1).fun(2).fun(3);
 var c = fun(0).fun(1); c.fun(2); c.fun(3);
 
-//1
+//5
 falseStr = "false";
 
 if(true){
@@ -308,4 +325,39 @@ a.x = a = {n:  2};
 console.log(a.x);
 console.log(b.x);
 https://stackoverflow.com/questions/49000564/whats-the-result-of-this-javascript-code-snippet-and-why
+
+function  setName(obj){
+    obj.name="tom";
+    obj=new Object();
+    obj.name="mike";
+}
+var  obj=new Object()                 
+     setName(obj);
+     console.log(obj.name);
+```
+### arguments
+```
+function b(x, y, a) {
+    arguments[2] = 10;
+    alert(a);
+}
+b(1, 2, 3);
+
+function b(x, y, a) {
+    arguments[2] = 10;
+    alert(a);
+}
+b(1, 2);
+
+//Arguments对象是活动对象的一个属性，它包括如下属性：
+callee — 指向当前函数的引用
+length — 真正传递的参数个数
+properties-indexes (字符串类型的整数) 属性的值就是函数的参数值(按参数列表从左到右排列)。 properties-indexes内部元素的个数等于arguments.length. properties-indexes 的值和实际传递进来的参数之间是共享的。
+
+当非严格模式中的函数有包含剩余参数、默认参数和解构赋值，那么arguments对象中的值不会跟踪参数的值（反之亦然）
+function func(a = 55) {
+  arguments[0] = 99; // updating arguments[0] does not also update a
+  console.log(a);
+}
+func(10); // 10
 ```
