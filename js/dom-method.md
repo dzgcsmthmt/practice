@@ -190,3 +190,4 @@ wrapper.normalize();
 // Now, wrapper.childNodes.length === 1
 // wrapper.childNodes[0].textContent === "Part 1 Part 2 "
 ```
+## Intersection Observer
