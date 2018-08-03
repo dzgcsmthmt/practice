@@ -12,3 +12,20 @@ user case:
 var str = "John Doe, John Smith and John Bull.";
 // for each John - replace it with Mr. and then John,no need group capture
 console.log(str.replace(/John/g, 'Mr.$&'));
+
+------------------------------------------------------------------------------------------------------------------------------
+匹配函数的参数
+// var fn = function(a, /*b,*/ c/*, d*/) { };
+/*
+    var fn = function(a, //b,
+    c) { };
+*/
+var strip_comments = /(\/\/.*$)|(\/\*.*?\*\/)/gm;
+var fn_Reg = /^function\s+[^\(]+\(\s*([^\)]*)\)/m;
+function testReg(fn){
+    var fnStr = fn + '';
+    fnStr.replace(strip_comments,'');
+    return fn_Reg.test(fnStr);
+}
+console.log(testReg(a));
+console.log(testReg('functiona()'));
