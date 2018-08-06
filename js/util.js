@@ -64,6 +64,29 @@ var util = {
         }
         return result;
    },
+   throttle: function(){
+        var timer = null;
+        var previous = null;
+
+        return function () {
+            var now = +new Date();
+
+            if ( !previous ) previous = now;
+            console.log('offset',now - previous);
+            if ( now - previous > atleast ) {
+                fn();
+                console.log('reset');
+                // 重置上一次开始时间为本次结束时间
+                previous = now;
+            } else {
+                clearTimeout(timer);
+                timer = setTimeout(function() {
+                    console.log('triggered');
+                    fn();
+                }, delay);
+            }
+        }     
+   },
    debounce: function (func, wait, immediate) {
        var timeout;
        return function() {
