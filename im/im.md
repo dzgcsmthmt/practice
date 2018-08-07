@@ -31,5 +31,6 @@
 流行库[react-vis](https://github.com/uber/react-vis)
 4. 增强app体验
 列表拖动到顶部和底部的效果
-5. 性能优化
+5. 样式主题
+6. 性能优化
 Route-based code splitting
