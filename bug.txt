@@ -11,3 +11,21 @@ IE8下 a标签绝对定位100%覆盖点击区域bug
 a{
   background: url("data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7") 0 0 repeat;
 }
+-------------------------------------------------------------------------------------------------------------
+Android调整系统字体导致采用REM布局错乱的解决方法
+1、js方法
+function calcREM() {
+    var docEl = document.documentElement;
+    var width = docEl.getBoundingClientRect().width;
+    var rem = width / 7.5;
+    rem = parseFloat(rem.toFixed(3));
+    docEl.style.fontSize = rem + 'px';
+    // 修正系统字体调整造成的布局问题
+    var realitySize = parseFloat(window.getComputedStyle(document.documentElement).fontSize);
+    if (rem !== realitySize) {
+        rem = rem * rem / realitySize;
+        docEl.style.fontSize = rem + 'px';
+    }
+    window.REM = rem;
+}
+2、在每个webview配置webview.getSettings().setTextZoom(100)就可以了
