@@ -8,7 +8,7 @@ $.each(clickEvents, function(key, handlerObj) {
 var isOpera = (!!window.opr && !!opr.addons) || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
     // Firefox 1.0+
 var isFirefox = typeof InstallTrigger !== 'undefined';
-    // Safari <= 9 "[object HTMLElementConstructor]" 
+    // Safari <= 9 "[object HTMLElementConstructor]"
 var isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;
     // Internet Explorer 6-11
 var isIE = /*@cc_on!@*/false || !!document.documentMode;
@@ -102,8 +102,8 @@ for(var key in a){
 对于处理大量的dom操作，可以使用setTimeout里拆成若干小块，每个小块执行后浏览器线程可以执行一些别的操作，防止长时间的卡顿
 setTimeout的延时时间设为0，以尽快重新开始dom操作
 --------------------------------------------------------------------------------------------------
-动态加载js文件 
-加载完成事件 
+动态加载js文件
+加载完成事件
 !IE:  onload
 IE: onreadystatechange ==>  readyState loaded || complete maybe either one,maybe both;so unbind event
 function loadScript(url, callback){
@@ -167,11 +167,11 @@ $yellow: #ffe42b;
 }
 --------------------------------------------------------------------------------------------------
 isInteger polyfill
-function isInteger(x) { return (x^0) === x; } 
+function isInteger(x) { return (x^0) === x; }
 function isInteger(x) { return Math.round(x) === x; }
 
 One fairly common incorrect solution is the following:
-function isInteger(x) { return parseInt(x, 10) === x; } 
+function isInteger(x) { return parseInt(x, 10) === x; }
 > String(1000000000000000000000)
 '1e+21'
 > parseInt(1000000000000000000000, 10)
@@ -185,7 +185,7 @@ var throttle = function(delay, action){
     var curr = +new Date()
     if (curr - last > delay){
       action.apply(this, arguments)
-      last = curr 
+      last = curr
     }
   }
 }
@@ -217,5 +217,22 @@ return obj == document && document != obj;
 fixed的卡顿问题
 fixed的类里添加属性  will-change:transform
 --------------------------------------------------------------------------------------------------
-
-
+$(document).on("input", "#comment", function() {
+    if (!m) {
+        var t = i(this).val()
+          , e = i.string.lenb(t)
+          , n = i(this).data("max");
+        e > n && (t = i.string.subByte(t, n),
+        i(this).val(t)),
+        i("#count_hint").html(i.string.lenb(t))
+    }
+}),
+i(document).on("compositionstart", "#comment", function() {
+    m = !0
+}),
+i(document).on("compositionend", "#comment", function() {
+    m = !1,
+    i("#comment").trigger("input")
+})
+针对中文输入法使用compositionstart方法
+-----------------------------------------------------------------------------------------------------------------------
