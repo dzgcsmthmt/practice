@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>canvas</title>
+    <title>easing function</title>
     <style media="screen">
         html,
         body {
@@ -15,7 +15,7 @@
             width: 0px;
             height: 15px;
             background: lightblue;
-            transition: 2s;
+            transition: 1s;
             margin-top: 15px;
         }
 
@@ -28,7 +28,7 @@
         }
 
         .ease-in {
-            transition-timing-function: ease-in;
+            transition-timing-function: cubic-bezier(.17,.67,.75,1.25);
         }
 
         .ease-out {
@@ -60,8 +60,8 @@
     <div class="anim ease"></div>
     <div class="anim ease-out"></div>
     <div class="anim ease-in-out"></div>
-    <div class="anim ease-in"></div>
     <div class="anim" id="SomeElementYouWantToAnimate"></div> -->
+    <div class="anim ease-in"></div>
     <input type="range"  min="0" max="1000" value="0" id="progress" />
     <div id="animator"></div>
 
@@ -72,7 +72,9 @@
     var start = 0;
     var end = 300;
     var min = 0;
-    var max = 100;
+    var max = 1000;
+    var gap = max - min;
+    var s = 0;
 
     document.getElementById("progress").addEventListener('change',function() {
         var max = this.getAttribute("max");
@@ -84,19 +86,21 @@
     root.addEventListener('click', function(ev) {
         let animObjs = document.querySelectorAll('.anim');
         for (var i = 0; i < animObjs.length; i++) {
-            animObjs[i].style.width = "600px";
+            animObjs[i].style.width = "330px";
         }
-        min = 10;
+        s = 0;
         window.requestAnimationFrame(step);
     }, false);
 
 
 
-    var s = 10;
+    var count = 0;
 
+    //s为每次时间间隔
     function step(timestamp) {
-        min++;
-        left = easing.easeInOutQuart(min/max, min, start, end, max);
+        console.log('executed',count++);
+        s += 16.666666667;
+        left = Math.abs(easing.easeInOutCubic(s / gap, s, start, end, max));
         document.getElementById("animator").style.left = left + 'px';
         if (left < end) {
             window.requestAnimationFrame(step);
