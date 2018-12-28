@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>devtools-layers</title>
+    <style>
+        html,body{
+            margin: 0;
+            padding: 0;
+        }
+        .wrapper{
+            height: 100vh;
+            overflow: auto;
+        }
+        #a,#b {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+        }
+
+        #a {
+            left: 10px;
+            top: 10px;
+            z-index: 2;
+            animation: move 1s linear infinite alternate;
+            background: red;
+        }
+
+        #b {
+            left: 50px;
+            top: 50px;
+            z-index: 1;
+            background: blue;
+        }
+        p,li,pre{
+            font-size: 26px;
+        }
+        #button{
+            margin-left: 400px;
+        }
+
+        @keyframes move {
+            from {top: translateX(0); }
+            to { transform: translateX(70px); }
+        }
+        /* @keyframes move {
+           from { top: 10px; }
+           to { top: 80px; }
+        } */
+
+    </style>
+</head>
+
+<body>
+    <div id="a">A</div>
+    <div id="b">B</div>
+    <div class="wrapper">
+        <button type="button" id="button">calc</button>
+        <div style="margin-top: 400px">
+            <p>A browser will promote an element to a compositing layer for many reasons, just a few of which are:</p>
+            <ul>
+                <li>3D transforms: translate3d, translateZ and so on;</li>
+                <li>&lt;video&gt;, &lt;canvas&gt; and &lt;iframe&gt; elements;</li>
+                <li>animation of transform and opacity via Element.animate();</li>
+                <li>animation of transform and opacity via СSS transitions and animations;</li>
+                <li>position: fixed;</li>
+                <li>will-change;</li>
+                <li>filter;</li>
+            </ul>
+        </div>
+        <h2>Memory Consumption</h2>
+        <p>How much memory does a single composite layer takes? Let’s take a simple example. Try to guess how much memory is required to store a 300 × 300-pixel rectangle, filled with a solid #FF0000 color.</p>
+        <p>our sample image would take 300 × 300 × 3 = 270,000 bytes of computer memory. That is, we multiply the image’s width by its height to get the number of pixels in the image. Then, we multiply it by 3, because every pixel is described by three bytes (RGB). If the image contains transparent areas, we’d multiply it by 4, because an additional byte is required to describe transparency: (RGBa): 300 × 300 × 4 = 360,000 bytes</p>
+        <p>Let’s take a more probable example: a carousel with 10 photos, each measuring 800 × 600 pixels. We’ve decided to smoothly transition between images upon a user interaction, such as dragging, so we add will-change: transform for every image. This will promote the images to composite layers ahead of time, so that the transition begins immediately upon the user’s interaction. Now, calculate how much additional memory is required just to display such a carousel: 800 × 600 × 4 × 10 ≈ 19 MB.</p>
+        <p>19 MB of additional memory is required to render a single control! And if you’re a modern web developer who is creating a website as a single-page application, with a lot of animated controls, parallax effects, high-resolution images and other visual enhancements, then an additional 100 to 200 MB per page is just the beginning. Add implicit compositing to the mix (admit it — you’ve never even thought about it before), and you’ll end up with a page filling all available memory on the device.</p>
+        <h2>Pros And Cons</h2>
+        <h3>PROS</h3>
+        <ul>
+            <li>The animation is fast and smooth, at 60 frames per second.</li>
+            <li>A properly crafted animation works in a separate thread and is not blocked by heavy JavaScript calculations.</li>
+            <li>3D transforms are “cheap.”</li>
+        </ul>
+        <h3>CONS</h3>
+        <ul>
+            <li>Additional repainting is required to promote an element to a composite layer. Sometimes this is very slow (i.e. when we get a full-layer repaint, instead of an incremental one).</li>
+            <li>Painted layers have to be transferred to the GPU. Depending on the number and size of these layers, the transfer can be very slow, too. This could lead to an element flickering on low-end and mid-market devices.</li>
+            <li>Every composite layer consumes additional memory. Memory is a precious resource on mobile devices. Excessive memory use could <b>crash the browser</b>.</li>
+            <li>If you don’t consider implicit compositing, then the chances of slow repainting, extra memory usage and browser crashes are very high.</li>
+            <li>We get visual artifacts, such as with text rendering in Safari, and page content will disappear or get distorted in some cases.</li>
+        </ul>
+        <h2>Input events from the browser's point of view</h2>
+        <p>When you hear "input events" you might only think of a typing in textbox or mouse click, but from the browser's point of view, input means any gesture from the user. Mouse wheel scroll is an input event and touch or mouse over is also an input event.</p>
+        <p>When user gesture like touch on a screen occurs, the browser process is the one that receives the gesture at first. However, the browser process is only aware of where that gesture occurred since content inside of a tab is handled by the renderer process. So the browser process sends the event type (like touchstart) and its coordinates to the renderer process. Renderer process handles the event appropriately by finding the event target and running event listeners that are attached.</p>
+        <img src="input.png" alt="">
+        <h2>Understanding non-fast scrollable region</h2>
+        <p>Since running JavaScript is the main thread's job, when a page is composited, the compositor thread marks a region of the page that has event handlers attached as "Non-Fast Scrollable Region". By having this information, the compositor thread can make sure to send input event to the main thread if the event occurs in that region. If input event comes from outside of this region, then the compositor thread carries on compositing new frame without waiting for the main thread.</p>
+        <img src="nfsr1.png" alt="">
+        <h2>Be aware when you write event handlers</h2>
+        <p>Common event handling pattern in web development is the event delegation. Since events bubble, you can attach one event handler at the topmost element and delegate tasks based on event target. You might have seen or written code like the blow.</p>
+        <pre>
+            document.body.addEventListener('touchstart', event => {
+                if (event.target === area) {
+                    event.preventDefault();
+                }
+            });
+        </pre>
+        <p>Since you only need to write one event handler for all elements, ergonomics of this event delegation pattern are attractive. However, if you look at this code from the browser's point of view, now the entire page is marked as a non-fast scrollable region. This means even if your application doesn't care about input from certain parts of the page, the compositor thread has to communicate with the main thread and wait for it every time an input event comes in. Thus, the smooth scrolling ability of the compositor is defeated.</p>
+        <img src="nfsr2.png" alt="">
+        <p>In order to mitigate this from happening, you can pass passive: true options in your event listener. This hints to the browser that you still want to listen to the event in the main thread, but compositor can go ahead and composite new frame as well.</p>
+        <pre>
+            document.body.addEventListener('touchstart', event => {
+                if (event.target === area) {
+                    event.preventDefault()
+                }
+             }, {passive: true});
+        </pre>
+        <a href="https://blog.csdn.net/tengxy_cloud/article/details/52858742" target="_blank">passive-true-csnd</a>
+        <a href="https://alligator.io/js/speed-up-scroll-events/" target="_blank">passive-true-alligator</a>
+    </div>
+    <script type="text/javascript">
+        document.getElementById('button').addEventListener('click',() => {
+            var num = 0;
+            for (var i = 0; i < 1000000000; i++) {
+                num++;
+            }
+        });
+        // document.querySelector('.wrapper').addEventListener('scroll',(ev) => {
+        //     console.log(ev);
+        // });
+    </script>
+</body>
+
+</html>

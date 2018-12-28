@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>performance-node-reverse</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1.0,user-scalable=no" />
+    <script>
+		(function(){
+			var html = document.documentElement;
+			var htmlWidth = html.getBoundingClientRect().width;
+			// html.style.fontSize = htmlWidth / 15 +"px";
+		})();
+	</script>
+    <style media="screen">
+        html,body{
+            margin: 0;
+            padding: 0;
+        }
+        ul,li{
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        #main{
+            /* width: 800px; */
+            margin: 50px auto;
+            background: lightblue;
+        }
+        li{
+            width: 100%;
+            height: 20px;
+            line-height: 20px;
+            text-align: center;
+            border-bottom: 1px solid #aaa;
+        }
+    </style>
+</head>
+
+<body>
+    <button id="btn">反转</button>
+    <button id="btn1">CloneNode</button>
+    <button id="btn2">innerHTML</button>
+    <div id="main">
+        <ul id="list">
+
+        </ul>
+    </div>
+    <script type="text/javascript">
+        var data = [
+            {name: '张三'},
+            {name: '李四'},
+            {name: '王五'},
+            {name: '赵六'},
+            {name: '田七'},
+            {name: '千把'},
+            {name: '许多'},
+        ];
+
+        createList(data,5000);
+
+        function createList(data,len){
+            var str = '';
+            len = len || data.length;
+            for (var i = 0; i < len; i++) {
+                str += '<li>' + data[i % data.length].name + '</li>';
+            }
+
+            list.innerHTML = str;
+        }
+
+        function reverseNode(){
+            var eles = list.children;
+            var len = eles.length - 1;
+            var i = 0;
+
+            while(len){
+                list.insertBefore(eles[eles.length - 1],eles[i++]);
+                len--;
+            }
+        }
+
+        function cloneNode(){
+            var clone = list.cloneNode(false);
+            var fragment = document.createDocumentFragment();
+            var eles = list.children;
+            var len = eles.length-1;
+
+            while(len >= 0){
+                // clone.appendChild(eles[len--]);
+                fragment.appendChild(eles[len--]);
+            }
+            clone.appendChild(fragment);
+            list.parentNode.replaceChild(clone,list);
+        }
+
+        btn.addEventListener('click',function(){
+            reverseNode();
+        },false);
+
+        btn1.addEventListener('click',function(){
+            cloneNode();
+        },false);
+
+        btn2.addEventListener('click',function(){
+            var arr = [];
+            var nodeList = list.children;
+            for(var i = 0,len = nodeList.length;i < len;i++){
+                arr.push({name:nodeList[i].innerHTML});
+            }
+            arr.reverse();
+            createList(arr);
+        },false);
+
+
+    </script>
+
+
+</body>
+
+</html>

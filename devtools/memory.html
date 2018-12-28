@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1.0,user-scalable=no" />
+        <title>devtools-memory</title>
+        <style media="screen">
+            html,body{
+                margin: 0;
+                padding: 0;
+            }
+            #main li{
+                margin: 0;
+                padding: 0;
+                list-style: none;
+                border-bottom: 1px solid #aaa;
+            }
+            #main{
+                width: 800px;
+                margin: 20px auto;
+            }
+            li,p{
+                font-size: 26px;
+
+            }
+        </style>
+    </head>
+    <body>
+        <button id='dom'>创造Node</button>
+        <button id='obj'>创造Object</button>
+        <ul>
+            <li>Memory 列表示原生内存。DOM 节点存储在原生内存中。 如果此值正在增大，则说明正在创建 DOM 节点。</li>
+            <li>JavaScript Memory 列表示 JS 堆。此列包含两个值。 您感兴趣的值是实时数字（括号中的数字）。 实时数字表示您的页面上的可到达对象正在使用的内存量。 如果此数字在增大，要么是正在创建新对象，要么是现有对象正在增长。</li>
+        </ul>
+        <h2>浅层大小</h2>
+        <p>这是对象自身占用内存的大小。</p>
+        <p>典型的 JavaScript 对象会将一些内存用于自身的说明和保存中间值。通常，只有数组和字符串会有明显的浅层大小。不过，字符串和外部数组的主存储一般位于渲染器内存中，仅将一个小包装器对象置于 JavaScript 堆上。</p>
+        <p>渲染器内存是渲染检查页面的进程的内存总和：原生内存 + 页面的 JS 堆内存 + 页面启动的所有专用工作线程的 JS 堆内存。尽管如此，即使一个小对象也可能通过阻止其他对象被自动垃圾回收进程处理的方式间接地占用大量内存。</p>
+        <h2>保留大小</h2>
+        <p>这是将对象本身连同其无法从 GC 根到达的相关对象一起删除后释放的内存大小。</p>
+        <p>GC 根由句柄组成，这些句柄在从原生代码引用 V8 外部的 JavaScript 对象时创建（本地或全局）。所有此类句柄都可以在 GC 根 &lt; 句柄作用域和 GC 根 &lt; 全局句柄下的堆快照内找到。本文档对句柄的介绍没有深入到浏览器实现的细节，可能让您感到困惑。您不必担心 GC 根和句柄。</p>
+        <p>存在很多内部 GC 根，其中的大部分都不需要用户关注。从应用角度来看，存在以下种类的根：</p>
+        <ul>
+            <li>Window 全局对象（位于每个 iframe 中）。堆快照中有一个距离字段，表示从 window 出发的最短保留路径上的属性引用数量。</li>
+            <li>文档 DOM 树，由可以通过遍历文档到达的所有原生 DOM 节点组成。并不是所有的节点都有 JS 包装器，不过，如果有包装器，并且文档处于活动状态，包装器也将处于活动状态。</li>
+            <li>有时，对象可能会被调试程序上下文和 DevTools 控制台保留（例如，在控制台评估后）。在调试程序中清除控制台并移除活动断点，创建堆快照。</li>
+        </ul>
+        <img src="dontcontrol.png" alt="">
+        <p>任何无法从根到达的对象都会被 GC 回收。</p>
+        <img src="leak.png" alt="">
+        <div id="main">
+            <ul id="list">
+
+            </ul>
+        </div>
+        <script type="text/javascript">
+            class Animal{
+                static bark(){
+                    console.log('wuwwwwwwwwwwuwwwuuuu');
+                }
+                fertile(){
+                    console.log('give babies');
+                }
+            }
+
+            class Dog extends Animal{
+
+            }
+            Dog.bark();
+
+            var d = new Dog();
+
+            window.arr = [];
+            dom.addEventListener('click',function(){
+                for (var i = 0; i < 500; i++) {
+                    var oLi = document.createElement('li');
+                    var oText = document.createTextNode('1111');
+                    oLi.appendChild(oText);
+                    list.appendChild(oLi);
+                }
+            },false);
+
+            obj.addEventListener('click',function(){
+                // setInterval(() => {
+                    for (var i = 0; i < 10000; i++) {
+                        arr.push(new Animal());
+                    }
+                // },1000);
+            },false);
+
+        </script>
+    </body>
+</html>
