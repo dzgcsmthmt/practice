@@ -41,6 +41,7 @@
     <button id="btn">反转</button>
     <button id="btn1">CloneNode</button>
     <button id="btn2">innerHTML</button>
+    <button id="btn3">innerHTML&regExp</button>
     <div id="main">
         <ul id="list">
 
@@ -110,6 +111,14 @@
             }
             arr.reverse();
             createList(arr);
+        },false);
+
+        btn3.addEventListener('click',function(){
+            var arr;
+            var html = list.innerHTML;
+            var regExp = /<li>[\s\S]*?<\/li>/g;
+            arr = html.match(regExp);
+            list.innerHTML = arr.reverse().join('');
         },false);
 
 
