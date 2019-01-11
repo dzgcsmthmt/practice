@@ -29,3 +29,7 @@ function calcREM() {
     window.REM = rem;
 }
 2、在每个webview配置webview.getSettings().setTextZoom(100)就可以了
+-------------------------------------------------------------------------------------------------------------
+Ios在input focus时调用select无效
+常用的解决方案如下：
+将focus事件改为click事件
