@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>document.write() example</title>
+    <style media="screen">
+
+    </style>
+</head>
+<body>
+    <ul>
+        <li>1</li>
+        <li>2</li>
+        <li>3</li>
+        <li>4</li>
+    </ul>
+    <button type="button" id="button">reverse</button>
+    <input type="range" id="range">
+    <img src="timg.gif" alt="">
+    <script src="jquery.js" charset="utf-8"></script>
+
+    <script type="text/javascript">
+        var oBtn = document.getElementById('button');
+        var oRange = document.getElementById('range');
+        oBtn.addEventListener('click',function(){
+            var arr = Array.from(document.querySelectorAll('ul li')).reverse();
+            for (var i = 1; i < arr.length; i++) {
+                document.querySelector('ul').appendChild(arr[i]);
+            }
+            console.log('reversed');
+        },false);
+        oRange.addEventListener('change',function(){
+            console.log(performance.now())
+            var count = 6000000000;
+            var step = 500000;
+            var start = 0;
+            var begin = 500000;
+            (function loop(){
+                setTimeout(function(){
+                    for (var i = start; i < Math.min(begin,count); i++) {
+
+                    }
+                    begin += step;
+                    start += step;
+                    if(begin < count){
+                        console.log(begin);
+                        loop();
+                    }else{
+                        console.log(performance.now())
+                    }
+                },0);
+            })();
+        },false);
+        setTimeout(function(){
+            var deferred = $.Deferred();
+            var deferred2 = $.Deferred();
+
+            setTimeout(function(){
+                deferred.resolve(deferred2);
+                setTimeout(function(){
+                    deferred2.resolve(2);
+                },2000)
+            },1000);
+
+            deferred.then(function(value){
+                console.log(value);
+                return value;
+            }).then(function(val){
+                console.log(val);
+            })
+
+            new Promise((resolve,reject) => {
+                setTimeout(() => {
+                    resolve(new Promise((resolve,reject) => {
+                        setTimeout(() => {
+                            resolve(111);
+                        },2000)
+                    }))
+                },1000)
+            }).then((val) => {
+                console.log(val);
+                return val + '11'
+            }).then((val) => {
+                console.log(val);
+            })
+        },5000);
+    </script>
+</body>
+</html>
