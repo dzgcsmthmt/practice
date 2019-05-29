@@ -2,77 +2,78 @@ var timer,count = 60;
 var checkValidation = function(condition,ele,invalidEle){
     ele[condition ? 'removeClass' : 'addClass']('error')[condition ? 'addClass' : 'removeClass']('success');
     invalidEle[condition ? 'hide' : 'show']();
+    // invalidEle[0].style.display = condition ? 'none' : '';
     return condition;
 };
-// var arr = [
-//         {key: "phone",func: function(){return checkValidation(/^1\d{10}$/.test(this.value),this.ele,this.invalidEle);}},
-//         {key: "validateCode",func: function(){return checkValidation(/^\d{4}$/.test(this.value),this.ele,this.invalidEle);}},
-//         {key: "areaCode",func: function(){return checkValidation(/^[0-9a-zA-Z]{4}$/.test(this.value),this.ele,this.invalidEle);}},
-//         {key: "password",func: function(){return checkValidation(/^(?=.*?[a-zA-Z])(?=.*?[0-9]).{6,16}$/.test(this.value),this.ele,this.invalidEle);}},
-//         {key: "repassword",func: function(){return checkValidation(this.value === validate.password.value && this.value.length,this.ele,this.invalidEle);}},
-//     ];
-var validate = {
-	phone: {
-        ele: $('#phone'),
-        invalidEle: $('#phone').next('p'),
-        value: $('#phone').val(),
-        checkValidation: function(){
-            //var re = new RegExp('Foo B', 'gi');
-            //console.log(re.test('Foo Bar'));
-            //console.log(re.test('Foo Bar'));
-            /*if(/(^1\d{10}$/.test(this.value)){
-                this.ele.addClass('success').removeClass('error');
-                this.invalidEle.hide();
-                return true;
-            }else{
-                this.ele.removeClass('success').addClass('error');
-                this.invalidEle.show();
-                return false;
-            }*/
-            /*
-            var flag = /^1\d{10}$/.test(this.value);
-            this.ele[flag ? 'removeClass' : 'addClass']('error')[flag ? 'addClass' : 'removeClass']('success');
-            this.invalidEle[flag ? 'hide' : 'show']();
-            return flag;
-            */
-            return checkValidation(/^1\d{10}$/.test(this.value),this.ele,this.invalidEle);
-        },
-    },
-	validateCode: {
-        ele: $('#validateCode'),
-        invalidEle: $('#validateCode').next('p'),
-        value: $('#validateCode').val(),
-        checkValidation: function(){
-            return checkValidation(/^\d{4}$/.test(this.value),this.ele,this.invalidEle);
-        },
-    },
-    areaCode: {
-        ele: $('#areaCode'),
-        invalidEle: $('#areaCode').next('p'),
-        value: $('#areaCode').val(),
-        checkValidation: function(){
-            return checkValidation(/^[0-9a-zA-Z]{4}$/.test(this.value),this.ele,this.invalidEle);
-        },
-    },
-    password: {
-        ele: $('#password'),
-        invalidEle: $('#password').next('p'),
-        value: $('#password').val(),
-        checkValidation: function(){
-            return checkValidation(/^(?=.*?[a-zA-Z])(?=.*?[0-9]).{6,16}$/.test(this.value),this.ele,this.invalidEle);
-        },
-    },
-    repassword: {
-        ele: $('#repassword'),
-        invalidEle: $('#repassword').next('p'),
-        value: $('#repassword').val(),
-        checkValidation: function(){
-            return checkValidation(this.value === validate.password.value && this.value.length,this.ele,this.invalidEle);
-        },
-    }
-}
+var arr = [
+        {key: "phone",func: function(){return checkValidation(/^1\d{10}$/.test(this.value),this.ele,this.invalidEle);}},
+        {key: "validateCode",func: function(){return checkValidation(/^\d{4}$/.test(this.value),this.ele,this.invalidEle);}},
+        {key: "areaCode",func: function(){return checkValidation(/^[0-9a-zA-Z]{4}$/.test(this.value),this.ele,this.invalidEle);}},
+        {key: "password",func: function(){return checkValidation(/^(?=.*?[a-zA-Z])(?=.*?[0-9]).{6,16}$/.test(this.value),this.ele,this.invalidEle);}},
+        {key: "repassword",func: function(){return checkValidation(this.value === validate.password.value && this.value.length,this.ele,this.invalidEle);}},
+    ];
+// var validate = {
+// 	phone: {
+//         ele: $('#phone'),
+//         invalidEle: $('#phone').next('p'),
+//         value: $('#phone').val(),
+//         checkValidation: function(){
+//             //var re = new RegExp('Foo B', 'gi');
+//             //console.log(re.test('Foo Bar'));
+//             //console.log(re.test('Foo Bar'));
+//             /*if(/(^1\d{10}$/.test(this.value)){
+//                 this.ele.addClass('success').removeClass('error');
+//                 this.invalidEle.hide();
+//                 return true;
+//             }else{
+//                 this.ele.removeClass('success').addClass('error');
+//                 this.invalidEle.show();
+//                 return false;
+//             }*/
+//             /*
+//             var flag = /^1\d{10}$/.test(this.value);
+//             this.ele[flag ? 'removeClass' : 'addClass']('error')[flag ? 'addClass' : 'removeClass']('success');
+//             this.invalidEle[flag ? 'hide' : 'show']();
+//             return flag;
+//             */
+//             return checkValidation(/^1\d{10}$/.test(this.value),this.ele,this.invalidEle);
+//         },
+//     },
+// 	validateCode: {
+//         ele: $('#validateCode'),
+//         invalidEle: $('#validateCode').next('p'),
+//         value: $('#validateCode').val(),
+//         checkValidation: function(){
+//             return checkValidation(/^\d{4}$/.test(this.value),this.ele,this.invalidEle);
+//         },
+//     },
+//     areaCode: {
+//         ele: $('#areaCode'),
+//         invalidEle: $('#areaCode').next('p'),
+//         value: $('#areaCode').val(),
+//         checkValidation: function(){
+//             return checkValidation(/^[0-9a-zA-Z]{4}$/.test(this.value),this.ele,this.invalidEle);
+//         },
+//     },
+//     password: {
+//         ele: $('#password'),
+//         invalidEle: $('#password').next('p'),
+//         value: $('#password').val(),
+//         checkValidation: function(){
+//             return checkValidation(/^(?=.*?[a-zA-Z])(?=.*?[0-9]).{6,16}$/.test(this.value),this.ele,this.invalidEle);
+//         },
+//     },
+//     repassword: {
+//         ele: $('#repassword'),
+//         invalidEle: $('#repassword').next('p'),
+//         value: $('#repassword').val(),
+//         checkValidation: function(){
+//             return checkValidation(this.value === validate.password.value && this.value.length,this.ele,this.invalidEle);
+//         },
+//     }
+// }
 
-/*
+/**/
 var validate = {};
 arr.forEach(function(ele,index){
     var key = ele.key;
@@ -82,7 +83,7 @@ arr.forEach(function(ele,index){
         value: $('#' + key).val(),
         checkValidation: ele.func
     }
-})*/
+})
 var signup = {
     countDown: function(ele){
         var self = this;
