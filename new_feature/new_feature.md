@@ -334,3 +334,6 @@ window.navigator.vibrate([100,30,100,30,100,200,200,30,200,30,200,200,100,30,100
 ---
 ## Media Capture and Streams
 参考：[w3c](https://www.w3.org/TR/mediacapture-streams//)
+---
+## navigator.sendBeacon
+参考：[w3c](https://developer.mozilla.org/zh-CN/docs/Web/API/Navigator/sendBeacon)

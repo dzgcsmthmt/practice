@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>开放注册</title>
+
+        <link rel="stylesheet" type="text/css" href="./reg.css" />
+        <link rel="stylesheet" type="text/css" href="./theme.css" />
+
+    </head>
+    <body>
+        <div class="page-main-content has-header">
+            <div id="register" class="main-content ">
+                <div class="clearfix reg-welcome">
+                    <span class="font-size-20">欢迎注册</span>
+                    <span class="fr input-color">已有帐号<a href="/" class="ml-5" id="gotoLogin">请登录</a></span>
+                </div>
+                <div class="input-row mt-40 clearfix">
+                    <div class="input-desc fl"><span class="star">*</span><span class="ml-5">手机号</span></div>
+                    <div class="input-wrapper fl">
+                        <input type="text" name="phone" id="phone" placeholder="请输入手机号">
+                        <p class="error-desc display-none">请输入正确的手机号</p>
+                    </div>
+                </div>
+                <div class="input-row mt-40 clearfix">
+                    <div class="input-desc fl"><span class="star">*</span><span class="ml-5">验证码</span></div>
+                    <div class="input-wrapper fl">
+                        <input type="text" name="phone" id="validateCode" placeholder="请输入验证码" class="w250">
+                        <span class="btn fr ml-10" id="sendCode">获取短信验证码</span>
+                        <p class="error-desc display-none">请输入正确的验证码</p>
+                    </div>
+                </div>
+                <div class="input-row mt-40 clearfix">
+                    <div class="input-desc fl"><span class="star">*</span><span class="ml-5">区域码</span></div>
+                    <div class="input-wrapper fl">
+                        <input type="text" name="phone" id="areaCode" placeholder="请输入区域码">
+                        <p class="error-desc display-none">请输入有效的区域码</p>
+                    </div>
+                </div>
+                <div class="input-row mt-40 clearfix">
+                    <div class="input-desc fl"><span class="star">*</span><span class="ml-5">密码</span></div>
+                    <div class="input-wrapper fl">
+                        <input type="password" name="phone" id="password" placeholder="请输入密码" class="">
+                        <p class="error-desc display-none">请输入6-16密码,且必须包含数字、字母</p>
+                    </div>
+                </div>
+                <div class="input-row mt-40 clearfix">
+                    <div class="input-desc fl"><span class="star">*</span><span class="ml-5">确认密码</span></div>
+                    <div class="input-wrapper fl">
+                        <input type="password" name="phone" id="repassword" placeholder="请再次输入密码" class="">
+                        <p class="error-desc display-none">两次输入密码不一致，请重新输入</p>
+                    </div>
+                </div>
+                <div class="protocol-wrapper">
+                    <input type="checkbox" checked><span class="input-color">我已阅读并同意</span><a href="#" class="ml-5" id="gotoLogin">OKAY教师注册协议</a>
+                    <p class="error-desc">请先阅读并同意注册协议</p>
+                </div>
+                <span href="javascript:void(0)" id="submitRegister" class="btn submit_btn">注册</span>
+            </div>
+        </div>
+
+        <script src="jquery.js" charset="utf-8"></script>
+        <script src="index.js" charset="utf-8"></script>
+    </body>
+</html>
