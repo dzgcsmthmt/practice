@@ -115,3 +115,4 @@ addEvent.prototype.isIn = function(x,y){
     }
 }   
 </pre>
+> 1px line https://stackoverflow.com/questions/7530593/html5-canvas-and-line-width/7531540#7531540
