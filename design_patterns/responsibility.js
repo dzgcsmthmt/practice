@@ -1,35 +1,52 @@
-function Sender(reciever){
-    this.reciever = reciever;
-}
+class FilterChain{
+                constructor(){
+                    this.filters = [];
+                    this.currentIndex = 0;
+                }
 
-Sender.prototype.send = function (request) {
-    this.reciever.handler(request);
-}
+                addFilter(filter){
+                    this.filters.push(filter);
+                    return this;
+                }
 
-function Reciever(){
-    this.next = null;
-}
+                doFilter(to,from,next,chain){
+                    if(this.currentIndex == this.filters.length){
+                        this.currentIndex = 0;
+                        return
+                    }
+                    var filter = this.filters[this.currentIndex++];
+                    filter.doFilter(to,from,next,chain);
+                }
+            }
 
-Reciever.prototype.handler = function(request){
-    console.log(request.a);
-    if(request.a == 2){
-        return;
-    }
-    request.a++;
-    this.next && this.next.handler(request);
-}
+            class Filter{
+                doFilter(to,from,next,chain){
 
-Reciever.prototype.setNext = function(reciever){
-    this.next = reciever;
-    return reciever;
-}
+                }
+            }
 
-var rec1 = new Reciever();
-var rec2 = new Reciever();
-var rec3 = new Reciever();
+            class HtmlFilter extends Filter{
+                doFilter(to,from,next,chain){
+                    to = to.replace('<','&lt;').replace('>','&gt;')
+                    console.log('to',to);
+                    // if(to.indexOf('aa') > -1){
+                        chain.doFilter(to,from,next,chain);
+                        console.log('from','HtmlFilter------');
+                    // }
+                }
+            }
 
-rec1.setNext(rec2).setNext(rec3);
+            class SensitiveFilter extends Filter{
+                doFilter(to,from,next,chain){
+                    to = to.replace('敏感','**');
+                    console.log('to',to);
+                    chain.doFilter(to,from,next,chain);
+                    console.log('from','SensitiveFilter------');
+                }
+            }
 
-var sender = new Sender(rec1);
+            var fc = new FilterChain();
 
-sender.send({a:1});
+            fc.addFilter(new HtmlFilter()).addFilter(new SensitiveFilter());
+            fc.doFilter('this is <script> 敏感 :) ^V^ asdf','from',function(){},fc);
+            // fc.doFilter('this is <script> 敏感 :) ^V^ asdf','from',function(){},fc);
