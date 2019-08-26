@@ -9,6 +9,11 @@ var util = {
         var match = url.match(reg);
         return !match ? null : match[1];
     },
+    jsonToQueryString: function(json) {
+        return Object.keys(json).map(function(key) {
+                   return encodeURIComponent(key) + '=' + encodeURIComponent(json[key]);
+               }).join('&');
+    },
     tplEngine: function(tpl, data) {
        var match,reg = /<%(.+)?%>/g,
            regOut = /(^(\s)+(if|for|else|switch|case|break|{|}))(.*)?/g,
@@ -85,7 +90,7 @@ var util = {
                     fn();
                 }, delay);
             }
-        }     
+        }
    },
    debounce: function (func, wait, immediate) {
        var timeout;
