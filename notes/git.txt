@@ -1,4 +1,4 @@
-git 笔记：
+﻿git 笔记：
 1、git分区
 工作区 -----------  代码区
 缓存区 -----------  git add. 加入了追踪但是还没有commit
@@ -39,3 +39,6 @@ git checkout 切换分支
 git checkout -b  新建并切换到新建分支
 git branch -d 删除分支
 git push origin :branch name 提交删除分支
+----------------------------------------------------------------------------------------------
+9、解决每次都需要输入用户名和密码
+git config --global credential.helper store
