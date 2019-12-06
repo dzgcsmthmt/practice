@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Perspective</title>
+    <style>
+        *{margin: 0;padding: 0;list-style: none}
+        div{
+            margin: 200px auto;
+            width: 800px;
+            perspective: 1000px;
+            perspective-origin: right bottom;
+        }
+        div:hover ul{
+            transform: rotateY(360deg);
+        }
+        ul{
+            width: 200px;
+            height: 200px;
+            position: relative;
+            margin: 0 auto;
+            transition: all 2s;
+            transform-style: preserve-3d;
+        }
+        ul li{
+            width: 200px;
+            height: 200px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: orangered;
+            text-align: center;
+        }
+        ul li:nth-child(1){
+            transform: translateZ(100px);
+        }
+        ul li:nth-child(5){
+            transform: rotateY(90deg) translateZ(100px);
+            background: palegreen;
+        }
+        ul li:nth-child(3){
+            transform: translateZ(-100px);
+            background: mediumpurple;
+        }
+        ul li:nth-child(6){
+            transform: rotateY(90deg) translateZ(-100px);
+            background: blue;
+        }
+        ul li:nth-child(2){
+            transform: rotateX(90deg) translateZ(100px);
+            background: yellow;
+        }
+        ul li:nth-child(4){
+            transform: rotateX(90deg) translateZ(-100px);
+            background: orange;
+        }
+
+    </style>
+</head>
+<body>
+<div>
+    <ul>
+        <li>1</li>
+        <li>2</li>
+        <li>3</li>
+        <li>4</li>
+        <li>5</li>
+        <li>6</li>
+    </ul>
+</div>
+</body>
+</html>

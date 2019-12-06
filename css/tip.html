@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,user-scalable=no" />
+    <title>Document</title>
+    <style>
+        *{margin: 0;padding: 0;list-style: none;}
+        input{
+            margin: 100px 0 0 200px ;
+            padding: 5px 0;
+            width: 180px;
+        }
+        .tip{
+            margin:8px 0 0 200px;
+            width: 240px;
+            background: #FFEEDD;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.4);
+            font-size: 12px;
+            word-break: break-all;
+            padding: 5px;
+            line-height: 18px;
+            border: 1px solid #B2A69A;
+            border-radius: 5px;
+            position: relative;
+            transition: 0.5s cubic-bezier(.17,.67,.57,1.26) transform;
+            transform-origin:2em -0.4em;
+        }
+        .tip:before{
+            content: '';
+            position: absolute;
+            top: -12px;
+            left: 2em;
+            height: 0;
+            border-left:8px solid transparent;
+            border-right:8px solid transparent;
+            border-bottom: 12px solid #FFEEDD;
+            border-top: none;
+            z-index: 2;
+        }
+        .tip:after{
+            content: '';
+            position: absolute;
+            top: -13px;
+            left: 2em;
+            height: 0;
+            border-left:8px solid transparent;
+            border-right:8px solid transparent;
+            border-bottom: 12px solid #B2A69A;
+            border-top: none;
+        }
+        input:focus + div{
+            transform: scale(1);
+        }
+        input:not(:focus) +.tip{
+            transform: scale(0);
+            transition-timing-function: ease;
+        }
+        .test{
+            width: 100px;
+            height: 100px;
+            background: #808080;
+            margin-left: 100px;
+            border-radius: 15px;
+            outline: 1px dashed blue;
+            outline-offset: -13px;
+
+        }
+    </style>
+
+</head>
+<body>
+    <input type="text"/>
+    <div class="tip">Only letters,numbers,underscores(_) and hyphens(-) allowed</div>
+
+    <div class="test"></div>
+</body>
+</html>

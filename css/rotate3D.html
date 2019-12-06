@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>3D旋转</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        div{
+            margin:100px 0 0 0px;
+            perspective: 8800px;
+        }
+        div ul{
+            position: relative;
+            float:left;
+            width: 100px;
+            height: 600px;
+            transform-style: preserve-3d;
+            transform: rotateX(0deg) /*rotateY(0deg)*/;
+            transition:all 4s;
+        }
+        div ul:nth-child(2){
+            transition-delay: 0.1s;
+        }
+        div ul:nth-child(3){
+            transition-delay: 0.2s;
+        }
+        div ul:nth-child(4){
+            transition-delay: 0.3s;
+        }
+        div ul:nth-child(5){
+            transition-delay: 0.4s;
+        }
+        div ul:nth-child(6){
+            transition-delay: 0.5s;
+        }
+        div ul:nth-child(7){
+            transition-delay: 0.6s;
+        }
+        div ul:nth-child(8){
+            transition-delay: 0.7s;
+        }
+        div:hover ul{
+            transform: rotateX(-90deg) /*rotateY(360deg)*/;
+        }
+        ul li{
+            position: absolute;
+            width: 100px;
+            height: 600px;
+            color: #fff;
+            text-align: center;
+        }
+        ul li:nth-child(1){
+            background: url(img/1.jpg);
+            transform: translateZ(300px);
+        }
+        ul li:nth-child(2){
+            background: url(img/2.jpg);
+            transform: rotateX(90deg) translateZ(300px);
+        }
+        ul li:nth-child(3){
+            background: url(img/3.jpg);
+            transform: translateZ(-300px);
+        }
+        ul li:nth-child(4){
+            background: url(img/4.jpg);
+            transform: rotateX(90deg) translateZ(-300px);
+        }
+        ul li:nth-child(5){
+            width: 600px;
+            background: #333;
+            transform: rotateY(90deg) translateZ(-300px);
+        }
+        ul li:nth-child(6){
+            width: 600px;
+            background: #333;
+            transform: rotateY(90deg) translateZ(-200px);
+        }
+        ul:nth-child(2) li{
+            background-position: -100px 0;
+        }
+        ul:nth-child(3) li{
+            background-position: -200px 0;
+        }
+        ul:nth-child(4) li{
+            background-position: -300px 0;
+        }
+        ul:nth-child(5) li{
+            background-position: -400px 0;
+        }
+        ul:nth-child(6) li{
+            background-position: -500px 0;
+        }
+        ul:nth-child(7) li{
+            background-position: -600px 0;
+        }
+        ul:nth-child(8) li{
+            background-position: -700px 0;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <ul>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+        <ul>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+        <ul>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+        <ul>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+        <ul>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+        <ul>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+        <ul>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+        <ul>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+        <div style="clear: both"></div>
+    </div>
+</body>
+</html>
