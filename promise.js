@@ -172,3 +172,22 @@
             // dp.resolve('abc');
             dp.reject('abc');
         },1000);
+
+
+
+        function promisify(fn) {
+            return (...args) => {
+                return new Promise((resolve,reject) => {
+                    fn(...args,(error,result) => {
+                        if(error){
+                            reject(result);
+                            return;
+                        }
+        
+                        resolve(result);
+                    })
+                })
+            }
+            
+        
+        }
