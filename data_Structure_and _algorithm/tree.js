@@ -1,3 +1,32 @@
+function Stack(){
+    this.items = [];
+}
+
+Stack.prototype = {
+    constructor: Stack,
+    push: function(item){
+        this.items.push(item);
+    },
+    pop: function(){
+        return this.items.pop();
+    },
+    peek: function(){
+        return this.items[this.size() - 1];
+    },
+    isEmpty: function(){
+        return this.items.length == 0;
+    },
+    size: function(){
+        return this.items.length;
+    },
+    clear: function(){
+        this.items.length = 0;
+    },
+    print: function(){
+        console.log(this.items.toString());
+    }
+}
+
 function BinarySearchTree(){
     this.root = null;
 }
@@ -62,7 +91,23 @@ BinarySearchTree.prototype = {
         }
         preOrderTraverseNode(this.root,cb);
     },
-    postOrderTraverse: function(){
+     //非递归前续遍历
+    preOrderTraverseNR: function(node,cb){
+        var stack = new Stack();
+        stack.push(node);
+        while(!stack.isEmpty()){
+            var cur = stack.pop();
+            cb(cur);
+            if(cur.right){
+                stack.push(cur.right);
+            }
+            if(cur.left){
+                stack.push(cur.left);
+            }
+        }
+        
+    },
+    postOrderTraverse: function(cb){
         function postOrderTraverseNode(node,cb){
             if(node != null){
                 postOrderTraverseNode(node.left,cb);
@@ -208,12 +253,15 @@ tree.insert(20);
 tree.insert(18);
 tree.insert(25);
 tree.insert(6);
-tree.inOrderTraverse(function(node){
-    // console.log(node.key);
+tree.preOrderTraverse(function(node){
+    console.log(node.key);
 });
-console.log(tree.minHeight());
+tree.preOrderTraverseNR(tree.root,function(node){
+    console.log(node.key);
+});
+//console.log(tree.minHeight());
 // console.log(tree.maxHeight());
 // console.log(tree.max());
 // console.log(tree.search(1));
 // console.log(tree.search(10));
-tree.remove(20);
+//tree.remove(20);
