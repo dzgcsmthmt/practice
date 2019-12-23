@@ -81,6 +81,22 @@ BinarySearchTree.prototype = {
         }
         inOrderTraverseNode(this.root,cb);
     },
+    inOrderTraverseNR: function(root,cb){
+        var stack = new Stack();
+        var arr = [];
+        var cur = root;
+        while(cur != null || !stack.isEmpty()){
+            while(cur != null){
+                stack.push(cur);
+                cur = cur.left;
+            }
+            var node = stack.pop();
+            arr.push(node);
+            cur = node.right;
+        }
+
+        arr.forEach(ele => cb(ele));
+    },
     preOrderTraverse: function(cb){
         function preOrderTraverseNode(node,cb){
             if(node != null){
@@ -116,6 +132,23 @@ BinarySearchTree.prototype = {
             }
         }
         postOrderTraverseNode(this.root,cb);
+    },
+    postOrderTraverseNR: function(node,cb){
+        var stack = new Stack();
+        var arr = [];
+        stack.push(node);
+        while(!stack.isEmpty()){
+            var cur = stack.pop();
+            arr.push(cur);
+            if(cur.left){
+                stack.push(cur.left);
+            }
+            if(cur.right){
+                stack.push(cur.right);
+            }
+        }
+
+        arr.reverse().forEach(ele => cb(ele));
     },
     levelOrderTraverse: function(){
         if(this.root == null){
