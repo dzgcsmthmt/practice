@@ -51,3 +51,33 @@ if (!Function.prototype.bind) {
     return fBound;
   };
 }
+
+
+function bigNumber2String(number){
+    var str,pre,post,int,frac,xs;
+    if(number > 1e21){
+        str = number.toString();
+        pre = str.split('e')[0];
+        post = '0'.padEnd(str.split('e')[1],0);
+
+        int = pre.split('\.')[0];
+        frac = pre.split('\.')[1];
+        if(frac){
+            if(frac.length > post.length){
+                xs = frac.substring(post.length);
+                frac = frac.substring(0,post.length);
+            }else{
+                frac = frac + post.substring(frac.length);
+            }
+            return (int > 0 ? int : '') + frac + (xs ? '\.' + xs : '');
+
+        }
+
+    }else{
+        return number.toString();
+    }
+
+}
+
+console.log(bigNumber2String(1.1234567890123456789012345e22));
+//1.1234567890123456789012345 --> 1.1234567890123457 无法保证精度
