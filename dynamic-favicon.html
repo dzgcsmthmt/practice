@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>index</title>
+    <link rel="short icon" id="favicon" href="/favicon.ico">
+    <style media="screen">
+
+    </style>
+</head>
+
+<body>
+    <div id="app">
+
+    </div>
+    <script type="text/javascript">
+        var favicon = document.getElementById('favicon');
+        var faviconSize = 16;
+
+        var canvas = document.createElement('canvas');
+        canvas.width = faviconSize;
+        canvas.height = faviconSize;
+
+        var context = canvas.getContext('2d');
+        var img = document.createElement('img');
+        img.src = favicon.href;
+
+
+        img.onload = () => {
+            let i = 1;
+            setInterval(() => {
+                context.clearRect(img, 0, 0, faviconSize, faviconSize);
+                // Draw Original Favicon as Background
+                context.drawImage(img, 0, 0, faviconSize, faviconSize);
+
+                // Draw Notification Circle
+                context.beginPath();
+                context.arc(canvas.width - faviconSize / 3, faviconSize / 3, faviconSize / 3, 0, 2 * Math.PI);
+                context.fillStyle = '#FF0000';
+                context.fill();
+
+                // Draw Notification Number
+                context.font = '10px "helvetica", sans-serif';
+                context.textAlign = "center";
+                context.textBaseline = "middle";
+                context.fillStyle = '#FFFFFF';
+
+                context.fillText(i++, canvas.width - faviconSize / 3, faviconSize / 3);
+                // Replace favicon
+                favicon.href = canvas.toDataURL('image/png');
+            },1000)
+        }
+    </script>
+</body>
+
+</html>
