@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>index</title>
+    <link rel="short icon" id="favicon" href="/favicon.ico">
+    <style media="screen">
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        .upload-progress-overlay{
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.1);
+            z-index: 9999;
+        }
+        .upload-progress-wrapper {
+            position: absolute;
+            background: #FFFFFF;
+            border: 1px solid #E0ECF4;
+            border-radius: 8px;
+            max-width: 100%;
+            padding: 32px 46px;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%,-50%);
+            box-shadow: 1px 1px 3px #cacaca;
+        }
+
+        .is-mobile .upload-progress-wrapper {
+            padding: 32px 18px;
+            width: 90%;
+            box-sizing: border-box;
+            max-width: 334px;
+        }
+
+        .upload-desc-wrapper {
+            text-align: center;
+            font-size: 14px;
+            color: #0A2233;
+            line-height: 28px;
+        }
+
+        .upload-desc-text {
+            font-size: 18px;
+            color: #000;
+        }
+
+        .progress-bar-wrapper{
+            margin-bottom: 14px;
+        }
+        .loading{
+            position: relative;
+            width: 64px;
+            height: 64px;
+            user-select: none;
+            box-sizing: border-box;
+            margin: 0 auto;
+            background: url('./loading.gif') no-repeat;
+        }
+        .loader{
+            position: relative;
+            width: 64px;
+            height: 64px;
+            user-select: none;
+            box-sizing: border-box;
+            margin: 0 auto;
+        }
+        .loader-bg{
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 5px solid #eee;
+            box-sizing: border-box;
+        }
+        .spiner-holder-one{
+            position: absolute;
+            top:0;
+            left:0;
+            overflow: hidden;
+            width: 50%;
+            height: 50%;
+            background: transparent;
+            box-sizing: border-box;
+        }
+        .spiner-holder-two{
+            position: absolute;
+            top:0;
+            left:0;
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            box-sizing: border-box;
+        }
+        .loader-spiner{
+            width: 200%;
+            height: 200%;
+            border-radius: 50%;
+            border: 5px solid #4FB6F5;
+            box-sizing: border-box;
+        }
+        .animate-0-25-a{
+            transform: rotate(90deg);
+            transform-origin: 100% 100%;
+        }
+        .animate-0-25-b{
+            transform: rotate(-90deg);
+            transform-origin: 100% 100%;
+        }
+        .animate-25-50-a{
+            transform: rotate(180deg);
+            transform-origin: 100% 100%;
+        }
+        .animate-25-50-b{
+            transform: rotate(-90deg);
+            transform-origin: 100% 100%;
+        }
+        .animate-50-75-a{
+            transform: rotate(270deg);
+            transform-origin: 100% 100%;
+        }
+        .animate-50-75-b{
+            transform: rotate(-90deg);
+            transform-origin:100% 100%;
+        }
+        .animate-75-100-a{
+            transform: rotate(0deg);
+            transform-origin: 100% 100%;
+        }
+        .animate-75-100-b{
+            transform: rotate(-90deg);
+            transform-origin: 100% 100%;
+        }
+        .text{
+            text-align: center;
+            line-height: 60px;
+            font-size: 20px;
+            color: #0A2233;
+        }
+
+
+    </style>
+</head>
+
+<body>
+    <div class="upload-progress-overlay">
+        <div class="upload-progress-wrapper">
+            <div class="progress-bar-wrapper">
+                <div class="loader">
+                    <div class="loader-bg">
+                        <div class="text">0%</div>
+                    </div>
+                    <div class="spiner-holder-one animate-0-25-a">
+                        <div class="spiner-holder-two animate-0-25-b">
+                            <div class="loader-spiner" style=""></div>
+                        </div>
+                    </div>
+                    <div class="spiner-holder-one animate-25-50-a">
+                        <div class="spiner-holder-two animate-25-50-b">
+                            <div class="loader-spiner"></div>
+                        </div>
+                    </div>
+                    <div class="spiner-holder-one animate-50-75-a">
+                        <div class="spiner-holder-two animate-50-75-b">
+                            <div class="loader-spiner"></div>
+                        </div>
+                    </div>
+                    <div class="spiner-holder-one animate-75-100-a">
+                        <div class="spiner-holder-two animate-75-100-b">
+                            <div class="loader-spiner"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="upload-desc-wrapper">
+                <p class="upload-desc-text">努力提交答案中…</p>
+                <p class="upload-desc-tip">请不要关闭页面，关闭页面将导致提交答案失败</p>
+            </div>
+        </div>
+    </div>
+    <script src="jquery.js" charset="utf-8"></script>
+    <script type="text/javascript">
+        function setProgress(progress){
+            progress = Math.floor(progress);
+            if(progress < 25){
+                var angle = -90 + (progress/100)*360;
+                $(".animate-0-25-b").css("transform","rotate("+angle+"deg)");
+            }
+            else if(progress>=25 && progress<50){
+                var angle = -90 + ((progress-25)/100)*360;
+                $(".animate-0-25-b").css("transform","rotate(0deg)");
+                $(".animate-25-50-b").css("transform","rotate("+angle+"deg)");
+            }
+            else if(progress>=50 && progress<75){
+                var angle = -90 + ((progress-50)/100)*360;
+                $(".animate-25-50-b, .animate-0-25-b").css("transform","rotate(0deg)");
+                $(".animate-50-75-b").css("transform","rotate("+angle+"deg)");
+            }
+            else if(progress>=75 && progress<=100){
+                var angle = -90 + ((progress-75)/100)*360;
+                $(".animate-50-75-b, .animate-25-50-b, .animate-0-25-b").css("transform","rotate(0deg)");
+                $(".animate-75-100-b").css("transform","rotate("+angle+"deg)");
+            }
+            $(".upload-progress-overlay .text").html(progress+"%");
+        }
+        var progress = 0;
+        var intervalId = setInterval(function () {
+            if(progress == 100){
+                clearInterval(intervalId);
+            }
+            setProgress(progress++);
+        }, 100);
+    </script>
+</body>
+
+</html>
