@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+       var socket = new WebSocket('ws://localhost:3000');
+       socket.onopen = function(){
+           socket.send('hi 老伙计');
+       }
+       socket.onmessage = function(e){
+           console.log(e.data);
+       }
+    </script>
+</body>
+</html>

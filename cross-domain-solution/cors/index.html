@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CORS</title>
+</head>
+<body>
+    CORS
+    <script>
+        var xhr = new XMLHttpRequest();
+
+        xhr.open('GET','http://192.168.1.7:8888/search',true);
+        document.cookie = 'xh=1';
+        xhr.withCredentials = true;
+        xhr.onreadystatechange = function(){
+            if(xhr.readyState == 4){
+                if(xhr.status >= 200 && xhr.status <= 399 || xhr.status == 304){
+                    console.log(xhr.response);
+                }
+            }
+        }
+        xhr.send();
+    </script>
+</body>
+</html>

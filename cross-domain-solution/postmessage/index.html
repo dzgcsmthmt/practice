@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>postmessage</title>
+</head>
+<body>
+    a
+    <iframe src="http://localhost:8888/iframe.html" 
+        frameborder="0" id='iframe' onload="load()"></iframe>
+    <script>
+        function load(){
+            let frame = document.getElementById('iframe');
+            frame.contentWindow.postMessage('I love you','http://localhost:8888');
+            window.onmessage = function(e){
+                console.log(e.data);
+            }
+        }
+    </script>
+</body>
+</html>

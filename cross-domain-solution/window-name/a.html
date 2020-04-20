@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    aaaaaaaaaaaaaaaaaaa
+    window.name有一个奇妙的性质，
+    页面如果设置了window.name，那么在不关闭页面的情况下，
+    即使进行了页面跳转location.href=...，这个window.name还是会保留。
+    <iframe src="http://localhost:8888/c.html" 
+        frameborder="0" id='iframe' onload="load()"></iframe>
+    <script>
+        let first = true;
+        var frame = document.getElementById('iframe');
+        function load(){
+            console.log('log',frame.src);
+            if(first){
+                first = false;
+                frame.src = 'http://localhost:3000/b.html';
+            }else{
+                console.log(frame.contentWindow.name);
+            }
+        }
+    </script>
+</body>
+</html>

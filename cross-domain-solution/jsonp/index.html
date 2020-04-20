@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        window.show = function(data){
+            console.log(data)
+        }
+        
+        /* $.get('http://192.168.1.7:3000/search',{cb:'show'},function(data){
+            console.log(data);
+        },function(error){
+            console.log(error)
+        })*/
+    </script>
+    <script src="http://192.168.1.7:3000/search?cb=show"></script>
+    <script>
+        (function () {
+            var _callbacks = 0
+          
+            window.jsonp = function (url, callback) {
+              var id = 'jsonp_cb_' + _callbacks,
+                  existing = document.scripts[0],
+                  script = document.createElement('script')
+          
+              script.src = url + (~url.indexOf('?') ? '&' : '?') + 'callback=' + id
+              existing.parentNode.insertBefore(script, existing)
+          
+              window[id] = function (data) {
+                script.parentNode.removeChild(script)
+                callback(data)
+                delete window[id]
+              }
+          
+              _callbacks += 1
+            }
+          }())
+    </script>
+</body>
+</html>
