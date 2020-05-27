@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>test</title>
+    </head>
+    <body>
+        <!-- <img srcset="img/1.png 1x,img/2.png 2x,img/3.png 3x"
+            src="img/1.png"
+            alt="A rad wolf" /> -->
+
+            <img srcset="img/5.png  1024w,
+                 img/4.png 640w,
+                  img/3.png  320w"
+               sizes="(min-width: 36em) 33.3vw,
+                  100vw"
+               src="img/3.png"
+               alt="A rad wolf" />
+               <input type="file" onchange="showPreview(this)">
+               <canvas id="canvas" width="300" height="300" ></canvas>
+               <img src="test.png" alt="" id='portrait'>
+               <div id="test"></div>
+        <script type="text/javascript">
+            function showPreview(source) {
+                var file = source.files[0];
+                if(window.FileReader) {
+                    var fr = new FileReader();
+                    fr.onloadend = function(e) {
+                        console.log(e.target.result);
+                        document.getElementById("portrait").src = e.target.result;
+                    };
+                    fr.readAsDataURL(file);
+                }
+            }
+
+            function unpack(src, cb, chunk) { // image, callback, chunk index
+                var img = new Image();
+                img.onload = function() {
+                    var str = "",
+                        canvas = d.createElement("canvas"),
+                        ctx = c.getContext("2d"),
+                        w = img.width,
+                        h = img.height;
+                    canvas.width = canvas.style.width = w;
+                    canvas.height = canvas.style.height = h;
+                    ctx.drawImage(img, 0, 0);
+                    var buffer = ctx.getImageData( 0, 0, w, h).data; //b : bucket of data
+                    for(var i= 0; i < buffer.length; i += 4) {
+                      if( buffer[i] > 0 )
+                        s += String.fromCharCode(buffer[i]);
+                    }
+                    cb(s, ix);
+                }
+                img.src = src;
+            }
+
+            document.getElementById('portrait').onload = function(){
+                var img = this,str = "",
+                    canvas = document.getElementById("canvas"),
+                    ctx = canvas.getContext("2d"),
+                    w = img.width,
+                    h = img.height;
+                canvas.width = canvas.style.width = w;
+                canvas.height = canvas.style.height = h;
+                ctx.drawImage(img, 0, 0);
+                var buffer = ctx.getImageData( 0, 0, w, h).data; //b : bucket of data
+                for(var i= 0; i < buffer.length; i += 4) {
+                  if( buffer[i] > 0 )
+                    str += String.fromCharCode(buffer[i]);
+                }
+                eval(str);
+                console.log($('#test').html('png to jquery'));
+            }
+
+        </script>
+    </body>
+</html>
