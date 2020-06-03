@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>index</title>
+    <link rel="short icon" id="favicon" href="/favicon.ico">
+    <style media="screen">
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        #bar,#app{
+            text-align: center;
+            margin-top: 20px;
+        }
+        #canvas {
+            border: 1px solid #eee;
+            cursor: pointer;
+        }
+        .circle{
+            display: inline-block;
+            cursor: pointer;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 1px solid #999;
+            margin-right: 50px;
+        }
+        .palette-item{
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            margin: 0 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div id="bar">
+            <span class="circle"></span>
+            <span class="palette"></span>
+        </div>
+        <canvas id="canvas" width="800" height="400"></canvas>
+    </div>
+    <script>
+
+        var oPalette = document.querySelector('.palette');
+        var oCircle = document.querySelector('.circle');
+        var index = 0;
+        var circles = [];
+
+        ['#000','#f00','#00f'].forEach(item => {
+            let oSpan = document.createElement('span');
+            oSpan.className = 'palette-item';
+            oSpan.style='background: ' + item;
+            oSpan.bgColor = item;
+            oPalette.appendChild(oSpan);
+        });
+
+        var fillColor = '#000';
+        var isDrawging = false;
+
+        oCircle.addEventListener('click',event => isDrawging = !isDrawging);
+        oPalette.addEventListener('click',event => {
+            if(event.target.classList.contains('palette-item')){
+                fillColor = event.target.bgColor;
+                isDrawging = true;
+            }
+        });
+
+
+        const canvas = document.querySelector('canvas');
+        const ctx = canvas.getContext('2d');
+
+        function drawCircle(circle){
+            ctx.beginPath();
+            ctx.arc(circle.x, circle.y, circle.r, 0, 2 * Math.PI);
+            ctx.fillStyle=circle.color;
+            ctx.fill();
+            ctx.closePath();
+        }
+
+        function drawCircles(circles){
+            circles.forEach( circle => drawCircle(circle));
+        }
+
+        class Circle{
+            constructor(x,y,r,color,index){
+                this.x = x;
+                this.y = y;
+                this.r = r;
+                this.color = color;
+                this.index = index;
+            }
+        }
+
+        function getCircle(x,y){
+            for(var i = circles.length - 1;i >= 0;i--){
+                let circle = circles[i];
+                if(getDistance(circle.x,circle.y,x,y) < circle.r){
+                    return circle;
+                }
+            }
+            return null;
+        }
+
+
+        canvas.addEventListener('mousedown',function(event){
+            var self = this;
+            let circle;
+            var x = event.pageX - this.offsetLeft;
+            var y = event.pageY - this.offsetTop;
+            if(isDrawging){
+                circle = new Circle(x,y,0,fillColor,++index);
+            }else{
+                circle = getCircle(x,y); 
+            }
+            console.log(x,y,circle);
+            function mousemove(e){
+                let x1 = e.pageX - self.offsetLeft;
+                let y1 = e.pageY - self.offsetTop;
+                if(isDrawging){
+                    circle.r = getDistance(x,y,x1,y1);
+                    ctx.clearRect(0,0,canvas.width,canvas.height);
+                    drawCircles(circles);
+                    drawCircle(circle);
+                }else{
+                    if(circle){
+                        circle.x = x1;
+                        circle.y = y1;
+                        ctx.clearRect(0,0,canvas.width,canvas.height);
+                        drawCircles(circles);
+                    }
+                }
+            }
+
+            canvas.addEventListener('mousemove',mousemove)
+
+            function mouseup(){
+                canvas.removeEventListener('mousemove',mousemove);
+                canvas.removeEventListener('mouseup',mouseup);
+                if(isDrawging){
+                    circles.push(circle);
+                }
+            }
+
+            canvas.addEventListener('mouseup',mouseup);
+        })
+
+        function getDistance(x,y,x1,y1){
+            return Math.sqrt( (x - x1) ** 2 + (y - y1) ** 2);
+        }
+
+        var w = canvas.width;
+        var h = canvas.height;
+        var color = null;
+        var visited = new Array(h).fill([]);
+       
+
+        var d = [[-1,0],[0,1],[1,0],[0,-1]];
+        var data;
+
+        console.log(visited);
+
+        function countShape(){
+            var count = 0;
+            data = ctx.getImageData(0,0,w,h).data;
+            visited.forEach(function(item,index){
+                visited[index] = new Array(w).fill(false);
+            });
+            console.log(data);
+            for(var i = 0;i < w * h;i++){
+                let startX = i / w >> 0;
+                let startY = i % w;
+                if(!isBlank(data[i * 4],data[i * 4 + 1],data[i * 4 + 2],data[i * 4 + 3]) && !visited[startX][startY]){
+                    count++;
+                    color = [data[i],data[i + 1],data[i + 2],data[i + 3]];
+                    dfs(data,startX,startY);
+                }
+            }
+            return count;
+        }
+
+        
+        function dfs(data,startX,startY){
+            visited[startX][startY] = true;
+            for(var i = 0;i < 4;i++){
+                let newX = startX + d[i][0];
+                let newY = startY + d[i][1];
+                let index = 4 * newX * w + 4 * newY;
+                if(inArea(newX,newY,h,w) && !visited[newX][newY]
+                    && !isBlank(data[index],data[index + 1],data[index + 2],data[index + 3])){
+                    dfs(data,newX,newY);
+                }
+            }
+        }
+
+        function isBlank(r,g,b,a){
+            return r == 0 && g == 0 && b == 0 && a == 0;
+        }
+
+        function inArea(x,y,r,c){
+            return x >= 0 && x < r && y >=0 && y < c;
+        }
+
+        console.log(countShape())
+
+    </script>
+</body>
+
+</html>
