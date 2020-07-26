@@ -35,12 +35,19 @@
             margin: 0 5px;
             cursor: pointer;
         }
+        button{
+            width: 50px;
+            height: 25px;
+            margin-right: 10px;
+        }
     </style>
 </head>
 
 <body>
     <div id="app">
         <div id="bar">
+            <button id="undo">undo</button>
+            <button id="redo">redo</button>
             <span class="circle"></span>
             <span class="palette"></span>
         </div>
@@ -50,8 +57,12 @@
 
         var oPalette = document.querySelector('.palette');
         var oCircle = document.querySelector('.circle');
+        var undoBtn = document.getElementById('undo');
+        var redoBtn = document.getElementById('redo');
         var index = 0;
         var circles = [];
+        var redos = [];
+        var undos = [];
 
         ['#000','#f00','#00f'].forEach(item => {
             let oSpan = document.createElement('span');
@@ -71,6 +82,28 @@
                 isDrawging = true;
             }
         });
+
+        undoBtn.addEventListener('click',event => {
+            if(undos.length){
+                redos.push(undos.pop());
+            }
+
+            redraw();
+        })
+
+        redoBtn.addEventListener('click',event => {
+            if(redos.length){
+                undos.push(redos.pop());
+            }
+            redraw();
+        })
+
+        function redraw(){
+            ctx.clearRect(0,0,w,h);
+            if(undos.length){
+                ctx.putImageData(undos[undos.length - 1],0,0);
+            }
+        }
 
 
         const canvas = document.querySelector('canvas');
@@ -95,6 +128,13 @@
                 this.r = r;
                 this.color = color;
                 this.index = index;
+            }
+            draw(){
+
+            }
+
+            move(){
+                
             }
         }
 
@@ -125,8 +165,7 @@
                 let y1 = e.pageY - self.offsetTop;
                 if(isDrawging){
                     circle.r = getDistance(x,y,x1,y1);
-                    ctx.clearRect(0,0,canvas.width,canvas.height);
-                    drawCircles(circles);
+                    redraw();
                     drawCircle(circle);
                 }else{
                     if(circle){
@@ -134,6 +173,8 @@
                         circle.y = y1;
                         ctx.clearRect(0,0,canvas.width,canvas.height);
                         drawCircles(circles);
+                        undos.push(ctx.getImageData(0,0,w,h))
+                        redos.length = 0;
                     }
                 }
             }
@@ -145,6 +186,8 @@
                 canvas.removeEventListener('mouseup',mouseup);
                 if(isDrawging){
                     circles.push(circle);
+                    undos.push(ctx.getImageData(0,0,w,h))
+                    redos.length = 0;
                 }
             }
 
