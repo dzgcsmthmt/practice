@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>index</title>
+    <link rel="short icon" id="favicon" href="/favicon.ico">
+    <style media="screen">
+        * {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            box-sizing: border-box;
+        }
+        h3{
+            text-align: center;
+            padding: 10px 0;
+        }
+        body{
+            line-height: 1.5;
+        }
+        .grid{
+            max-width: 400px;
+            margin: 20px auto;
+        }
+        .row{
+            border-left: 1px solid #999;
+        }
+        .row ul{
+            display: flex;
+        }
+        .row:nth-last-child(1){
+            border-bottom: 1px solid #999;
+        }
+        .cell{
+            flex: 1;
+            height: 42px;
+            line-height: 42px;
+            text-align: center;
+            border-top: 1px solid #999;
+            border-right: 1px solid #999;
+            font-size: 26px;
+        }
+        .num{
+            width: 96%;
+            height: 90%;
+            border: none;
+            outline: none;
+            text-align: center;
+            font-size: 26px;
+        }
+        .btn{
+            border: 1px solid #999;
+            outline: none;
+            padding: 0.4em 0.8em;
+            margin: 0 20px;
+            border-radius: 4px;
+            background: #fff;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        .btn-wrapper{
+            text-align: center;
+            margin: 20px;
+        }
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+        }
+        input[type="number"]{
+            -moz-appearance: textfield;
+        }
+    </style>
+</head>
+
+<body>
+    <h3>数独解析器</h3>
+    <ul class="grid" id="sudoku">
+       
+    </ul>
+    <div class="btn-wrapper">
+        <button id="reset" class="btn">重置数独</button>
+        <button id="show" class="btn">查看结果</button>
+    </div>
+    <ul class="grid" id="result">
+    </ul>
+
+
+    <script>
+
+        var arr =  [
+            [".", ".", ".", ".", ".", ".", ".", ".", "."],
+            [".", ".", ".", ".", ".", ".", ".", ".", "."], 
+            [".", ".", ".", ".", ".", ".", ".", ".", "."], 
+            [".", ".", ".", ".", ".", ".", ".", ".", "."], 
+            [".", ".", ".", ".", ".", ".", ".", ".", "."], 
+            [".", ".", ".", ".", ".", ".", ".", ".", "."], 
+            [".", ".", ".", ".", ".", ".", ".", ".", "."], 
+            [".", ".", ".", ".", ".", ".", ".", ".", "."], 
+            [".", ".", ".", ".", ".", ".", ".", ".", "."]
+        ]
+        var sudoku = document.getElementById('sudoku');
+        var result = document.getElementById('result');
+        var reset = document.getElementById('reset');
+        var show = document.getElementById('show');
+        
+        function makeSudoku(){
+            var str = '';
+            for(var i = 0; i < 9; i++){
+                str += `
+                <li class="row">
+                    <ul >
+                        <li class="cell"><input class="num" tep="1" min="1" max="9" type="number"/></li>
+                        <li class="cell"><input class="num" tep="1" min="1" max="9" type="number"/></li>
+                        <li class="cell"><input class="num" tep="1" min="1" max="9" type="number"/></li>
+                        <li class="cell"><input class="num" tep="1" min="1" max="9" type="number"/></li>
+                        <li class="cell"><input class="num" tep="1" min="1" max="9" type="number"/></li>
+                        <li class="cell"><input class="num" tep="1" min="1" max="9" type="number"/></li>
+                        <li class="cell"><input class="num" tep="1" min="1" max="9" type="number"/></li>
+                        <li class="cell"><input class="num" tep="1" min="1" max="9" type="number"/></li>
+                        <li class="cell"><input class="num" tep="1" min="1" max="9" type="number"/></li>
+                    </ul>
+                </li>`
+            }
+            sudoku.innerHTML = str;
+        }
+
+        makeSudoku();
+
+        function solveSudoku(board) {
+            //行
+            var rows_ = new Array(9).fill(0).map(() => new Array(10).fill(0));
+            //列
+            var cols_ = new Array(9).fill(0).map(() => new Array(10).fill(0));
+            //分成9块，第一块下标0，第二块1，最下角8
+            var boxes_ = new Array(9).fill(0).map(() => new Array(10).fill(0));
+
+            for (var i = 0; i < 9; ++i) {
+                for (var j = 0; j < 9; ++j) {
+                    if (board[i][j] != '.') {
+                        var c = board[i][j] - 0;
+                        var bx = (j / 3) >> 0;
+                        var by = (i / 3) >> 0;
+                        rows_[i][c] = 1;
+                        cols_[j][c] = 1;
+                        boxes_[by * 3 + bx][c] = 1;
+                    }
+                }
+            }
+
+            dfs(board, 0, 0);
+            return board;
+
+            function dfs(board, x, y) {
+                if (y == 9) {
+                    return true;
+                }
+                var nx = (x + 1) % 9;
+                var ny = (nx == 0) ? y + 1 : y;
+
+                if (board[y][x] != '.') return dfs(board, nx, ny);
+
+                for (var i = 1; i <= 9; i++) {
+                    var bx = (x / 3) >> 0;
+                    var by = (y / 3) >> 0;
+                    var box_key = by * 3 + bx;
+                    if (!rows_[y][i] && !cols_[x][i] && !boxes_[box_key][i]) {
+                        rows_[y][i] = 1;
+                        cols_[x][i] = 1;
+                        boxes_[box_key][i] = 1;
+                        board[y][x] = i + '';
+                        if (dfs(board, nx, ny)) return true;
+                        board[y][x] = '.';
+                        boxes_[box_key][i] = 0;
+                        cols_[x][i] = 0;
+                        rows_[y][i] = 0;
+                    }
+                }
+                return false;
+
+            };
+        }
+        
+        function showResult(arr){
+            var str = '';
+            var len = arr.length;
+            for(var i = 0; i < len; i++){
+                var row = arr[i];
+                str += `
+                <li class="row">
+                    <ul>
+                        <li class="cell">${row[0]}</li>
+                        <li class="cell">${row[1]}</li>
+                        <li class="cell">${row[2]}</li>
+                        <li class="cell">${row[3]}</li>
+                        <li class="cell">${row[4]}</li>
+                        <li class="cell">${row[5]}</li>
+                        <li class="cell">${row[6]}</li>
+                        <li class="cell">${row[7]}</li>
+                        <li class="cell">${row[8]}</li>
+                    </ul>
+                </li>`
+            }
+            result.innerHTML = str;
+        }
+
+        reset.addEventListener('click',function(){
+            arr = new Array(9).fill(0).map(() => new Array(9).fill('.'));
+            sudoku.querySelectorAll('.num').forEach(item => item.value = "");
+            result.innerHTML = '';
+        },false)
+        show.addEventListener('click',function(){
+            sudoku.querySelectorAll('.num').forEach((item,index) => {
+                arr[index / 9 >> 0][index % 9] = item.value || '.';
+            });
+            console.log(arr);
+            showResult(solveSudoku(arr));
+        },false)
+
+    </script>
+</body>
+
+</html>
