@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            background: #222;
+        }
+
+        .container {
+            width: 878px;
+            height: 539px;
+            margin: 50px auto;
+            background: #eee;
+        }
+
+        .content {
+            height: calc(100% - 70px);
+        }
+
+        .ratio {
+            width: 80%;
+            height: 100%;
+            background: blue;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .ratio img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: fill;
+            vertical-align: middle;
+        }
+
+        .footer {
+            height: 70px;
+            background: red;
+        }
+
+        #new-version {
+            background: #309BFF;
+            color: #fff;
+            text-align: center;
+            position: absolute;
+            right: 0;
+            bottom: 50%;
+            writing-mode: vertical-lr;
+            padding: 10px 12px 6px 12px;
+            border-radius: 2px;
+            letter-spacing: 4px;
+        }
+        p{
+            width: 300px;
+            margin: 20px auto;
+            line-height: 1.5;
+            color: #fff;
+        }
+        mark{
+            background-color: transparent;
+            background: linear-gradient(#73ffa0,#73ffa0);
+            background-repeat: no-repeat;
+            background-size: 0% 38%;
+            background-position: 0 100%;
+            color: #fff;
+        }
+        mark.animate{
+            animation: 2s highlight ease-in-out forwards;
+        }
+        @keyframes highlight {
+            to {
+                background-size: 100% 38%;
+            }
+        }
+        h1{
+            width: 850px;
+            margin: 50px auto;
+            color: #333;
+            font-size: 8em;
+            position: relative;
+        }
+        h1::after{
+            content: 'CodingStartUp';
+            color: transparent;
+            position: absolute;
+            top: 0;
+            left: 0;
+            clip-path: ellipse(100px 100px at 0% 50%);
+            animation: 5s spotlight infinite;
+            background-image: url(./1.jpg);
+            background-position: center center;
+            background-size: 150%;
+            -webkit-background-clip: text;
+            background-clip: text;
+        }
+        @keyframes spotlight {
+            0%{
+                clip-path: ellipse(100px 100px at 0% 50%);
+            }
+            50%{
+                clip-path: ellipse(100px 100px at 100% 50%);
+            }
+            100%{
+                clip-path: ellipse(100px 100px at 0% 50%);
+            }   
+        }
+        .payment{
+            margin: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        h2{
+            margin-top: 40px;
+            font-size: 32px;
+            color: #fff;
+            opacity: 0;
+        }
+        input[type="checkbox"]:checked ~ h2{
+            animation: title 0.6s ease-in-out forwards;
+            animation-delay: 1.35s;
+        }
+        .circle{
+            stroke-dasharray: 1194;
+            stroke-dashoffset: 1194;
+        }
+        input[type="checkbox"]:checked + svg .circle{
+            animation: circle 0.8s ease-in-out forwards;
+        }
+        .tick{
+            stroke-dasharray: 350;
+            stroke-dashoffset: 350;
+        }
+        input[type="checkbox"]:checked + svg .tick{
+            animation: tick 0.6s ease-in-out forwards;
+            animation-delay: 0.75s;
+        }
+        @keyframes circle {
+            from{
+                stroke-dashoffset: 1194;
+            }
+            to{
+                stroke-dashoffset: 2388;
+            }
+        }
+
+        @keyframes tick {
+            from{
+                stroke-dashoffset: 350;
+            }
+            to{
+                stroke-dashoffset: 0;
+            }
+        }
+        @keyframes title {
+            from{
+                opacity: 0;
+            }
+            to{
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="payment">
+        <input type="checkbox" />
+        <svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
+            <circle fill="none" class="circle" stroke="#68E534" stroke-width="20" cx="200" cy="200" r="190" stroke-linecap="round" transform="rotate(-90 200 200)" />
+            <polyline fill="none" class="tick" stroke="#68E534" stroke-width="24" points="88,214 173,284 304,138" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <h2>支付成功</h2>  
+    </div>
+    <h1>CodingStartUp</h1>
+    <p>线性渐变由一个轴 (梯度线) 定义，其上的每个点<mark>具有两种或多种的颜色，且轴上的每个点都具有独立的颜色。为了构建出平滑的渐变，linear-gradient() 函数构建一系列垂直于</mark>渐变线的着色线，每一条着色线的颜色则取决于与之垂直相交的渐变线上的色点</p>
+    <p>线性渐变由一个轴 (梯度线) 定义，其上的每个点具有两种或多种的颜色，且轴上的每个点都具有独立的颜色。为了构建出平滑的渐变，linear-gradient() 函数构建一系列垂直于渐变线的着色线，每一条着色线的颜色则取决于与之垂直相交的渐变线上的色点</p>
+    <p>默认情况下，从一个颜色的终止点平滑的过渡<mark>到另一个颜色的终止点，颜色之间的中点是两个颜色颜色转换的中点。你可以将中点移动到这两个颜色之间的任意位置，方法是在两个颜色之间</mark>添加未标记的 %，以指示颜色的中转位置。下面的示例是从起始点到10%的位置标记红色，从90%到结束标记蓝色。在10%到90%之间，颜色从红色过渡到蓝色，然而过渡的中点是在30%的标记上，而不是在没有30%中转点的情况下会默认为50%</p>
+    <p>在最初语法中，<mark>使用同样的语法实现线性渐变和径向渐变。但这两种渐变所需要的参数有所不同</mark>，导致了需要增加第一个参数来区分两种渐变。如果再增加渐变类型，这样的处理方式会变得更加复杂。比如锥形渐变，需要用到函数和不规范的CSS值。W3C并未收到相关草案。</p>
+    <p>一个替代语法在2009年由Mozilla提出并实现。这个语法需要两个CSS函数，一个用来做线性渐变，另一个用于径向渐变。然而，这个语法并没有被发布产品实现。有人提出了第三种语法，它将线性渐变的语法简化为：</p>
+    <p>在预乘颜色空间里定义过渡色，从而可以防止在使用不同透明度颜色的情况下出现违和的灰色。<mark>在未舍弃原生语法的情况下，带前缀的版本被Webkit和Trident（IE）</mark>实现。</p>
+    <p>在带前缀的变体和不带前缀的提案之间仍然存在一项语义的分歧。最终Apple的提案显示，带前缀的语法都使用极坐标定义<angle>参数，导致了0deg指向东方。为了与CSS的其他部分保持一致，标准将0deg指向北方。为了防止使用前缀版本属性的站点不至于崩溃，它们保持原始的角度定义（0deg指向东方）。在使用不带前缀版本的时候将会切换到正确的规格。在这种不兼容的情况下，Gecko给所有语法都加上前缀，不带前缀且没有to关键词的语法会被丢弃。</p>
+    <p>可以为渐变轴某个位置指定某个颜色，这些位置可被称为“颜色中间点（color-stops）”。<mark>颜色会从一个颜色中间点平滑过渡到下一个。在渐变范围内</mark>，每个颜色都表现为一条垂直于渐变轴的直线。在下图中，渐变轴从左上角出发并且呈45度。渐变轴上定义了红色和蓝色两个颜色中间点。</p>
+    <p>如果第一个颜色中间点没有 <length> 或 <percentage>属性,那么它默认为0%。如果最后一个颜色中间点没有 <length> 或者 <percentage>属性, 则默认为100%。如果一个既不是起始也不是终止的颜色中间点，没有被明确声明位置，那么这个颜色就会从前后两个颜色的中间位置开始。</p>
+    <p>如果第一个颜色中间点没有定义长度或百分比，它将包含缺省值0。<mark>如果最后一个颜色中间点没有定义长度或百分比，它将包含缺省值100%</mark>。如果中间的颜色中间点没定义长度或百分比，那么它将被设定为前后两站的平均值。</p>
+    <p>如果所有点和长度都使用固定单位（而不是相对于background-size的值指定的百分比或关键字），则渐变背景不受 background-size 的影响。</p>
+    <p>-moz-前缀的规则用于兼容Fx 3.6 to Fx 15的火狐浏览器。 <mark>-webkit-前缀的规则用于兼容在Android 4.3以前版本、iOS 6.1以前版本、Safari 6。</mark>当使用带前缀的规则时，不要加“to”关键字。</p>
+    <script>
+        var observer = new IntersectionObserver((entries,observer) => {
+            entries.forEach(entry => {
+                if(entry.isIntersecting){
+                    entry.target.classList.add('animate');
+                    observer.unobserve(entry.target);
+                }
+            })
+        })
+
+        document.querySelectorAll('mark').forEach(mark => {
+            observer.observe(mark);
+        })
+    </script>
+</body>
+
+</html>
