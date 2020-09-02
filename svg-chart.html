@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        #chart{
+            display: block;
+            background:#f6f6f6;
+            width: 800px;
+            margin: 100px auto;
+
+            --stroke-length: 0;
+        }
+
+        #chart #line{
+            stroke: #9F3Af0;
+            stroke-dasharray: var(--stroke-length);
+            stroke-dashoffset: var(--stroke-length);
+        }
+        .caption,.axis{
+            color: #999;
+            font-size: 4px;
+            font-weight: bold;
+            animation: 0.5s fade-in ease-in-out;
+        }
+        @keyframes animate-line {
+            from{
+                stroke-dashoffset: var(--stroke-length);
+            }
+            to{
+                stroke-dashoffset: 0;
+            }
+        }
+        #chart.animate #line{
+            animation: animate-line 3s linear forwards;
+            animation-delay: 0.3s;
+        }
+        @keyframes zoom-in {
+            from{
+                transform: scale(0);
+            }
+            to{
+                transform: scale(1);
+            }
+        }
+        @keyframes fade-in {
+            from{
+                opacity: 0;
+            }
+            to{
+                opacity: 1;
+            }
+        }
+        #chart .point{
+            opacity: 0;
+        }
+        #chart.animate .point{
+            animation: .5s fade-in ease-in-out, .5s zoom-in ease-in-out;
+            animation-fill-mode: forwards;
+            animation-delay: var(--delay);
+        }
+        .loading{
+            font-size: 5px;
+            fill: #999;
+            transition: 0.25s opacity ease-in-out;;
+        }
+        #chart.animate .loading{
+            opacity: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <svg width="400" height="400" viewbox="0 0 200 100" id="chart" xmlns="http://www.w3.org/2000/svg">
+        <g transform="translate(0,100) scale(1,-1)" id="path-container">
+            <path fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" id="line" d="" />    
+        </g>
+        <text text-anchor="middle" alignment-baseline="middle" x="100" y="50" class="loading">Loading...</text>
+    </svg>
+    <script>
+        let padding = 15;
+        let start_x = padding;
+        let svg_width = document.querySelector('#chart').viewBox.baseVal.width;
+        function loadData(){
+           var data = {
+                "stock_name": "Apple Inc. (AAPL)",
+                "data": [
+                    {
+                        "date": "Apr 01",
+                        "index": 240.91,
+                        "normalized": 27.08
+                    },
+                    {
+                        "date": "Apr 02",
+                        "index": 244.93,
+                        "normalized": 36.11
+                    },
+                    {
+                        "date": "Apr 03",
+                        "index": 241.41,
+                        "normalized": 28.2
+                    },
+                    {
+                        "date": "Apr 06",
+                        "index": 262.47,
+                        "normalized": 75.54
+                    },
+                    {
+                        "date": "Apr 07",
+                        "index": 259.43,
+                        "normalized": 68.71
+                    },
+                    {
+                        "date": "Apr 08",
+                        "index": 266.07,
+                        "normalized": 83.64
+                    },
+                    {
+                        "date": "Apr 09",
+                        "index": 267.99,
+                        "normalized": 87.95
+                    }
+                ]
+            }
+            setTimeout(() => {
+                drawChart(data);
+            },1000)
+              
+        }
+        loadData();
+
+        function drawChart(api_data){
+            let stock_data = api_data.data;
+            let path_data = [];
+
+            let caption = document.createElementNS('http://www.w3.org/2000/svg','text');
+            caption.setAttribute('text-anchor','middle');
+            caption.setAttribute('alignment-baseline','middle');
+            caption.setAttribute('x', svg_width >> 1);
+            caption.setAttribute('y', 6);
+            caption.classList.add('caption');
+            caption.appendChild(document.createTextNode(api_data.stock_name));
+            document.querySelector('#chart').appendChild(caption);
+
+            for(let i in stock_data){
+                path_data.push(`${start_x},${stock_data[i]['normalized']}`);
+                let axis = document.createElementNS('http://www.w3.org/2000/svg','text');
+                axis.setAttribute('text-anchor','middle');
+                axis.setAttribute('alignment-baseline','middle');
+                axis.setAttribute('x', start_x);
+                axis.setAttribute('y', 96);
+                axis.classList.add('axis');
+                axis.appendChild(document.createTextNode(stock_data[i].date));
+                document.querySelector('#chart').appendChild(axis);
+
+                let circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
+                circle.setAttribute('cx',start_x);
+                circle.setAttribute('cy',stock_data[i].normalized);
+                circle.setAttribute('r',3);
+                circle.setAttribute('stroke','#9f3aF0');
+                circle.setAttribute('stroke-width',2);
+                circle.setAttribute('fill','white');
+                circle.setAttribute('transform-origin',`${start_x} ${stock_data[i].normalized}`);
+                circle.style.setProperty('--delay',`${( 3 * parseInt(i) / stock_data.length)}s`)
+                circle.classList.add('point');
+                document.querySelector('#path-container').appendChild(circle);
+
+                start_x += (svg_width - padding * 2) / (stock_data.length - 1);
+            }
+
+            let line = document.querySelector('#line');
+            line.setAttribute('d',`M${path_data.join(' ')}`)
+
+            let strokeLength = line.getTotalLength();
+            document.querySelector('#chart').style.setProperty('--stroke-length',strokeLength);
+            document.querySelector('#chart').classList.add('animate');
+        }
+
+    </script>
+</body>
+
+</html>
