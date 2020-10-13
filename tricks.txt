@@ -274,3 +274,11 @@ HTML提供了5种空格实体（space entity），它们拥有不同的宽度，
 Asynchronous loading of CSS
 <link rel="stylesheet" href="/path/to/my.css" media="print" onload="this.media='all'">
 -----------------------------------------------------------------------------------------------------------------------
+判断元素是否在视窗内
+function elementInView(element) {
+  var rect = element.getBoundingClientRect()
+  var yInView = rect.top < window.innerHeight && rect.bottom > 0
+  var xInView = rect.left < window.innerWidth && rect.right > 0
+  return yInView && xInView
+}
+-----------------------------------------------------------------------------------------------------------------------
