@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        p {
+            height: 300px;
+            width: 150px;
+            background-color: #ccf;
+        }
+
+        .test {
+            width: 300px;
+            height: 300px;
+            /* display: none; */
+            background: #ccf;
+        }
+
+        .test span {
+            display: inline-block;
+            width: 50px;
+            text-align: center;
+        }
+
+        .box {
+            position: relative;
+            width: 64px;
+            height: 64px;
+            top: 32px;
+            left: 32px;
+        }
+
+        .red {
+            background: red;
+        }
+
+        .green {
+            background: green;
+        }
+
+        .blue {
+            background: blue;
+        }
+
+        #example-0 {
+            margin-top: 32px;
+        }
+    </style>
+</head>
+
+<body>
+  <div id="example-auto">
+        <div class="box red">
+            <div class="box green" style="z-index: 1"></div>
+        </div>
+        <div class="box blue"></div>
+    </div>
+
+    <div id="example-0">
+        <div class="box red" style="z-index: 0">
+            <div class="box green" style="z-index: 1"></div>
+        </div>
+        <div class="box blue"></div>
+    </div>
+</body>
+
+</html>
