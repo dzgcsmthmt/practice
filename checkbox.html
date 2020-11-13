@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        li{
+            list-style: none;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <ul>
+        <li><input type="checkbox" /></li>
+        <li><input type="checkbox" /></li>
+        <li><input type="checkbox" /></li>
+        <li><input type="checkbox" /></li>
+        <li><input type="checkbox" /></li>
+        <li><input type="checkbox" /></li>
+        <li><input type="checkbox" /></li>
+        <li><input type="checkbox" /></li>
+        <li><input type="checkbox" /></li>
+        <li><input type="checkbox" /></li>
+        <li><input type="checkbox" /></li>
+        <li><input type="checkbox" /></li>
+        <li><input type="checkbox" /></li>
+        <li><input type="checkbox" /></li>
+        <li><input type="checkbox" /></li>
+        <li><input type="checkbox" /></li>
+    </ul>
+    <script>
+        var lastChecked = null;
+        var lastUnchecked = null;
+        var list = document.querySelectorAll('input');
+
+        list.forEach(item => {
+            item.addEventListener('click',function(e){
+                console.log(e.shiftKey);
+                let flag = false;
+                let _this = this;
+                var checked = this.checked ? lastChecked :lastUnchecked;
+                if(e.shiftKey){
+                    list.forEach(c => {
+                        if(c == _this || c == checked){
+                            flag = !flag;
+                        }
+                        if(flag && checked){
+                            c.checked = this.checked;
+                        }
+                    })
+                }
+                lastChecked = this.checked ? this : null;
+                lastUnchecked = this.checked ? null : this;
+            })
+        })
+    </script>
+</body>
+</html>
