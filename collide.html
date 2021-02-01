@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>collide detection</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        canvas {
+            border: 1px solid orange;
+            margin: 100px auto 0;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="canvas" width="600" height="300"></canvas>
+    <script>
+        var Ball = function (context) {
+            this.left = 0
+            this.top = 0
+            this.radius = 16
+            this.velocityX = 3
+            this.velocityY = 2
+            this.context = context
+        }
+
+        Ball.prototype = {
+            paint: function () {
+                this.context.beginPath()
+                this.context.arc(this.left + this.radius, this.top + this.radius,
+                    this.radius, 0, Math.PI * 2, false)
+                this.context.fill()
+            },
+
+            move: function () {
+                this.left += this.velocityX
+                this.top += this.velocityY
+            }
+        }
+
+        function handleEdgeCollisions(ball) {
+            var ballRight = ball.left + ball.radius * 2,
+                ballBottom = ball.top + ball.radius * 2
+
+            if (ball.left < 0) {
+                ball.left = 0
+                ball.velocityX = -ball.velocityX
+            } else if (ballRight > canvas.width) {
+                ball.left = canvas.width - ball.radius * 2
+                ball.velocityX = -ball.velocityX
+            }
+
+            if (ball.top < 0) {
+                ball.top = 0
+                ball.velocityY = -ball.velocityY
+            } else if (ballBottom > canvas.height) {
+                ball.top = canvas.height - ball.radius * 2
+                ball.velocityY = -ball.velocityY
+            }
+        }
+
+        function animate(time) {
+            context.clearRect(0, 0, canvas.width, canvas.height)
+
+            ball.move()
+            handleEdgeCollisions(ball)
+            ball.paint()
+
+            requestAnimationFrame(animate)
+        }
+
+        var canvas = document.getElementById('canvas'),
+            ctx = canvas.getContext('2d'),
+            // ball = new Ball(context),
+            w = canvas.width,
+            h = canvas.height;
+
+        // ctx.globalCompositeOperation = 'xor';
+
+        ctx.fillStyle = 'blue';
+        ctx.fillRect(0, 0, 10, 10);
+        
+        ctx.fillStyle = 'green';
+        ctx.fillRect(50, 50, 150, 100);
+
+        ctx.fillStyle = 'red';
+        ctx.fillRect(150, 100, 150, 100);
+
+        var myImageData = ctx.getImageData(195, 145, 5, 5);
+        console.log(myImageData);
+
+        // ball.paint()
+        // requestAnimationFrame(animate)
+        /*
+        function drawBaseLine(ctx){
+            ctx.beginPath();
+            ctx.moveTo(0,h >> 1);
+            ctx.lineTo(w,h >> 1);
+            ctx.moveTo(w >> 1, 0);
+            ctx.lineTo(w >> 1,h);
+            ctx.stroke();
+            ctx.closePath();
+        }
+        drawBaseLine(context);
+
+        canvas.addEventListener('mouseover',function(ev){
+            console.log(ev.offsetX,ev.offsetY);
+
+            var middleX = w >> 1;
+            var middleY = h >> 1;
+
+            var deltaX = ev.offsetX - middleX;
+            var deltaY = middleY - ev.offsetY;
+
+            let deg = Math.atan2(deltaY,deltaX) * 180 / Math.PI;
+
+            if(deg >= 0 && deg <= 45){
+                console.log('from right top');
+            }else if(deg > 45 && deg <= 90){
+                console.log('from top right');
+            }else if(deg > 90 && deg <= 135){
+                console.log('from top left');
+            }else if(deg > 135 && deg <= 180){
+                console.log('from left top');
+            }else if(deg >= -45 && deg < 0){
+                console.log('from right bottom');
+            }else if(deg >= -90 && deg < -45){
+                console.log('from bottom right');
+            }else if(deg >= -135 && deg < -90){
+                console.log('from bottom left');
+            }else if(deg >= -180 && deg < -135){
+                console.log('from left bottom');
+            }
+
+        },false);*/
+    </script>
+</body>
+
+</html>
