@@ -1,254 +1,273 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <title>俄罗斯方块</title>
-        <style>
-            #tetirs{
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                margin: auto;
-                background: #000;
-            }
-        </style>
-    </head>
-    <body>
-        <canvas width="490" height="490" id="tetirs"></canvas>
-        <script type="text/javascript">
-            var tetirs = document.getElementById('tetirs');
-            var context = tetirs.getContext('2d');
-            var mapData = [],nextMold = [];
-            var col = 12,row = 12,rowIndex = 0,colIndex = 4,timer,flag;
-            var moldArray = [
-                [[1,1,1,1]],
-                [[1,1],[1,1]],
-                [[1,1,0],[0,1,1]],
-                [[0,1,1],[1,1,0]],
-                [[0,1,0],[1,1,1]],
-                [[1,0,0],[1,1,1]],
-                [[0,0,1],[1,1,1]]
-            ];
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Tetris</title>
+    <style>
+        body{
+            background: black;
+            color: white;
+        }
+        #canvas{
+            display: block;
+            margin: 50px auto;
+            border: 2px solid white;
+        }
+        h1{
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>score: <span id="score">0</span></h1>
+    <canvas id="canvas" width="240" height="400"></canvas>
+    <script type="text/javascript">
+        var canvas = document.getElementById('canvas');
+        var ctx = canvas.getContext('2d');
+        //放大20倍
+        ctx.scale(20,20);
 
-            //生成地图数据
-            (function(){
-                for (var i = 0; i < row; i++) {
-                    mapData.push(new Array(col).fill(0));
-                }
-                renderMap();
-                nextMold = mold();
-                createMold();
-                play();
-                fall(400);
-            })();
 
-            //渲染地图
-            function renderMap(){
-                context.clearRect(0,0,context.width,context.height);
-                for (var i = 0; i < mapData.length; i++) {
-                    for (var j = 0; j < mapData[0].length; j++) {
-                        context.fillStyle = mapData[i][j] == 1 ? '#0f0' : '#0ff';
-                        context.fillRect(40*j + 10, 40*i + 10,30,30);
+        function arenaSweep(){
+            let rowCount = 0;
+            outer: for(let y = arena.length - 1; y >= 0;y--){
+                for(let x = 0; x < arena[y].length;x++){
+                    if(arena[y][x] == 0){
+                        continue outer;
                     }
                 }
+                const row = arena.splice(y,1)[0].fill(0);
+                arena.unshift(row);
+                ++y;
+                rowCount += 1;
             }
-
-            //生成方块
-            function mold(){
-                var index = Math.floor(Math.random() * 7);
-                return moldArray[index];
+            if(rowCount == 1){
+                player.score += 10;
+            }else if(rowCount == 2){
+                player.score += 30;
+            }else if(rowCount == 3){
+                player.score += 50;
+            }else if(rowCount == 4){
+                player.score += 70;
             }
+        }
 
-            //从顶部开始下落方块
-            function createMold(){
-                for (var i = 0; i < nextMold.length; i++) {
-                    for (var j = 0; j < nextMold[i].length; j++) {
-                        if(!mapData[i + rowIndex][j + colIndex]){
-                            mapData[i + rowIndex][j + colIndex] = nextMold[i][j];
-                        }
-                    }
-                }
-                renderMap();
-            }
-
-
-
-            //清楚上次的方块
-            function clearPrev(){
-                for (var i = 0; i < nextMold.length; i++) {
-                    for (var j = 0; j < nextMold[i].length; j++) {
-                        mapData[i + rowIndex][j + colIndex] = 0;
-                    }
-                }
-            }
-
-            //下落
-            function fall(ms){
-                if(flag){
-                    return;
-                }
-                clearInterval(timer);
-                timer = setInterval(function(){
-                    if(rowIndex == mapData.length - nextMold.length || collideVTest()){
-                        nextMold = mold();
-                        rowIndex = 0;
-                        colIndex = 4;
-                        scoreOrEnd();
-                    }else{
-                        clearPrev();
-                        rowIndex++;
-                    }
-                    createMold();
-                },ms);
-            }
-
-            //垂直方向碰撞检测
-            function collideVTest() {
-                //为1的位置
-                var arr = [];
-                for (var i = 0; i < nextMold.length; i++) {
-                    for (var j = 0; j < nextMold[i].length; j++) {
-                        if(nextMold[i][j]){
-                            arr[j] = i;
-                        }
-                    }
-                }
-                for (var j = 0; j < nextMold[0].length; j++) {
-                    if(mapData[rowIndex + arr[j] + 1][j + colIndex]){
+        function collide(arena,player){
+            const [m,o] = [player.matrix,player.pos];
+            for(var y = 0;y < m.length;y++){
+                for(var x = 0; x < m[y].length;x++){
+                    if(m[y][x] != 0 && (arena[y + o.y] && arena[y + o.y][x + o.x]) != 0){
                         return true;
                     }
                 }
-                return false;
+            }
+            return false;
+        }
 
+        function createMatrix(w,h){
+            return new Array(h).fill(0).map(a => new Array(w).fill(0));
+        }
+
+        function createPiece(type){
+            if(type == 'T'){
+                return  [
+                    [0,0,0],
+                    [1,1,1],
+                    [0,1,0]
+                ];
+            }else if(type == 'O'){
+                return  [
+                    [2,2],
+                    [2,2]
+                ];
+            }else if(type == 'L'){
+                return  [
+                    [0,3,0],
+                    [0,3,0],
+                    [0,3,3]
+                ];
+            }else if(type == 'J'){
+                return  [
+                    [0,4,0],
+                    [0,4,0],
+                    [4,4,0]
+                ];
+            }else if(type == 'I'){
+                return  [
+                    [0,5,0,0],
+                    [0,5,0,0],
+                    [0,5,0,0],
+                    [0,5,0,0]
+                ];
+            }else if(type == 'S'){
+                return  [
+                    [0,6,6],
+                    [6,6,0],
+                    [0,0,0]
+                ];
+            }else if(type == 'Z'){
+                return  [
+                    [7,7,0],
+                    [0,7,7],
+                    [0,0,0]
+                ];
+            }
+        }
+
+        function draw(){
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+
+            drawMatrix(arena,{x:0,y:0});
+            drawMatrix(player.matrix,player.pos);
+        }
+
+        function drawMatrix(matrix,offset = {x:0 ,y: 0}){
+            matrix.forEach((row,y) => {
+                row.forEach((value,x) => {
+                    if(value != 0){
+                        ctx.fillStyle = colors[value];
+                        ctx.fillRect(x + offset.x,y + offset.y,1,1);
+                    }
+                })
+            });
+        }
+
+        function merge(arena,player){
+            player.matrix.forEach((row,y) => {
+                row.forEach((value,x) => {
+                    if(value != 0){
+                        arena[y + player.pos.y][x + player.pos.x] = value;
+                    }
+                })
+            });
+        }
+
+        function playerDrop(){
+            player.pos.y++;
+            if(collide(arena,player)){
+                player.pos.y--;
+                merge(arena,player);
+                playerReset();
+                arenaSweep();
+                undateScore()
+            }
+            dropCounter = 0;
+        }
+
+
+        function playerMove(dir){
+            player.pos.x += dir;
+            if(collide(arena,player)){
+                player.pos.x -= dir;
+            }
+        }
+
+        function playerReset(){
+            const piece = 'ILJOTSZ';
+            player.matrix = createPiece(piece[(piece.length * Math.random()) >> 0]);
+            player.pos.y = 0;
+            player.pos.x = (arena[0].length >> 1) - (player.matrix[0].length >> 1);
+            if(collide(arena,player)){
+                arena.forEach(row => row.fill(0));
+                player.score = 0;
+            }
+        }
+
+
+        function playerRotate(dir){
+            const pos = player.pos.x;
+            let offset = 1;
+            rotate(player.matrix,dir);
+            while(collide(arena,player)){
+                player.pos.x += offset;
+                offset = -(offset + (offset > 0 ? 1 : -1));
+                if(offset > player.matrix[0].length){
+                    rotate(player.matrix,-dir);
+                    player.pos.x = pos;
+                    return;
+                }
+            }
+        }
+
+        //leetcode 48 rotate image
+        function rotate(matrix,dir){
+            for(let y = 0; y < matrix.length;y++){
+                for(let x = 0; x < y;x++){
+                    [matrix[x][y],matrix[y][x]] = [matrix[y][x],matrix[x][y]];
+                }
             }
 
-            //开始游戏
-            function play(){
-                document.onkeydown = function(ev){
-                    switch (ev.keyCode) {
-                        case 37:
-                            moveH(-1)
-                        break;
-                        case 39:
-                            moveH(1)
-                        break;
-                        case 38:
-                            transform();
-                        break;
-                        case 40:
-                            speedUp();
-                        break;
-
-                    }
-                }
-                document.onkeyup = function(ev){
-                    if(ev.keyCode == 40){
-                        flag = false;
-                        fall(400);
-                    }
-                }
+            if(dir > 0){
+                matrix.forEach(row => row.reverse());
+            }else{
+                matrix.reverse();
             }
+        }
 
-            //水平移动
-            function moveH(step){
-                if(!collideHTest(step)){
-                    clearPrev();
-                    colIndex += step;
-                    createMold();
-                }
+        let colors = [
+            null,
+            'red',
+            'blue',
+            'violet',
+            'green',
+            'purple',
+            'orange',
+            'pink'
+        ]
+
+        let dropCounter = 0;
+        let dropInterval = 100;
+        
+        let lastTime = 0;
+        function update(time = 0){
+            let deltaTime = time - lastTime;
+            lastTime = time;
+
+            dropCounter += deltaTime;
+            if(dropCounter > dropInterval){
+                playerDrop();
             }
+            draw();
+            requestAnimationFrame(update);
+        }
 
-            //水平检测
-            function collideHTest(step){
-                var arr = [];
-                if((colIndex == 0 && step < 0) || (colIndex + nextMold[0].length == mapData.length && step > 0)){
-                    return true;
-                }
+        function undateScore(){
+            document.getElementById('score').innerText = player.score;
+        }
 
-                if(step < 0){
-                    for (var i = 0; i < nextMold.length; i++) {
-                        for (var j = 0; j < nextMold[i].length; j++) {
-                            if(nextMold[i][j]){
-                                arr[i] = j;
-                                break
-                            }
-                        }
-                    }
-                    for (var j = 0; j < nextMold.length; j++) {
-                        if(mapData[rowIndex+j][colIndex + arr[j] - 1]){
-                            return true;
-                        }
-                    }
-                }else{
-                    for (var i = 0; i < nextMold.length; i++) {
-                        for (var j = nextMold[0].length - 1; j >= 0 ; j--) {
-                            if(nextMold[i][j]){
-                                arr[i] = j;
-                                break;
-                            }
-                        }
-                    }
-                    for (var j = 0; j < nextMold.length; j++) {
-                        if(mapData[rowIndex+j][colIndex + arr[j] + 1]){
-                            return true;
-                        }
-                    }
-                }
-                return false;
+        const arena = createMatrix(12,20);
+
+        const player = {
+            matrix: createPiece('T'),
+            pos: {x: 4,y: 0},
+            score: 0
+        }
+
+        document.addEventListener('keydown',(ev) => {
+            console.log(ev.keyCode);
+            if(ev.keyCode == 37){
+                playerMove(-1);
+            }else if(ev.keyCode == 39){
+                playerMove(1);
+            }else if(ev.keyCode == 40){
+                playerDrop();
+            }else if(ev.keyCode == 38){
+                playerRotate(1);
             }
+            // }else if(ev.keyCode == 83){
+            //     playerRotate(1);
+            // }
+        })
 
-            function transform(){
-                clearPrev();
-                var arr = [];
-                for (var i = 0; i < nextMold[0].length; i++) {
-                    arr[i] = [];
-                    for (var j = 0; j < nextMold.length; j++) {
-                        arr[i][j] = nextMold[nextMold.length - j - 1][i];
-                    }
-                }
-                nextMold = arr;
-                createMold();
-            }
-
-            //加速
-            function speedUp(){
-                fall(60);
-                flag = true;
-            }
-
-            //得分还是结束的检查
-            function scoreOrEnd(){
-                var x = mapData.length;
-                var y = mapData[0].length;
-
-                for (var i = 0; i < x; i++) {
-                    var flag = false;
-                    for (var j = 0; j < y; j++) {
-                        if(!mapData[i][j]){
-                            flag = true;
-                        }
-                    }
-                    if(!flag){
-                        mapData.splice(i,1);
-                        mapData.unshift(new Array(12).fill(0));
-                    }
-                }
-
-
-                for (var j = 0; j < 12; j++) {
-                    if(mapData[0][j]){
-                        alert('game over');
-                        window.location.reload();
-                    }
-                }
+        update();
+        
+        
 
 
 
-            }
-
-
-        </script>
-    </body>
+    </script>
+</body>
 </html>
