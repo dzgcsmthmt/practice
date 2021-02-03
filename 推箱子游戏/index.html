@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>推箱子游戏</title>
+	<link rel="stylesheet" href="css/base.css">
+	<style type="text/css">
+		#gameWrapper{
+			margin: 20px auto;
+			position: relative;
+		}
+		.clazz1{
+			width: 60px;
+			height: 60px;
+			float: left;
+			background: #666;
+		}
+		.clazz2{
+			width: 60px;
+			height: 60px;
+			float: left;
+			background:url(images/brick.png) no-repeat;
+		}
+		.clazz3{
+			width: 60px;
+			height: 60px;
+			float: left;
+			background:#f00;
+		}
+		.clazz4{
+			width: 60px;
+			height: 60px;
+			float: left;
+			background:#00f;
+		}
+		.box{
+			width: 60px;
+			height: 60px;
+			position: absolute;
+			z-index: 101;
+			background: url(images/box.png) no-repeat;
+		}
+		.person{
+			width: 60px;
+			height: 60px;
+			position: absolute;
+			z-index: 101;
+			background: url(images/1.jpg) no-repeat;
+		}
+	</style>
+	<script type="text/javascript" src="js/jquery-1.8.1.min.js"></script>
+	<script type="text/javascript">
+		$(function(){
+			Game.init($("#gameWrapper"));
+		})
+		var Game = {
+			gk : [
+				{
+					map:[
+						1,1,2,2,2,2,1,1,
+						1,1,2,3,3,2,1,1,
+						1,2,2,4,3,2,2,1,
+						1,2,4,4,4,3,2,1,
+						2,2,4,4,4,4,2,2,
+						2,4,4,2,4,4,4,2,
+						2,4,4,4,4,4,4,2,
+						2,2,2,2,2,2,2,2
+					],
+					box:[
+						{x:4,y:3},
+						{x:3,y:4},
+						{x:4,y:5},
+						{x:5,y:5}
+					],
+					person:{x:3,y:6}
+				},
+				{
+					map:[
+						1,1,1,1,2,2,2,2,2,2,2,1,
+						1,1,1,1,2,4,4,2,4,4,2,1,
+						1,1,1,1,2,4,4,4,4,4,2,1,
+						2,2,2,2,2,4,4,2,4,4,2,1,
+						3,3,3,2,2,2,4,2,4,4,2,2,
+						3,4,4,2,4,4,4,4,2,4,4,2,
+						3,4,4,4,4,4,4,4,4,4,4,2,
+						3,4,4,2,4,4,4,4,2,4,4,2,
+						3,3,3,2,2,2,4,2,4,4,2,2,
+						2,2,2,2,2,4,4,4,4,4,2,1,
+						1,1,1,1,2,4,4,2,4,4,2,1,
+						1,1,1,1,2,2,2,2,2,2,2,1
+					],
+					box:[
+						{x:5,y:6},
+						{x:6,y:3},
+						{x:6,y:5},
+						{x:6,y:7},
+						{x:6,y:9},
+						{x:7,y:2},
+						{x:8,y:2},
+						{x:9,y:6}
+					],
+					person:{x:5,y:9}
+				}
+			],
+			init : function(oParent){
+				this.oParent = oParent;
+				this.createMap(0);
+			},
+			createMap: function(iNow){
+				this.oParent.empty();
+				this.nowJson = this.gk[iNow];
+				this.oParent.width(Math.sqrt(this.nowJson.map.length) * 60);
+				$.each(this.nowJson.map, $.proxy(function(index, val) {
+					this.oParent.append('<div class="clazz' + val + '"></div>');
+				},this));
+				this.createBox();
+				this.createPerson(); 
+			},
+			createBox: function(){
+				$.each(this.nowJson.box, $.proxy(function(index, val) {
+					var oBox = $('<div class="box"></div>');
+					oBox.css({
+						left: val.x * 60,
+						top: val.y * 60
+					});
+					this.oParent.append(oBox);
+				},this)); 
+			},
+			createPerson: function(){
+				var oPerson = $('<div class="person"></div>');
+				oPerson.css({
+					left: this.nowJson.person.x * 60,
+					top: this.nowJson.person.y * 60
+				});
+				oPerson.data("x",this.nowJson.person.x);
+				oPerson.data("y",this.nowJson.person.y);
+				this.oParent.append(oPerson);
+				this.bindPerson(oPerson);
+			},
+			bindPerson:function(oP){
+				$(document).keydown($.proxy(function(event) {
+					switch(event.which){
+						case 37 :
+							oP.css('backgroundPosition', '-180px 0');
+							this.runPerson(oP,{x : -1});
+						break;
+						case 38 :
+							oP.css('backgroundPosition', '0 0');
+							this.runPerson(oP,{y : -1});
+						break;
+						case 39 :
+							oP.css('backgroundPosition', '-60px 0');
+							this.runPerson(oP,{x : 1});
+						break;
+						case 40 :
+							oP.css('backgroundPosition', '-120px 0');
+							this.runPerson(oP,{y : 1});
+						break;
+					}
+				},this));
+			},
+			runPerson:function(oP,data){
+				var stepX = data.x || 0;
+				var stepY = data.y || 0;
+				if(this.nowJson.map[(oP.data("y") + stepY) * Math.sqrt(this.nowJson.map.length) + (oP.data("x") + stepX)] != 2){
+					oP.data('x', oP.data("x") + stepX);
+					oP.data('y', oP.data("y") + stepY);
+
+					oP.css('left', oP.data("x") * 60);	
+					oP.css('top', oP.data("y") * 60);	
+
+					$(".box").each($.proxy(function(index, el) {
+						if(this.pz(oP,$(el)) && this.nowJson.map[(oP.data("y") + stepY) * Math.sqrt(this.nowJson.map.length) + (oP.data("x") + stepX)] != 2){
+							$(el).css('left', (oP.data("x") + stepX) * 60);	
+							$(el).css('top', (oP.data("y") + stepY) * 60);	
+
+							$(".box").each($.proxy(function(index2, el2) {
+								if(this.pz($(el2),$(el)) && el != el2){
+									$(el).css('left', (oP.data("x")) * 60);	
+									$(el).css('top', (oP.data("y")) * 60);
+									oP.data('x', oP.data("x") - stepX);
+									oP.data('y', oP.data("y") - stepY);
+
+									oP.css('left', oP.data("x") * 60);	
+									oP.css('top', oP.data("y") * 60);
+								}
+							},this));
+
+						}else if(this.pz(oP,$(el))){
+							oP.data('x', oP.data("x") - stepX);
+							oP.data('y', oP.data("y") - stepY);
+
+							oP.css('left', oP.data("x") * 60);	
+							oP.css('top', oP.data("y") * 60);	
+						}
+					},this));
+				}
+				this.nextShow();
+			},
+			nextShow : function(){
+				var rightCount = 0;
+				$(".clazz3").each($.proxy(function(index, el) {
+					$(".box").each($.proxy(function(index2, el2) {
+						if(this.pz($(el),$(el2))){
+							rightCount++;
+						}
+					},this));
+				},this));
+				if(rightCount == $(".box").size()){
+					this.createMap(1);
+				}
+			},
+			pz:function(obj1,obj2){
+				var l1 = obj1.offset().left;
+				var r1 = obj1.offset().left + obj1.width();
+				var t1 = obj1.offset().top;
+				var b1 = obj1.offset().top + obj1.height();
+
+				var l2 = obj2.offset().left;
+				var r2 = obj2.offset().left + obj2.width();
+				var t2 = obj2.offset().top;
+				var b2 = obj2.offset().top + obj2.height();
+
+				if(l1 >= r2 || r1 <= l2 || b1 <= t2 || t1 >= b2){
+					return false;
+				}else{
+					return true;
+				}
+
+			}
+		}
+	</script>
+</head>
+<body>
+	<div id="gameWrapper" class="clearfix"></div>
+</body>
+</html>
