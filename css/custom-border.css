@@ -1,0 +1,12 @@
+div {
+    width: 200px;
+    height: 100px;
+    margin: 100px auto;
+    background: 
+        linear-gradient(90deg, #333 50%, transparent 0) repeat-x,
+        linear-gradient(90deg, #333 50%, transparent 0) repeat-x,
+        linear-gradient(0deg, #333 50%, transparent 0) repeat-y,
+        linear-gradient(0deg, #333 50%, transparent 0) repeat-y;
+    background-size: 4px 1px, 4px 1px, 1px 4px, 1px 4px;
+    background-position: 0 0, 0 100%, 0 0, 100% 0;
+}
