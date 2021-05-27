@@ -184,23 +184,25 @@ var util = {
         let startFlag = false;
         for(let i = 0;i < len;i++){
             if(str[i] == '<'){
+                tagName = '';
                 startFlag = true;
                 stack.push({pos:i});
             }else if(str[i] == '>'){
                 if(startFlag){
                     startFlag = false;
                     stack.pop();
+                    tagName = '';
                 }
             }else{
                 if(startFlag){
                     if(/[a-zA-Z\-]/.test(str[i])){
                         tagName += str[i];
                     }else{
-                        if(!tagName || allTags.indexOf(tagName) > -1){
+                        if(!tagName || allTags.indexOf(tagName.toLowerCase()) == -1){
                             stack.pop();
                             startFlag = false;
+                            tagName = '';
                         }
-                        tagName = '';
                     }
                 }
             }
