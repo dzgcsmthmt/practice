@@ -215,5 +215,36 @@ var util = {
         }
 
         return res;
+    },
+    checkDeviceScale: function () {
+        var retValue = {
+            zoom: 1,
+            devicePixelRatio: window.devicePixelRatio,
+            applicationPixelRatio: window.devicePixelRatio
+        };
+    
+        var supportedScaleValues = [1];
+    
+        var systemScaling = window.devicePixelRatio;
+        var bestIndex = 0;
+        var bestDistance = Math.abs(supportedScaleValues[0] - systemScaling);
+        var currentDistance = 0;
+        for (var i = 1, len = supportedScaleValues.length; i < len; i++) {
+            if (Math.abs(supportedScaleValues[i] - systemScaling) > 0.0001) {
+                if (supportedScaleValues[i] > (systemScaling - 0.0001))
+                    break;
+            }
+            currentDistance = Math.abs(supportedScaleValues[i] - systemScaling);
+            if (currentDistance < (bestDistance - 0.0001)) {
+                bestDistance = currentDistance;
+                bestIndex = i;
+            }
+        }
+    
+        retValue.applicationPixelRatio = supportedScaleValues[bestIndex];
+        if (Math.abs(retValue.devicePixelRatio - retValue.applicationPixelRatio) > 0.01) {
+            retValue.zoom = retValue.devicePixelRatio / retValue.applicationPixelRatio;
+        }
+        return retValue;
     }
 }

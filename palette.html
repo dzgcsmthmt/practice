@@ -179,11 +179,11 @@
                 }
             }
 
-            canvas.addEventListener('mousemove',mousemove)
+            document.addEventListener('mousemove',mousemove)
 
             function mouseup(){
-                canvas.removeEventListener('mousemove',mousemove);
-                canvas.removeEventListener('mouseup',mouseup);
+                document.removeEventListener('mousemove',mousemove);
+                document.removeEventListener('mouseup',mouseup);
                 if(isDrawging){
                     circles.push(circle);
                     undos.push(ctx.getImageData(0,0,w,h))
@@ -191,7 +191,7 @@
                 }
             }
 
-            canvas.addEventListener('mouseup',mouseup);
+            document.addEventListener('mouseup',mouseup);
         })
 
         function getDistance(x,y,x1,y1){
