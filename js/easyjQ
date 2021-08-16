@@ -1,0 +1,494 @@
+const cssNumber = {
+    columnCount: 1,
+    fillOpacity: 1,
+    fontWeight: 1,
+    lineHeight: 1,
+    opacity: 1,
+    order: 1,
+    orphans: 1,
+    widows: 1,
+    zIndex: 1,
+    zoom: 1
+};
+const cssProps = {
+    float: "cssFloat"
+};
+const rkeyEvent = /^key/,
+	rmouseEvent = /^(?:mouse|contextmenu)|click/;
+const props = "altKey bubbles cancelable ctrlKey currentTarget eventPhase metaKey relatedTarget shiftKey target timeStamp view which".split(" ");
+const mouseHooks = "char charCode key keyCode".split(" ");
+const keyHooks = "button buttons clientX clientY offsetX offsetY pageX pageY screenX screenY toElement".split(" ");
+
+function camelCase(str) {
+    return str.replace( /-([\da-z])/gi, (all,letter) => letter.toUpperCase());
+}
+
+function isObject(obj){
+    return typeof obj === 'object' && obj !== null;
+}
+
+function isFunction(obj){
+    return typeof obj === 'function';
+}
+
+function isNode(node){
+    return node instanceof Node;
+}
+
+function merge( first, second ) {
+    var l = second.length,
+        i = first.length,
+        j = 0;
+
+    if ( typeof l === "number" ) {
+        for ( ; j < l; j++ ) {
+            first[ i++ ] = second[ j ];
+        }
+    } else {
+        while ( second[j] !== undefined ) {
+            first[ i++ ] = second[ j++ ];
+        }
+    }
+
+    first.length = i;
+
+    return first;
+}
+
+function parseHtml(html){
+    let fragment = document.createDocumentFragment();
+    fragment.innerHTML = html;
+    return fragment.children;
+}
+
+function each(obj,callback){
+   const len = obj.length;
+   for(let i = 0;i < len;i++){
+       callback(obj[i],i);
+   }
+}
+function returnTrue() {
+	return true;
+}
+
+function returnFalse() {
+	return false;
+}
+
+function EnhanceEvent(src){
+	this.originalEvent = src;
+	let copy = props.concat(rmouseEvent.test( src.type ) ? mouseHooks : rkeyEvent.test( src.type ) ? this.keyHooks : []);
+	
+	copy.forEach((prop) => {
+		this[ prop ] = src[ prop ];
+	});
+}
+EnhanceEvent.prototype = {
+	prototype: EnhanceEvent,
+	isDefaultPrevented: returnFalse,
+	isPropagationStopped: returnFalse,
+	isImmediatePropagationStopped: returnFalse,
+
+	preventDefault: function() {
+		var e = this.originalEvent;
+
+		this.isDefaultPrevented = returnTrue;
+
+		if ( e && e.preventDefault ) {
+			e.preventDefault();
+		}
+	},
+	stopPropagation: function() {
+		var e = this.originalEvent;
+
+		this.isPropagationStopped = returnTrue;
+
+		if ( e && e.stopPropagation ) {
+			e.stopPropagation();
+		}
+	},
+	stopImmediatePropagation: function() {
+		this.isImmediatePropagationStopped = returnTrue;
+		this.stopPropagation();
+	}
+};
+
+const psEvent = {
+    guid: 1,
+    on: function( elem, type, handler, selector,useCapture ) {
+
+		var eventHandle, events, handleObj,handlers, type;
+
+		// Don't attach events to text/comment nodes
+		if ( !elem || elem.nodeType === 3 || elem.nodeType === 8 || !elem.style ) {
+            return;
+        }
+
+		// Make sure that the handler has a unique ID, used to find/remove it later
+		if ( !handler.guid ) {
+			handler.guid = psEvent.guid++;
+		}
+
+		// Init the element's event structure and main handler, if this is the first
+		if ( !(events = elem.events) ) {
+			events = elem.events = {};
+		}
+
+		if ( !(eventHandle = elem.handle) ) {
+			eventHandle  = elem.handle = function( e ) {
+				return psEvent.dispatch.apply( eventHandle.elem, arguments );
+			};
+			// Add elem as a property of the handle fn to prevent a memory leak with IE non-native events
+			eventHandle.elem = elem;
+		}
+
+		// handleObj is passed to all event handlers
+		handleObj = {
+			handler: handler,
+			guid: handler.guid,
+			selector: selector,
+		};
+
+		// Init the event handler queue if we're the first
+		if ( !(handlers = events[ type ]) ) {
+			handlers = events[ type ] = [];
+			handlers.delegateCount = 0;
+
+			elem.addEventListener( type, eventHandle, !!useCapture );
+		}
+
+		// Add to the element's handler list, delegates in front
+		if ( selector ) {
+			handlers.splice( handlers.delegateCount++, 0, handleObj );
+		} else {
+			handlers.push( handleObj );
+		}
+    },
+    off: function(elem, type, handler, selector,useCapture ) {
+
+		var j, origCount,
+			events, handleObj, handlers,
+			events = elem.events;
+
+		if ( !events ) {
+			return;
+		}
+
+		// Unbind all events for the element
+		if ( !type ) {
+			for(let k in events){
+				elem.removeEventListener( k, elem.handle, !!useCapture );
+			}
+			delete elem.handle;
+			delete elem.events;
+			return;
+		}
+
+		handlers = events[ type ] || [];
+
+		// Remove matching events
+		origCount = j = handlers.length;
+		while ( j-- ) {
+			handleObj = handlers[ j ];
+
+			if ( ( !handler || handler.guid === handleObj.guid ) &&
+				( !selector || selector === handleObj.selector || selector === "**" && handleObj.selector ) ) {
+				handlers.splice( j, 1 );
+
+				if ( handleObj.selector ) {
+					handlers.delegateCount--;
+				}
+			
+			}
+		}
+
+		// Remove generic event handler if we removed something and no more handlers exist
+		// (avoids potential for endless recursion during removal of special event handlers)
+		if ( origCount && !handlers.length ) {
+			elem.removeEventListener( type, handle, !!useCapture );
+			delete events[ type ];
+		}
+
+		if ( Object.keys( events ).length === 0 ) {
+			delete elem.handle;
+			delete elem.events;
+		}
+    },
+    dispatch: function( event ) {
+
+		// Make a writable jQuery.Event from the native event object
+		var i, j, ret, matched, handleObj,
+			handlerQueue = [],
+			args = ([]).slice.call( arguments ),
+			handlers = ( this.events || {} )[ event.type ] || [];
+
+		event = new EnhanceEvent( event );
+
+		// Use the fix-ed jQuery.Event rather than the (read-only) native event
+		args[0] = event;
+		event.delegateTarget = this;
+
+		// Determine handlers
+		handlerQueue = psEvent.handlers.call( this, event, handlers );
+
+		// Run delegates first; they may want to stop propagation beneath us
+		i = 0;
+		while ( (matched = handlerQueue[ i++ ]) && !event.isPropagationStopped() ) {
+			event.currentTarget = matched.elem;
+			j = 0;
+			while ( (handleObj = matched.handlers[ j++ ]) && !event.isImmediatePropagationStopped()) {
+				ret = handleObj.handler.apply( matched.elem, args );
+				if ( ret !== undefined ) {
+					if ( (event.result = ret) === false ) {
+						event.preventDefault();
+						event.stopPropagation();
+					}
+				}
+			}
+		}
+
+		return event.result;
+	},
+
+	handlers: function( event, handlers ) {
+		var i, matches, sel, handleObj,
+			handlerQueue = [],
+			delegateCount = handlers.delegateCount,
+			cur = event.target;
+
+		// Find delegate handlers
+		// Black-hole SVG <use> instance trees (#13180)
+		// Avoid non-left-click bubbling in Firefox (#3861)
+		if ( delegateCount && cur.nodeType && (!event.button || event.type !== "click") ) {
+
+			for ( ; cur !== this; cur = cur.parentNode || this ) {
+
+				// Don't process clicks on disabled elements (#6911, #8165, #11382, #11764)
+				if ( cur.disabled !== true || event.type !== "click" ) {
+					matches = [];
+					for ( i = 0; i < delegateCount; i++ ) {
+						handleObj = handlers[ i ];
+
+						// Don't conflict with Object.prototype properties (#13203)
+						sel = handleObj.selector + " ";
+
+						if ( matches[ sel ] === undefined ) {
+							matches[ sel ] = cur.matches(sel);
+						}
+						if ( matches[ sel ] ) {
+							matches.push( handleObj );
+						}
+					}
+					if ( matches.length ) {
+						handlerQueue.push({ elem: cur, handlers: matches });
+					}
+				}
+			}
+		}
+
+		// Add the remaining (directly-bound) handlers
+		if ( delegateCount < handlers.length ) {
+			handlerQueue.push({ elem: this, handlers: handlers.slice( delegateCount ) });
+		}
+
+		return handlerQueue;
+	}
+}
+
+
+function $(selector){
+    if(selector instanceof $) return selector;
+    if(!(this instanceof $)) return new $(selector);
+    this.length = 0;
+    if(selector == null) return this;
+    //处理Dom
+    if(isNode(selector)) return merge(this,[selector]);
+   
+    if ( selector.charAt(0) === "<" && selector.charAt( selector.length - 1 ) === ">" && selector.length >= 3 ) {
+         //处理标签
+        return merge(this,parseHtml(selector));
+    }else{
+        //处理选择器
+        return merge(this,document.querySelectorAll(selector));
+    }
+
+}
+
+$.prototype = {
+    constructor: $,
+    pushStack: function( elems ) {
+		var ret = merge( new $(), elems );
+		ret.prevObject = this;
+		return ret;
+    },
+    end: function() {
+		return this.prevObject || new $();
+	},
+    hide: function(){
+        each(this,ele => {
+            //通过olddisplay存一下
+            let display = getComputedStyle(ele).display;
+            if(display !== 'none'){
+                ele.olddisplay = display;
+                ele.style.display = 'none';
+            }
+        });
+        return this;
+    },
+    show: function(){
+        //ele.style.display = '' 使用默认的值
+        each(this,ele => ele.style.display = ele.olddisplay || '');
+        return this;
+    },
+    css: function(name,val){
+        each(this,ele => {
+            if ( !ele || ele.nodeType === 3 || ele.nodeType === 8 || !ele.style ) {
+                return;
+            }
+            //name可以是对象，统一处理
+            if(!isObject(name)){
+                name = {[name]: val};
+            }
+            for(let key in name){
+                let origName = camelCase( key );
+			    if(cssProps[origName]){
+                    origName = cssProps[origName];
+                } 
+                let value = name[key];
+                let type = typeof value;
+                if ( type === "number" && !cssNumber[ origName ] ) {
+                    value += "px";
+                }
+                ele.style[origName] = value;
+            }
+        })
+        return this;
+    },
+    addClass: function(clsName){
+        each(this,ele => ele.classList.add(clsName));
+        return this;
+    },
+    removeClass: function(clsName){
+        each(this,ele => ele.classList.remove(clsName));
+        return this;
+    },
+    toggleClass: function(clsName){
+        each(this,ele => ele.classList.toggle(clsName));
+        return this;
+    },
+    empty: function(){
+        each(this,ele => ele.innerHTML = '');
+        return this;
+    },
+    remove: function(){
+        each(this,ele => ele.parentNode.removeChild(ele));
+    },
+    append: function(node){
+        each(this,ele => {
+            if(isNode(node)){
+                ele.appendChild(node);
+            }else if(typeof node === 'string'){
+                ele.insertAdjacentHTML('beforeend',node);
+            }
+        });
+        return this;
+    },
+    get: function(index){
+        return this[index];
+    },
+    first: function(){
+        return this.eq( 0 );
+    },
+    last: function(){
+        return this.eq( -1 );
+    },
+    eq: function(i){
+        var len = this.length,
+			j = +i + ( i < 0 ? len : 0 );
+		return this.pushStack( j >= 0 && j < len ? [ this[j] ] : [] );
+    },
+    find: function(selector){
+        return this.pushStack(this[0].querySelectorAll(selector));
+    },
+    prev: function(){
+        return this.pushStack([this[0].previousElementSibling]);
+    },
+    next: function(){
+        return this.pushStack([this[0].nextElementSibling]);
+    },
+    parent: function(){
+        return this.pushStack([this[0].parentNode]);
+    },
+    offsetParent: function(){
+        return this.pushStack([this[0].offsetParent]);
+    },
+    children: function(){
+        return this.pushStack(this[0].children);
+    },
+    siblings: function(){
+        let first = this.get(0);
+        return this.pushStack([...first.parentNode.children].filter(item => item !== first));
+    },
+    closest: function(selector){
+        if(!selector) return this;
+        let first = this.get(0);
+        while(first){
+            first = first.parentNode;
+            if(first.matches(selector)) break;
+        }
+        return this.pushStack(first ? [first] : []);
+    },
+    attr: function(name,val){
+        if(val === void 0) return this.get(0).getAttribute(name);
+        if(!isObject(name)){
+            name = {[name]: val};
+        }
+        for(let key in name){
+            each(this,ele => {
+                if(key === 'disabled' && !val){
+                    ele.removeAttribute(key);
+                }else{
+                    ele.setAttribute(key,name[key])
+                }
+            });
+        }
+        return this;
+    },
+    html: function(html){
+        if(!html) return this.get(0).innerHTML.trim();
+        each(this,ele => ele.innerHTML = html);
+        return this;
+    },
+    text: function(text){
+        if(!text) return this.get(0).textContent || this.get(0).innerText;
+        each(this,ele => ele.textContent = text);
+        return this;
+    },
+    val: function(val){
+        if(!val) return this.get(0).value || this.get(0).nodeValue;
+        each(this,ele => ele.value = val);
+        return this;
+	},
+	on: function(type,selector,handler,useCapture){
+		each(this,ele => {
+			if(isFunction(selector)){
+				useCapture = handler;
+				handler = selector;
+				selector = '';
+			}
+			psEvent.on(ele,type,handler,selector,useCapture);
+		});
+		return this;
+	},
+	off: function(type,selector,handler,useCapture){
+		each(this,ele => {
+			if(isFunction(selector)){
+				useCapture = handler;
+				handler = selector;
+				selector = '';
+			}
+			psEvent.off(ele,type,handler,selector,useCapture);
+		});
+		return this;
+	}
+}
