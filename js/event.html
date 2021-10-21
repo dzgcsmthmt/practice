@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>不老事件</title>
+    <style>
+        p{
+            text-align: center;
+            font-size: 24px; 
+        }
+        li{
+            height: 200px;
+            line-height: 200px;
+            text-align: center;
+            font-size: 64px;
+            background: red;
+        }
+    </style>
+</head>
+<body>
+    <ul>
+        <li>1</li>
+        <li>2</li>
+        <li>3</li>
+    </ul>
+    <script src="./jquery.js"></script>
+    <script>
+        // https://github.com/liriliri/eruda/blob/v1.10.3/src/lib/util.js
+        // https://github.com/facebook/react/blob/main/packages/react-dom/src/events/SyntheticEvent.js
+        // https://github.com/vuejs/vue/blob/dev/src/core/instance/events.js
+        let oUl = document.querySelector('ul');
+        
+        // oUl.addEventListener('click',function(e){
+        //     console.log(1);
+        //     e.stopImmediatePropagation();
+        // })
+        // oUl.addEventListener('click',function(e){
+        //     console.log(new EnhanceEvent(e));
+        //     console.log(2);
+        // });
+        oUl.addEventListener('mouseover',function(e){
+            // console.log(e.type);
+            // console.log(3);
+        });
+
+        function returnTrue(){
+            return true;
+        }
+
+        function returnFalse(){
+            return false;
+        }
+
+
+        class EnhanceEvent{
+            constructor(originEvent){
+                this.originEvent = originEvent;
+                // for(let key in originEvent){
+                //     this[key] = originEvent[key];
+                // }
+                "altKey bubbles cancelable ctrlKey currentTarget eventPhase metaKey relatedTarget shiftKey target timeStamp view which".split(" ").forEach((key) => {
+                    this[key] = originEvent[key];
+                })
+                this.isDefaultPrevented = returnFalse;
+                this.isPropagationStopped = returnFalse;
+                this.isImmediatePropagationStopped = returnFalse;
+            }
+
+            stopPropagation(){
+                this.isPropagationStopped = returnTrue;
+                if(this.originEvent && this.originEvent.stopPropagation){
+                    this.originEvent.stopPropagation();
+                }
+            }
+
+            stopImmediatePropagation(){
+                this.isImmediatePropagationStopped = returnTrue;
+                if(this.originEvent && this.originEvent.stopImmediatePropagation){
+                    this.originEvent.stopImmediatePropagation();
+                }else{
+                    this.stopPropagation();
+                }
+            }
+
+            preventDefault(){
+                this.isDefaultPrevented = returnTrue;
+                if(this.originEvent && this.originEvent.preventDefault){
+                    this.originEvent.preventDefault();
+                }
+            }
+
+
+        }
+
+        
+        const okEvent = {
+            on: function(ele,type,selector,handler){
+                let handlers,eventHandler;
+                if(!ele || ele.nodeType === 3 || ele.nodeType === 8 || !ele.style) return;
+                if(!ele.events){
+                    ele.events = {};
+                }
+
+                if(typeof selector === 'function'){
+                    handler = selector;
+                    selector = '';
+                }
+
+                if(!(eventHandler = ele.handler)){
+                    eventHandler = ele.handler = function(){
+                        return okEvent.dispatch.apply(ele,arguments);
+                    }
+                }
+
+                let handlerObj = {
+                    handler: handler,
+                    selector: selector
+                }
+
+                if(!(handlers = ele.events[type])){
+                    handlers = ele.events[type] = [];
+                    handlers.delegateCount = 0;
+                    ele.addEventListener(type,eventHandler,false);
+                }
+
+                if(selector){
+                    handlers.splice(handlers.delegateCount++,0,handlerObj);
+                }else{
+                    handlers.push(handlerObj);
+                }
+
+                return this;
+
+            },
+            off: function(ele,type,selector,handler){
+                if(!ele || ele.nodeType === 3 || ele.nodeType === 8 || !ele.events) return;
+                if(typeof selector === 'function'){
+                    handler = selector;
+                    selector = '';
+                }
+
+                if(!type){
+                    for(let type in ele.events){
+                        ele.removeEventListener( type, ele.handler, false );
+                    }
+                    delete ele.handle;
+                    delete ele.events;
+                    return;
+                }
+
+
+                let handlers = ele.events[type] || [];
+                let len,j;
+                len = j = handlers.length;
+
+                while(j--){
+                    let handlerObj = handlers[j];
+
+                    if((!handler || handler === handlerObj.handler) && (!selector || selector === handlerObj.selector) ){
+                        handlers.splice(j,1);
+                        if(handlerObj.selector){
+                            handlers.delegateCount--;
+                        }
+                    }
+
+                }
+
+                if(len & !handlers.length){
+                    ele.removeEventListener(type,ele.handler,false);
+                    delete ele.events[type];
+                }
+
+
+                if ( Object.keys( ele.events ).length === 0 ) {
+                    delete ele.handle;
+                    delete ele.events;
+                }
+
+            },
+            dispatch: function(event){
+                let args = Array.from(arguments),handlers = (this.events || {})[event.type] || [];
+                let i = 0,matched,handlerObj,handlerQueue;
+
+                event = new EnhanceEvent(event);
+                args[0] = event;
+
+                handlerQueue = okEvent.handlers.call(this,event,handlers);
+
+
+                while((matched = handlerQueue[i++]) && !event.isPropagationStopped()){
+                    event.currentTarget = matched.ele;
+                    let j = 0;
+
+                    while((handlerObj = matched.handlers[j++]) && !event.isImmediatePropagationStopped()){
+                        let ret = handlerObj.handler.apply(matched.ele,args);
+                        if(ret !== undefined){
+                            if((event.ret = ret) === false){
+                                event.stopPropagation();
+                                event.preventDefault();
+                            }
+                        }
+                        
+                    }
+
+                }
+                
+                return event.ret;
+            },
+            handlers: function(event,handlers){
+                let delegateCount = handlers.delegateCount || 0;
+                let queue = [],match,i;
+                if(delegateCount > 0){
+                    for(let cur = event.target;cur != this;cur = cur.parentNode || this){
+                        match = [];
+                        for(let i = 0;i < delegateCount;i++){
+                            let handlerObj = handlers[i];
+                            let sel = handlerObj.selector + ' ';
+    
+                            if(match[sel] === undefined){
+                                match[sel] = cur.matches(sel);
+                            }
+    
+                            if(match[sel]){
+                                match.push(handlerObj);
+                            }
+    
+                        }
+                        if(match.length){
+                            queue.push({ele: cur,handlers: match});
+                        }
+                    }
+                }
+
+                if(delegateCount < handlers.length){
+                    queue.push({ele: this,handlers: handlers.slice(delegateCount)});
+                }
+
+                return queue;
+            }
+
+        }
+
+
+        function fn1(){
+            console.log(1);
+        }
+
+        function fn2(){
+            console.log(2);
+        }
+
+        function fn3(){
+            console.log(3);
+        }
+
+        okEvent.on(oUl,'click','li',function(ev){
+            console.log('li',this)
+            // ev.stopPropagation();
+        }).on(oUl,'click',function(ev){
+            console.log(1,this);
+            // ev.stopImmediatePropagation();
+        }).on(oUl,'click',fn2).on(oUl,'mouseover',fn3)
+
+    </script>
+</body>
+</html>
