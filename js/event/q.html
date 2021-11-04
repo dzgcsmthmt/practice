@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        li{
+            height: 200px;
+            line-height: 200px;
+            text-align: center;
+            font-size: 64px;
+            background: red;
+        }
+    </style>
+</head>
+<body>
+    <ul>
+        <li>1</li>
+        <li>2</li>
+        <li>3</li>
+    </ul>
+    <script src="./jquery.js"></script>
+    <script>
+        let oUl = document.querySelector('ul');
+
+        //代理
+        /*oUl.addEventListener('click',function(ev){
+            console.log('ul clicked');
+        });
+
+        oUl.addEventListener('click',function(ev){
+            let target = ev.target;
+            if(target.tagName.toLowerCase() === 'li'){
+                console.log('li clicked');
+                ev.stopPropagation();
+            }
+        });*/
+
+        
+        /* $('ul').on('click',function(ev){
+            console.log('ul clicked');
+        }).on('click','li',function(ev){
+            console.log('li clicked');
+            // ev.stopPropagation();
+        }); */
+
+        //取消绑定
+        /*oUl.addEventListener('click',function(ev){
+            console.log(ev.target);
+            console.log(1,ev,this);
+            ev.stopImmediatePropagation();
+        });
+
+        oUl.addEventListener('click',function(ev){
+            console.log(2,ev,this);
+        });*/
+
+        //oUl.removeEventListener('click',getEventListeners(oUl).click[0].listener)
+
+        // let fn1 = (ev) => {console.log(1)}
+        // let fn2 = (ev) => {console.log(2)}
+
+        // oUl.addEventListener('click',fn1);
+        // oUl.addEventListener('click',fn2);
+
+        // oUl.removeEventListener('click',fn1);
+
+        //jQ取消
+        // $('ul').off('click');
+
+
+
+    </script>
+</body>
+</html>
