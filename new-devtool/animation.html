@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Animation</title>
+    <style>
+        #a,#b {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+        }
+        #a {
+            left: 10px;
+            top: 10px;
+            z-index: 2;
+            animation: move 1s linear infinite alternate;
+            background: red;
+            /* transform: translate3d(0px, 0px, 10px); */
+        }
+        #b {
+            left: 50px;
+            top: 50px;
+            z-index: 1;
+            background: blue;
+        }
+        #button{
+            margin-left: 400px;
+        }
+
+        /* @keyframes move {
+            from {top: translateX(0); }
+            to { transform: translateX(70px); }
+        } */
+        @keyframes move {
+           from { top: 10px; }
+           to { top: 80px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="a">A</div>
+    <div id="b">B</div>
+    <button type="button" id="button">calc</button>
+    <script type="text/javascript">
+        document.getElementById('button').addEventListener('click',() => {
+            var num = 0;
+            for (var i = 0; i < 1000000000; i++) {
+                num++;
+            }
+        });
+    </script>
+</body>
+</html>

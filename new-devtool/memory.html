@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Memory</title>
+    <style>
+        a{display: block;margin: 10px 0;font-size: 24px;}
+    </style>
+</head>
+<body>
+    
+    <div id="parent">
+        <button id="btn">button</button>
+    </div>
+    <a href="./taskManager.html" target="_blank" rel="noopener noreferrer">task manager</a>
+    <a href="https://developer.chrome.com/docs/devtools/memory-problems/allocation-profiler/" target="_blank" rel="noopener noreferrer">devtool memory</a>
+    <a href="https://qdmana.com/2021/09/20210910054527809o.html" target="_blank" rel="noopener noreferrer">Delve into how the memory of the V8 - JS array is allocated</a>
+    <a href="https://draft.li/blog/2016/12/22/javascript-engines-hidden-classes/" target="_blank" rel="noopener noreferrer">hidden class</a>
+    <a href="http://slides.com/gruizdevilla/memory#/5/16" target="_blank" rel="noopener noreferrer">slow delete</a>
+    <script>
+        
+        /***
+         * Shallow Size
+         * 这是对象自身占用内存的大小。典型的 JavaScript 对象会将一些内存用于自身的说明和保存中间值
+         * Retained Size
+         * 这是将对象本身连同其无法从 GC 根到达的相关对象一起删除后释放的内存大小。
+        */
+
+        //Boolean null undefined
+
+        var b = true;
+        var nul = null;
+        var undef = undefined;
+
+        //Number
+        // V8 represents objects and numbers with 32 bits. It uses a bit to know if it is an object (flag = 1) or an integer (flag = 0) called SMI (SMall Integer) 
+        // because of its 31 bits. Then, if a numeric value is bigger than 31 bits, V8 will box the number, 
+        //turning it into a double and creating a new object to put the number inside. 
+        // Try to use 31 bit signed numbers whenever possible to avoid the expensive boxing operation into a JS object.
+        var num = 2;
+        var bigNum = 2 ** 56;
+        var bigInt = 72057594037927940n;
+        var floatNum = 2.3;
+
+        //String
+        var _keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+        var str1 = 's'.repeat(1000);
+        var str2 = '';
+        for(let i = 0;i < 1000;i++){
+            str2 += _keyStr[(Math.random() * 64) | 0]
+        }
+
+        // 字符串存在字符串常量池中
+        var strA = 'aaaaaa';
+        var strB = 'aaaaaa';
+        var strC = new String('aaaaaa');
+
+        //Array
+        var arr1 = [];
+        var arr2 = [];
+        console.log(arr1 === arr2);
+
+        //https://qdmana.com/2021/09/20210910054527809o.html
+        /**
+         * Array index properties (Array-indexed Properties) and   Named properties (Named Properties)
+         * Fast arrays and slow arrays
+         */
+        arr1['a'] = 1;
+        //take a snapshot
+        arr1.push(1);
+
+
+        /* 
+        //snapshot element @id
+        for(let i = 0;i < 100000;i++){
+            arr1.push(i);
+        } */
+
+
+        //Object map elements
+        // var obj = {a: 1,str:str2}
+        var obj = {1:1,a: 1,str:str2}
+
+
+        //closure optimization
+        //need debugger
+        function outer(){
+            var a = 1;
+            var b = 'd';
+            var str = 'a'.repeat(1000);
+
+            function inner(){
+                console.log(b);
+            }
+            return inner;
+        }
+
+        var innerFunc = outer();
+        innerFunc();
+
+        //dom
+        let oLi = document.querySelector('li');
+        // document.querySelector('ul').innerHTML = '';
+
+        //DOM leaks are bigger than you think
+        //#leaf maintains a reference to it's parent (parentNode), and recursively up to #tree, 
+        //so only when leafRef is nullified is the WHOLE tree under #tree candidate to be GC
+        var oPar = document.querySelector('#parent');
+        var oBtn = document.querySelector('#btn');
+
+        //hidden class
+        // https://draft.li/blog/2016/12/22/javascript-engines-hidden-classes/
+        class Person{
+            constructor(name){
+                this.name = name;
+            }
+        }
+
+        var zs = new Person('zs');
+        var ls = new Person('ls');
+
+        // ls.age = 13;
+
+        //hidden class memory effect
+        //http://slides.com/gruizdevilla/memory#/5/16
+        function FastPurchase(units, price) {
+            this.units = units;
+            this.price = price;
+            this.total = 0;
+            this.x = 1;
+        }
+        var fast = new FastPurchase(3, 25);
+
+        function SlowPurchase(units, price) {
+            this.units = units;
+            this.price = price;
+            this.total = 0;
+            this.x = 1;
+        }
+        var slow = new SlowPurchase(3, 25);
+        //x property is useless 
+        //so I delete it
+        delete slow.x; 
+
+
+        //timeline
+
+        var con = [];
+        var df;
+        setTimeout(() => {
+            // let con = []; //局部变量不展示，应该是用完就回收了
+            for(let i = 0;i < 10;i++){
+                con.push(new Person('zs' + i));
+                df = document.createDocumentFragment();
+                df.appendChild(document.createElement('div'));
+            }
+        },3000);
+        
+        setTimeout(() => {
+            // let con = [];
+            for(let i = 0;i < 10;i++){
+                con.push(new Person('zs' + i));
+            }
+        },5000);
+
+    </script>
+</body>
+</html>
