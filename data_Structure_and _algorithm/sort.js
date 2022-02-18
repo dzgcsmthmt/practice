@@ -82,6 +82,27 @@ function merge(left,right){
 }
 
 //快速排序
+//stable quick sort need extra space(O(N))
+
+function quickSort(arr) {
+    return partition(arr);
+}
+
+function partition(arr){
+    if(arr.length <= 1) return arr;
+    let pivot = arr[0];
+    let left = [],right = [];
+    for(let i = 1; i < arr.length;i++){
+       if(arr[i] < pivot){
+           left.push(arr[i]);
+       } else{
+           right.push(arr[i]);
+       }
+    }
+
+    return [...partition(left),pivot,...partition(right)];
+}
+
 function quickSort(arr){
     quick(arr,0,arr.length - 1);
 }
