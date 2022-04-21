@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <button id="a">click a</button>
+    <button id="b">click b</button>
+    <div id="d">
+        <button id="c">click c</button>
+    </div>
+    <input type="text" id="e">
+    <script src="./jquery.js"></script>
+    <script src="./src/index.js" type="module"></script>
+    <script>
+        document.querySelector('#a').addEventListener('click',function(e){
+            console.log(this,e.target);
+        },true);
+
+        $('#a,#b').on('click',function(e){
+            console.log(this,e.target)
+        })
+
+        $('#a,#b').on('mousedown',function(e){
+            console.log('mousedown',e.target)
+        })
+
+        $('#d').on('click','#c',function(e){
+            console.log(this,e.target)
+        })
+
+        $('#e').on('focus',function(e){
+            console.log('get focused')
+        })
+    </script>
+</body>
+</html>
