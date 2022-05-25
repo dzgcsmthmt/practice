@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>devtools-layers</title>
+    <style>
+        li,p{
+            font-size: 24px;
+        }
+        a{
+            display: block;
+            margin: 10px 0;
+            font-size: 24px;
+        }
+        .inline{
+            display: inline;
+        }
+       
+    </style>
+</head>
+
+<body>
+    <a href="./animation.html" target="_blank">为何需要创建一个Layer</a>
+    <h2>浏览器会出于多种原因将元素提升为<a href="./createNewLayer.html" class="inline" target="_blank">合成层</a>，其中有几个：</h2>
+    <ul>
+        <li>3D transforms: translate3d, translateZ;</li>
+        <li>&lt;video&gt;, &lt;canvas&gt; and &lt;iframe&gt; elements;</li>
+        <li>animation of transform and opacity via Element.animate();</li>
+        <li>animation of transform and opacity via СSS transitions and animations;</li>
+        <li>position: fixed;</li>
+        <li>will-change;</li>
+        <li>filter;</li>
+    </ul>
+    <h2>Memory estimate</h2>
+    <p>单个复合层占用多少内存？ 让我们举一个简单的例子。 猜测存储一个300 × 300像素纯色#F00填充的矩形需要多少内存。</p>
+    <p>将图像的宽度乘以它的高度来得到图像中的像素数,乘以 3，因为每个像素都由三个字节 (RGB) 描述,300 × 300 × 3 = 270,000 字节;如果图像包含透明区域，我们将其乘以 4，因为需要一个额外的字节来描述透明度： (RGBa): 300 × 300 × 4 = 360,000 字节</p>
+    <p>Swiper为例：一个有 10 张照片的轮播，每张尺寸为 800 × 600 像素。 我们决定在用户交互（例如拖动）时在图像之间平滑过渡，因此我们为每个图像添加 will-change: transform。 这将提前将图像提升为合成层，以便在用户交互时立即开始转换。 一个轮播需要额外的内存：800 × 600 × 4 × 10 ≈ 19 MB。</p>
+    <p>渲染单个控件需要 19 MB 的额外内存！ 如果创建具有大量动画控件、视差效果、高分辨率图像和其他视觉增强功能的单页应用，那么每页额外至少需要100到200MB的内存</p>
+    <h2>优点和缺点</h2>
+    <h3>优点</h3>
+    <ul>
+        <li>动画快速流畅，每秒 60 帧。</li>
+        <li>在单独的线程中工作，不会被繁重的 JavaScript 计算阻塞。</li>
+        <li>3D transforms “使用简单”</li>
+    </ul>
+    <h3>缺点</h3>
+    <ul>
+        <li>需要进行额外的重新绘制才能将元素提升为复合层。 有时这很慢（即当我们需要全层重绘，而不是增量重绘时）</li>
+        <li>必须将绘制的图层传输到 GPU。 根据这些层的数量和大小，传输也可能非常缓慢。 这可能会导致低端和中端设备上的元素闪烁</li>
+        <li>每个复合层都会消耗额外的内存。 内存是移动设备上的宝贵资源。 过多的内存使用可能会<b>使浏览器崩溃</b>。</li>
+        <li>对于定位的元素，使用不当可能会导致生成新的独立图层（z-index低的元素设置transform 3d，z-index高的元素也会变成一个独立图层）</li>
+        <li>可能有视觉伪影，Safari 中的文本渲染，并且在某些情况下页面内容会消失或扭曲。</li>
+    </ul>
+    <a href="https://developers.google.com/web/updates/2018/09/inside-browser-part4#understanding_non-fast_scrollable_region" target="_blank">understanding_non-fast_scrollable_region</a>
+    <a href="https://blog.csdn.net/tengxy_cloud/article/details/52858742" target="_blank">passive-true-csnd</a>
+    <a href="https://alligator.io/js/speed-up-scroll-events/" target="_blank">passive-true-alligator</a>
+</body>
+
+</html>

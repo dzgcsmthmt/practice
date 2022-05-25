@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title>Download</title>
+    </head>
+    <body>
+        <!-- 通过download直接下载  IE全部不行 edge13以后可以 Safari也要10.1 ios Safari暂不支持-->
+        <a href="img.png" download="output.png">Download</a>
+    </body>
+    <script type="text/javascript">
+        function downloadURI(uri, name) {
+            var link = document.createElement("a");
+            link.download = name;
+            link.href = uri;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        // iframe
+        var getIFrameWindow = function ( file ) {
+            var ifr = document.getElementById( "fileFrame" );
+            if ( null != ifr )
+                document.body.removeChild( ifr );
+            createFrame( file );
+            var wnd = window.frames["fileFrame"];
+            return wnd;
+        }
+        var createFrame = function ( file ) {
+            var frame = document.createElement( "iframe" );
+    		frame.src = file;
+            frame.name = "fileFrame";
+            frame.id = "fileFrame";
+
+            frame.style.width = "0px";
+            frame.style.height = "0px";
+            frame.style.border = "0px";
+            frame.style.display = "none";
+
+    		document.body.appendChild( frame );
+        }
+        //window.open()
+        var downloadFile = function(sUrl) {
+            window.open(sUrl, '_self');
+        }
+        downloadURI("data:text/html,HelloWorld!", "helloWorld.txt");
+
+        //download of image from src=“data:image/jpeg;base64…”
+        function replaceMime(){
+            //var img = reference to image
+            var url = img.src.replace(/^data:image\/[^;]+/, 'data:application/octet-stream');
+            window.open(url);
+            // Or perhaps: location.href = url;
+            // Or even setting the location of an <iframe> element,
+        }
+        function blob(){
+            // atob to base64_decode the data-URI
+           var image_data = atob(img.src.split(',')[1]);
+           // Use typed arrays to convert the binary data to a Blob
+           var arraybuffer = new ArrayBuffer(image_data.length);
+           var view = new Uint8Array(arraybuffer);
+           for (var i=0; i<image_data.length; i++) {
+               view[i] = image_data.charCodeAt(i) & 0xff;
+           }
+           try {
+               // This is the recommended method:
+               var blob = new Blob([arraybuffer], {type: 'application/octet-stream'});
+           } catch (e) {
+               // The BlobBuilder API has been deprecated in favour of Blob, but older
+               // browsers don't know about the Blob constructor
+               // IE10 also supports BlobBuilder, but since the `Blob` constructor
+               //  also works, there's no need to add `MSBlobBuilder`.
+               var bb = new (window.WebKitBlobBuilder || window.MozBlobBuilder);
+               bb.append(arraybuffer);
+               var blob = bb.getBlob('application/octet-stream'); // <-- Here's the Blob
+           }
+
+           // Use the URL object to create a temporary URL
+           var url = (window.webkitURL || window.URL).createObjectURL(blob);
+           location.href = url; // <-- Download!
+        }
+    </script>
+</html>
