@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        img{
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <header id="header">
+        <h1>我是header</h1>
+        <button class="share-btn">click</button>
+        <button class="login-btn">login</button>
+    </header>
+    <!-- <div class="hash-rate">
+        <img src="https://okimg.okjiaoyu.cn/okimg_7fa8ho2u0550.jpg" alt="img">
+    </div>
+    <div class="introduction-item-desc-wrapper mb-50 clearfix">
+        <div class="introduction-item-desc">
+            <p>千里之外，大山里的</p>
+            <p>孩子也能上一堂好课</p>
+        </div>
+        <div class="introduction-item-sub-desc">
+            <p>各个大屏跨区域、跨校、跨教室互联互通，<br>将优质课堂远程同步出去。</p>
+        </div>
+    </div>
+    <div class="hash-rate">
+        <img src="https://okimg.okjiaoyu.cn/okimg_7fa8ho2u0550.jpg" alt="img">
+    </div>
+    <div class="introduction-item-desc-wrapper mb-50 clearfix">
+        <div class="introduction-item-desc">
+            <p>千里之外，大山里的</p>
+            <p>孩子也能上一堂好课</p>
+        </div>
+        <div class="introduction-item-sub-desc">
+            <p>各个大屏跨区域、跨校、跨教室互联互通，<br>将优质课堂远程同步出去。</p>
+        </div>
+    </div> -->
+    <script>
+        // let start = Date.now();
+        // while(true){
+        //     let now = Date.now();
+        //     if(now - start > 5000) break;
+        // }
+        let oBtn = document.createElement('button');
+        oBtn.innerText = 'append'
+        document.querySelector('header').appendChild(oBtn);
+
+        class Header{
+            constructor(container){
+                this.container = typeof container === 'string' ? document.querySelector(container) : container;
+            }
+
+            on(selector,type,fn,before=false){
+                if(Array.isArray(selector)){
+                    selector.forEach(sel => this.on(sel,type,fn,before));
+                    return;
+                }
+
+                let eles = this.container.querySelectorAll(selector);
+                eles.forEach(ele => {
+                    let events = ele.events;
+                    if(!events){
+                        events = ele.events = {};
+                    }
+                    if(!ele.eventHandler){
+                        ele.eventHandler = (ev) => {
+                            //顺序执行
+                            let cbs = events[ev.type];
+                            let index = 0;
+                            function next(){
+                                if(index === cbs.length) return;
+                                cbs[index++].call(ele,ev,next);
+                            }
+                            next();
+                            //同步执行
+                            //events[type].forEach(cb => cb(ev));
+                        }
+                    }
+                    if(events[type]){
+                        events[type][before ? 'unshift' : 'push'](fn)
+                    }else{
+                        events[type] = [fn];
+                        ele.addEventListener(type,ele.eventHandler)
+                    }
+                })
+            }
+
+            off(selector,type,fn){
+                if(Array.isArray(selector)){
+                    selector.forEach(sel => this.on(sel,type,fn,before));
+                    return;
+                }
+
+                let eles = this.container.querySelectorAll(selector);
+                eles.forEach(ele => {
+                    let events = ele.events;
+                    if(!events || !events[type]) return;
+                    if(typeof fn === 'undefined'){
+                        ele.removeEventListener(type,ele.eventHandler)
+                        delete events[type];
+                        return;
+                    }
+
+                    let cbs = events[type];
+
+                    let index = cbs.indexOf(fn);
+                    if(index > -1){
+                        cbs.splice(index,1);
+                    }
+
+                    if(cbs.length === 0){
+                        //跟上面重复代码，提取个方法
+                        ele.removeEventListener(type,ele.eventHandler)
+                        delete events[type];
+                    }
+
+                })
+            }
+        }
+
+        var header = new Header('#header');
+        var fn2 = (ev,next) => {
+            console.log(2);
+            next();//不执行next就不会调用下一个执行函数 3就不会打
+        };
+        var fn3 = (ev,next) => {
+            console.log(3,ev);
+            next();
+        }
+        header.on('.share-btn','click',fn2)
+        header.on('.share-btn','click',fn3)
+
+        header.on('.share-btn','mouseover',(ev,next) => {
+            console.log('mouseover',ev);
+            next();
+        })
+        /* 
+        可以在console里动态执行以下，不调用next，2也打印不出来
+        header.on('.share-btn','click',(ev,next) => {
+            console.log(1);
+            //next()
+        },true) 
+        */
+    </script>
+</body>
+</html>
