@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1.0,user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection"content="telephone=no, email=no" />
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="cache-control" content="no-cache">
+    <meta http-equiv="expires" content="0">
+    <meta name="HandheldFriendly" content="true">
+    <meta name="MobileOptimized" content="320">
+    <meta name="screen-orientation" content="portrait">
+    <meta name="x5-orientation" content="portrait">
+    <meta name="x5-fullscreen" content="true">
+    <meta name="msapplication-tap-highlight" content="no">
+    <!-- <meta http-equiv="refresh" content="0;url=https://www.okzhihui.cn" /> -->
+    <title>数据报告</title>
+    <script>
+        (function(){
+            var html = document.documentElement;
+            var htmlWidth = html.getBoundingClientRect().width;
+            html.style.fontSize = htmlWidth / 15 +"px";
+        })();
+    </script>
+    <title>数据报告</title>
+    <style>
+        body{
+            margin: 0;
+            padding: 0;
+        }
+        .canvas{
+            margin: 20px 0.56rem;
+            border: 2px solid #ebebeb;
+            border-top: none;
+            box-sizing: border-box;
+        }
+        #canvas{
+            display: block;
+            vertical-align: middle;
+            /*border: 1px solid #999;*/
+            /*background: red;*/
+        }
+    </style>
+     <script src='base64js.min.js' type='text/javascript'></script>
+     <script type="text/javascript">
+          var data = {SharerSystemId: 152,shareId: 520};
+          var e = btoa(JSON.stringify(data));
+          console.log(e);
+     </script>
+</head>
+<body>
+    <div class="canvas">
+        <canvas id="canvas"></canvas>
+    </div>
+    <div>
+        <span>开始点</span>
+        <input type="text" id="start" value="0.5">
+        <input type="range" id='range1'>
+    </div>
+    <div>
+        <span>结束点</span>
+        <input type="text" id="percent" value="0.5">
+        <input type="range" id='range'>
+    </div>
+    <button type="button" id="button">change</button>
+
+    <script type="text/javascript">
+        var htmlWidth = document.documentElement.getBoundingClientRect().width;
+        var originWidth = 750,originMargin = 30,originPadding = 35;
+        var originScale = htmlWidth / originWidth;
+        var margin  = originMargin * originScale;
+        var padding = originPadding * originScale;
+        var startX = padding;
+        var drawWidth = htmlWidth - 2 * (margin + padding);
+        var curveScale = drawWidth / 173;
+        var hSpan = 20,marginB = 104;
+        var canvas  = document.getElementById("canvas");
+        canvas.width = htmlWidth - 2 * margin;
+        canvas.height = canvas.width / 1.5;
+        canvas.height = canvas.height - (canvas.height % hSpan);
+        var ctx = canvas.getContext('2d');
+        var drawX = canvas.height - marginB * originScale;
+        var rangeA = 65.8 * curveScale / drawWidth;
+        var rangeB = 95.9 * curveScale / drawWidth;
+        var rangeC = 101.3 * curveScale / drawWidth;
+        var rangeD = 131 * curveScale / drawWidth;
+        var rangeE = 1;
+        var phaseC = 0.48,phaseB = 0.64,phaseA = 1;
+        var colorPhaseC = '#d43a04',colorPhaseB = '#ffb400',colorPhaseA = '#04D4A5',defaultColor='#939393';
+        var alphabetFontSize = 80,defaultFontSize = 12,drawFontSize = hSpan * originScale * 1.2;
+        var startPhase = 'C',startPercent = 0.2,endPhase = 'A',endPercent = 0.9;
+
+        button.onclick = function(){
+            endPercent = document.getElementById('percent').value;
+            if(endPercent < phaseC){
+                endPhase = 'C';
+            }else if(endPercent < phaseB){
+                endPhase = "B";
+            }else{
+                endPhase = "A";
+            }
+            startPercent = document.getElementById('start').value;
+            if(startPercent < phaseC){
+                startPhase = 'C';
+            }else if(startPercent < phaseB){
+                startPhase = "B";
+            }else{
+                startPhase = "A";
+            }
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            render();
+        }
+
+        range.oninput = function(){
+            document.getElementById('percent').value = this.value / 100;
+        }
+
+        range1.oninput = function(){
+            document.getElementById('start').value = this.value / 100;
+        }
+
+
+        function render(){
+            drawCoordinate(canvas.width,canvas.height,drawWidth / 5,hSpan);
+            drawBg(startX,canvas.height - marginB * originScale,curveScale);
+            drawCurve();
+            drawEndPoint();
+            drawStartPoint();
+            drawArrow(startX,drawX,curveScale);
+        }
+
+        render();
+
+        function drawCoordinate(width,height,wSpan,hSpan){
+            var hLen = parseInt(height / hSpan);
+            ctx.beginPath();
+            ctx.moveTo(0,1);
+            ctx.lineTo(width,1);
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = '#ebebeb';
+            ctx.stroke();
+
+            //画Y轴刻度
+            for(var i = 1;i < hLen;i++){
+                ctx.beginPath();
+                ctx.moveTo(0,i * hSpan);
+                ctx.lineTo(width,i * hSpan);
+                if(i == hLen - 1){
+                    ctx.lineWidth = 2;
+                    ctx.strokeStyle = '#ebebeb';
+                }else{
+                    ctx.lineWidth = 1;
+                    ctx.strokeStyle = '#fafafa';
+                }
+                ctx.stroke();
+            }
+
+            //画X轴刻度
+            for(var i = 0;i < 6;i++){
+                ctx.beginPath();
+                ctx.moveTo(startX + i * wSpan,0);
+                ctx.lineTo(startX + i * wSpan,(hLen - 1) * hSpan);
+                ctx.lineWidth = 1;
+                ctx.strokeStyle = '#ebebeb';
+                ctx.stroke();
+            }
+
+            //画X轴文字
+            for(var i = 0;i < 6;i++){
+                ctx.beginPath();
+                ctx.font= defaultFontSize + "px Arial Narrow";
+                ctx.textAlign = "center";
+                ctx.textBaseline = "top";
+                ctx.fillStyle = '#939393';
+                ctx.fillText(i * 20 + (i != 0 ? '%' : ''),startX + i * wSpan,(hLen - 1) * hSpan + 4);
+            }
+
+        }
+
+        function drawBg(x,y,scale){
+            strokeLine(ctx,{x:x + 0,y:y},{x:x + 66 * scale,y:y},{color:'#E6E6E6',width: 5});
+            strokeBezier(ctx,{x:x + 65.8 * scale,y:y},{x:x + 76.5 * scale,y:y},{x:x + 87.7 * scale,y:y-26.4*scale},{x:x + 95.9 * scale,y:y-26.4*scale});
+            strokeLine(ctx,{x:x + 95.5 * scale,y:y-26.4*scale},{x:x + 101.3 * scale,y:y-26.4*scale});
+            strokeBezier(ctx,{x: x + 101 * scale,y:y-26.4*scale},{x:x + 106.5 * scale,y:y-26.4*scale},{x:x + 117.4 * scale,y:y-52.8*scale},{x:x + 131 * scale,y:y-52.8*scale});
+            strokeLine(ctx,{x:x + 130.7 * scale,y:y-52.8*scale},{x:x + drawWidth,y:y-52.8*scale});
+        }
+
+        function drawCurve(){
+            if(endPercent < rangeA){
+                paintA(startX,drawX,curveScale,endPercent / rangeA);
+            }else if(endPercent < rangeB){
+                paintA(startX,drawX,curveScale,1);
+                paintB(startX,drawX,curveScale,endPercent);
+            }else if(endPercent < rangeC){
+                paintA(startX,drawX,curveScale,1);
+                paintB(startX,drawX,curveScale,rangeB);
+                paintC(startX,drawX,curveScale,endPercent);
+            }else if(endPercent < rangeD){
+                paintA(startX,drawX,curveScale,1);
+                paintB(startX,drawX,curveScale,rangeB);
+                paintC(startX,drawX,curveScale,rangeC);
+                paintD(startX,drawX,curveScale,endPercent);
+            }else{
+                paintA(startX,drawX,curveScale,1);
+                paintB(startX,drawX,curveScale,rangeB);
+                paintC(startX,drawX,curveScale,rangeC);
+                paintD(startX,drawX,curveScale,rangeD);
+                paintE(startX,drawX,curveScale,endPercent);
+            }
+        }
+
+        function drawEndPoint(){
+            var point;
+            if(endPercent < rangeA){
+                drawCross({x: startX + endPercent * drawWidth,y: drawX},5,colorPhaseC,2,1);
+                drawText((endPercent * 100).toFixed(0) + '%',drawFontSize,{x: startX + endPercent * drawWidth,y: drawX},'top',colorPhaseC);
+            }else if(endPercent < rangeB){
+                 point = BezierCubicXY({x:startX + 65.8 * curveScale,y:drawX},{x:startX + 76.5 * curveScale,y: drawX},
+                    {x: startX + 87.7 * curveScale,y: drawX - 26.4*curveScale},{x:startX + 95.9 * curveScale,y:drawX - 26.4*curveScale},(endPercent - rangeA) / (rangeB - rangeA));
+                drawCross({x: startX + endPercent * drawWidth,y: point.y},5,endPercent < phaseC ? colorPhaseC : colorPhaseB,2,1);
+                drawText((endPercent * 100).toFixed(0) + '%',drawFontSize,{x: startX + endPercent * drawWidth,y: point.y},'top',endPercent < phaseC ? colorPhaseC : colorPhaseB);
+            }else if(endPercent < rangeC){
+                drawCross({x: startX + endPercent * drawWidth,y: drawX-26.4*curveScale},5,colorPhaseB,2,1);
+                drawText((endPercent * 100).toFixed(0) + '%',drawFontSize,{x: startX + endPercent * drawWidth,y: drawX - 26.4*curveScale},'top',colorPhaseB);
+            }else if(endPercent < rangeD){
+                point = BezierCubicXY({x:startX + 101.3 * curveScale,y:drawX - 26.4*curveScale},{x:startX + 106.5 * curveScale,y: drawX - 26.4*curveScale},
+                    {x: startX + 117.4 * curveScale,y: drawX - 52.8*curveScale},{x:startX + 131 * curveScale,y:drawX - 52.8*curveScale},(endPercent - rangeC) / (rangeD - rangeC));
+                drawCross({x: startX + endPercent * drawWidth,y: point.y - (endPercent >= 0.72 ? 0 : 5)},5,endPercent < phaseB ? colorPhaseB : colorPhaseA,2,1);
+                drawText((endPercent * 100).toFixed(0) + '%',drawFontSize,{x: startX + endPercent * drawWidth,y: point.y},'top',endPercent < phaseB ? colorPhaseB : colorPhaseA);
+            }else{
+                drawCross({x: startX + endPercent * drawWidth,y: drawX-52.8*curveScale},5,colorPhaseA,2,1);
+                drawText((endPercent * 100).toFixed(0) + '%',drawFontSize,{x: startX + endPercent * drawWidth,y: drawX - 52.8*curveScale},'top',colorPhaseA);
+            }
+
+            if(endPercent < phaseC){
+                drawText('C',alphabetFontSize * originScale,{x: startX + 66 * curveScale / 2,y: drawX - 4 * curveScale},'bottom',colorPhaseC);
+                drawTriangle({x: startX + 66 * curveScale / 2,y: drawX - 10 * curveScale},12,colorPhaseC);
+            }else if(endPercent < phaseB){
+                drawText('B',alphabetFontSize * originScale,{x: startX + 198 * curveScale / 2,y: drawX - 30.4*curveScale},'bottom',colorPhaseB);
+                drawTriangle({x: startX + 198 * curveScale / 2,y: drawX - 36.4*curveScale},12,colorPhaseB);
+            }else{
+                drawText('A',alphabetFontSize * originScale,{x: startX + (131 + drawWidth / curveScale) * curveScale / 2,y: drawX - 56.8*curveScale},'bottom',colorPhaseA);
+                drawTriangle({x: startX + (131 + drawWidth / curveScale) * curveScale / 2,y: drawX - 62.8*curveScale},12,colorPhaseA);
+            }
+
+        }
+
+        function drawStartPoint(){
+            var offset = collision();
+            if(startPercent < rangeA){
+                drawText((startPercent * 100).toFixed(0) + '%',drawFontSize,{x: startX + (offset || startPercent * drawWidth),y: drawX},'top',defaultColor);
+            }else if(startPercent < rangeB){
+                 point = BezierCubicXY({x:startX + 65.8 * curveScale,y:drawX},{x:startX + 76.5 * curveScale,y: drawX},
+                    {x: startX + 87.7 * curveScale,y: drawX - 26.4*curveScale},{x:startX + 95.9 * curveScale,y:drawX - 26.4*curveScale},(startPercent - rangeA) / (rangeB - rangeA));
+                drawText((startPercent * 100).toFixed(0) + '%',drawFontSize,{x: startX + startPercent * drawWidth,y: point.y + (offset ? drawFontSize * (0.05 - (endPercent - startPercent)) / 0.05 : 0)},'top',defaultColor);
+            }else if(startPercent < rangeC){
+                drawText((startPercent * 100).toFixed(0) + '%',drawFontSize,{x: startX + (offset || startPercent * drawWidth),y: drawX - 26.4*curveScale},'top',defaultColor);
+            }else if(startPercent < rangeD){
+                point = BezierCubicXY({x:startX + 101.3 * curveScale,y:drawX - 26.4*curveScale},{x:startX + 106.5 * curveScale,y: drawX - 26.4*curveScale},
+                    {x: startX + 117.4 * curveScale,y: drawX - 52.8*curveScale},{x:startX + 131 * curveScale,y:drawX - 52.8*curveScale},(startPercent - rangeC) / (rangeD - rangeC));
+                drawText((startPercent * 100).toFixed(0) + '%',drawFontSize,{x: startX + startPercent * drawWidth,y: point.y + (offset ? drawFontSize * (0.05 - (endPercent - startPercent)) / 0.05 : 0)},'top',defaultColor);
+            }else{
+                drawText((startPercent * 100).toFixed(0) + '%',drawFontSize,{x: startX + (offset || startPercent * drawWidth),y: drawX - 52.8*curveScale},'top',defaultColor);
+            }
+
+            if(startPercent < phaseC){
+                drawText('C',alphabetFontSize * originScale,{x: startX + 66 * curveScale / 2,y: drawX - 4 * curveScale},'bottom',defaultColor);
+            }else if(startPercent < phaseB){
+                drawText('B',alphabetFontSize * originScale,{x: startX + 198 * curveScale / 2,y: drawX - 30.4*curveScale},'bottom',defaultColor);
+            }else{
+                drawText('A',alphabetFontSize * originScale,{x: startX + (131 + drawWidth / curveScale) * curveScale / 2,y: drawX - 56.8*curveScale},'bottom',defaultColor);
+            }
+
+            function collision(){
+                var start;
+                ctx.font = drawFontSize + 'px Arial Narrow';
+                var w1 = ctx.measureText((startPercent * 100).toFixed(0) + '%').width;
+                var w2 = ctx.measureText((endPercent * 100).toFixed(0) + '%').width;
+                if((endPercent - startPercent) * drawWidth < (w1 + w2) / 2){
+                    start = endPercent * drawWidth - (w2 + w1) / 2 - 10;
+                    return start;
+                }else{
+                    return false;
+                }
+            }
+
+        }
+
+        function drawArrow(x,y,scale){
+            var offsetX = 4;
+            var offsetY = 12;
+            ctx.beginPath();
+            ctx.strokeStyle = defaultColor;
+            if(startPhase == 'C' && endPhase == 'A'){
+                ctx.lineWidth = 2;
+                ctx.save();
+                ctx.translate(-8,0);
+                strokeBezier(ctx,{x:x + 65.8 * scale,y:y - offsetY * scale},{x:x + 76.5 * scale,y:y - offsetY * scale},{x:x + 87.7 * scale,y:y - (26.4 + offsetY ) * scale},{x:x + 95.9 * scale,y:y - (26.4 + offsetY) * scale});
+                strokeLine(ctx,{x:x + 95.5 * scale,y:y - (26.4 + offsetY) * scale},{x:x + 100 * scale,y:y - (26.4 + offsetY) * scale});
+                ctx.restore();
+                ctx.save();
+                ctx.translate(-11,0);
+                strokeBezier(ctx,{x: x + 101 * scale,y:y - (26.4 + offsetY) * scale},{x:x + 106.5 * scale,y:y - (26.4 + offsetY) * scale},{x:x + 120.4 * scale,y:y - (50 + offsetY) * scale},{x:x + 131 * scale,y:y - (50 + offsetY) * scale});
+                traingle({x:x + 130.7 * scale,y:y - (50 + offsetY ) * scale + 1},6,defaultColor);
+                ctx.restore();
+            }else if(startPhase == 'C' && endPhase == 'B'){
+                ctx.lineWidth = 2;
+                ctx.save();
+                ctx.translate(-4,0);
+                strokeLine(ctx,{x:x + (58.8 - offsetX) * scale,y:y - offsetY * scale},{x:x + (65.8 - offsetX) * scale,y:y - offsetY * scale});
+                strokeBezier(ctx,{x:x + (65.8 - offsetX) * scale,y:y - offsetY * scale},{x:x + (76.5 - offsetX) * scale,y:y - offsetY * scale},{x:x + (87.7 - offsetX) * scale,y:y - (26.4 + offsetY) * scale},{x:x + (90.9 - offsetX) * scale,y:y - (24.4 + offsetY) * scale});
+                traingle({x:x + (90.6 - offsetX) * scale,y:y - (24.4 + offsetY) * scale + 1.5 - 1},6,defaultColor);
+                ctx.restore();
+            }else if(startPhase == 'B' && endPhase == 'A'){
+                ctx.lineWidth = 2;
+                ctx.save();
+                ctx.translate(-8,0);
+                strokeBezier(ctx,{x: x + 101 * scale,y:y - (26.4 + offsetY) * scale},{x:x + 106.5 * scale,y:y - (26.4 + offsetY) * scale},{x:x + 120.4 * scale,y:y - (51 + offsetY) * scale},
+                    {x:x + 131 * scale,y:y - (51 + offsetY) * scale},{gradient:{colorStops:[['0','transparent'],['0.4','transparent'],['0.4001',defaultColor],['1',defaultColor]],startPoint: {x: x + 101 * scale,y: y - (26.4 + offsetY) * scale},endPoint: {x: x + 131 * scale,y : y - (51 + offsetY) * scale}}});
+                strokeLine(ctx,{x: x + (130.7) * scale,y: y - (51 + offsetY) * scale},{x: x + (133.7) * scale,y: y - (51 + offsetY) * scale});
+                traingle({x:x + (133) * scale,y:y - (51 + offsetY) * scale + 1.5},6,defaultColor);
+                ctx.restore();
+            }
+
+            function traingle(point,length,color){
+                ctx.beginPath();
+                ctx.moveTo(point.x,point.y);
+                ctx.lineTo(point.x + length,point.y);
+                ctx.lineTo(point.x, point.y - length);
+                ctx.fillStyle = color;
+                ctx.closePath();
+                ctx.fill();
+            }
+
+        }
+
+        //还可以提取为2个方法或1个方法
+        function paintA(x,y,scale,percent){
+            strokeLine(ctx,{x:x + 0,y:y},{x:x + 66 * percent * scale,y:y},{color:'#f00',width: 5});
+        }
+
+        function paintB(x,y,scale,percent){
+            strokeBezier(ctx,
+                {x:x + 65.8 * scale,y:y},
+                {x:x + 76.5 * scale,y:y},
+                {x:x + 87.7 * scale,y:y-26.4*scale},
+                {x:x + 95.9 * scale,y:y-26.4*scale},
+                {gradient:{colorStops:[['0','#f00'],['0.99999','#ff7f00'],['1','transparent']],startPoint: {x: startX + 65.8 * scale,y: y},endPoint: {x: startX + percent * drawWidth,y : y}}}
+            );
+        }
+
+        function paintC(x,y,scale,percent){
+            strokeLine(ctx,{x:x + 95.5 * scale,y:y-26.4*scale},{x:x + percent * drawWidth,y:y-26.4*scale},{color:'#ff7f00',width: 5});
+        }
+
+        function paintD(x,y,scale,percent){
+            strokeBezier(ctx,
+                {x: x + 101 * scale,y:y-26.4*scale},
+                {x:x + 106.5 * scale,y:y-26.4*scale},
+                {x:x + 117.4 * scale,y:y-52.8*scale},
+                {x:x + 131 * scale,y:y-52.8*scale},
+                {gradient:{colorStops:[['0','#ff7f00'],['0.99999','#c0bf00'],['1','transparent']],startPoint: {x: x + 101 * scale,y: y},endPoint: {x: x + percent * drawWidth,y : y}}}
+            );
+        }
+
+        function paintE(x,y,scale,percent){
+            strokeLine(ctx,{x:x + 130.7 * scale,y:y-52.8*scale},{x:x + percent * drawWidth,y:y-52.8*scale},
+                {gradient:{colorStops:[['0','#c0bf00'],['1','#5ffe00']],startPoint: {x: x + 130.7 * scale,y: y},endPoint: {x: x + percent * drawWidth,y : y}}});
+        }
+
+        function drawCross(point,radious,color,arcWidth,width){
+
+            ctx.beginPath();
+            ctx.moveTo(point.x,point.y);
+            ctx.arc(point.x,point.y,radious,0,2*Math.PI);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = arcWidth;
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(point.x,0);
+            ctx.lineTo(point.x,canvas.height - hSpan);
+            ctx.lineWidth = width;
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(0,point.y);
+            ctx.lineTo(2*startX + drawWidth,point.y);
+            ctx.lineWidth = width;
+            ctx.stroke();
+
+        }
+
+        function drawText(text,size,point,align,color){
+            ctx.beginPath();
+            ctx.font= size + "px Arial Narrow";
+            ctx.textAlign = "center";
+            ctx.textBaseline = align;
+            ctx.fillStyle = color;
+            ctx.fillText(text,point.x,point.y + (align == 'bottom' ? -6 : 6));
+        }
+
+        function drawTriangle(point,length,color){
+            ctx.beginPath();
+            ctx.moveTo(point.x,point.y);
+            ctx.lineTo(point.x + length / 2,point.y + length * Math.cos(60 * Math.PI / 180));
+            ctx.lineTo(point.x - length / 2, point.y + length * Math.cos(60 * Math.PI / 180));
+            ctx.fillStyle = color;
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        function strokeLine(ctx,startPoint,endPoint,options){
+            var gradient,obj;
+            options = options || {};
+            ctx.beginPath();
+            ctx.moveTo(startPoint.x,startPoint.y);
+            ctx.lineTo(endPoint.x,endPoint.y);
+            ctx.lineWidth = options.width || ctx.lineWidth;
+            if(obj = options.gradient){
+                gradient = ctx.createLinearGradient(obj.startPoint.x,obj.startPoint.y,obj.endPoint.x,obj.endPoint.y);
+                var colorStops =  obj.colorStops;
+                for(var i = 0,len = colorStops.length;i < len;i++){
+                    gradient.addColorStop(colorStops[i][0],colorStops[i][1]);
+                }
+                ctx.strokeStyle = gradient;
+            }else{
+                ctx.strokeStyle = options.color || ctx.strokeStyle;
+            }
+            ctx.stroke();
+        }
+
+        function strokeBezier(ctx,startPoint,controlPoint1,controlPoint2,endPoint,options){
+            var gradient,obj;
+            options = options || {};
+            ctx.beginPath();
+            ctx.lineWidth = options.width || ctx.lineWidth;
+            if(obj = options.gradient){
+                gradient = ctx.createLinearGradient(obj.startPoint.x,obj.startPoint.y,obj.endPoint.x,obj.endPoint.y);
+                var colorStops =  obj.colorStops;
+                for(var i = 0,len = colorStops.length;i < len;i++){
+                    gradient.addColorStop(colorStops[i][0],colorStops[i][1]);
+                }
+                ctx.strokeStyle = gradient;
+            }else{
+                ctx.strokeStyle = options.color || ctx.strokeStyle;
+            }
+            ctx.moveTo(startPoint.x,startPoint.y);
+            ctx.bezierCurveTo(controlPoint1.x,controlPoint1.y,controlPoint2.x,controlPoint2.y,endPoint.x,endPoint.y);
+            ctx.stroke();
+        }
+
+        function BezierCubicXY(p0, p1, p2, p3, t) {
+            var ret = {};
+            var coords = ['x', 'y'];
+            var i, k;
+
+            for (i in coords) {
+                k = coords[i];
+                ret[k] = Math.pow(1 - t, 3) * p0[k] + 3 * Math.pow(1 - t, 2) * t * p1[k] + 3 * (1 - t) * Math.pow(t, 2) * p2[k] + Math.pow(t, 3) * p3[k];
+            }
+
+            return ret;
+        }
+
+        // paint(startX,drawX,curveScale);
+        function paint(x,y,scale){
+            strokeLine(ctx,{x:x + 0,y:y},{x:x + 66 * scale,y:y},{color:'#f00',width: 5});
+            strokeBezier(ctx,
+                {x:x + 65.8 * scale,y:y},
+                {x:x + 76.5 * scale,y:y},
+                {x:x + 87.7 * scale,y:y-26.4*scale},
+                {x:x + 95.9 * scale,y:y-26.4*scale},
+                {gradient:{colorStops:[['0','#f00'],['1','#ff7f00']],startPoint: {x: 65.8 * scale,y: y},endPoint: {x: x + 95.9 * scale,y : y}}}
+            );
+            strokeLine(ctx,{x:x + 95.5 * scale,y:y-26.4*scale},{x:x + 101.3 * scale,y:y-26.4*scale},{color:'#ff7f00'});
+            strokeBezier(ctx,
+                {x: x + 101 * scale,y:y-26.4*scale},
+                {x:x + 106.5 * scale,y:y-26.4*scale},
+                {x:x + 117.4 * scale,y:y-52.8*scale},
+                {x:x + 131 * scale,y:y-52.8*scale},
+                {gradient:{colorStops:[['0','#ff7f00'],['1','#c0bf00']],startPoint: {x: x + 101 * scale,y: y},endPoint: {x: x + 131 * scale,y : y}}}
+            );
+            strokeLine(ctx,
+                {x:x + 130.7 * scale,y:y-52.8*scale},
+                {x:x + drawWidth,y:y-52.8*scale},
+                {gradient:{colorStops:[['0','#c0bf00'],['1','#5ffe00']],startPoint: {x: x + 130.7 * scale,y: y},endPoint: {x: x + drawWidth,y : y}}}
+            );
+        }
+
+    </script>
+
+</body>
+</html>
