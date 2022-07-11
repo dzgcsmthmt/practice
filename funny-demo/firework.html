@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>烟花效果</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+       body{
+           background: #000;
+           overflow: hidden;
+       }
+       .fw{
+           width: 4px;
+           height: 26px;
+           position: absolute;
+           top: 100%;
+           background: red;
+       }
+        .fwspot{
+            width: 4px;
+            height: 4px;
+            position: absolute;
+        }
+    </style>
+    <script src="jquery-1.8.1.min.js"></script>
+    <script>
+        $(function(){
+            $(document).click(function(ev){
+                var disX = ev.pageX;
+                var disY = ev.pageY;
+                var oDiv = $("<div class='fw'></div>");
+                $("body").append(oDiv.css("left",disX));
+                var timer = setInterval(function(){
+                    if(oDiv.position().top - 10 < disY){
+                        clearInterval(timer);
+                        oDiv.remove();
+                        explode();
+                    }else{
+                        oDiv.css("top",oDiv.position().top - 10 + "px");
+                    }
+                },30);
+
+                function explode(){
+                    var arr = [];
+                    for(var i = 0;i < 40;i++){
+                        var spot = $("<div class='fwspot'></div>");
+                        spot.css({top:disY,left:disX,"background":"rgb("+parseInt(Math.random()*255)+","+parseInt(Math.random()*255)+","+parseInt(Math.random()*255)+")"});
+                        spot.speedX = 20 - 40 * Math.random();
+                        spot.speedY = 20 - 40 * Math.random();
+                        $("body").append(spot);
+                        arr.push(spot);
+                    }
+
+                    var t = setInterval(function(){
+                        if(!arr.length){
+                            clearInterval(t);
+                        }
+                        for(var i = 0;i < arr.length;i++){
+                            arr[i].css("top",arr[i].position().top + arr[i].speedY + "px");
+                            arr[i].css("left",arr[i].position().left + arr[i].speedX + "px");
+                            arr[i].speedY++;
+                            if(arr[i].position().top > $(window).height() || arr[i].position().left < 0 || arr[i].position().left > $(window).width()){
+                                arr[i].remove();
+                                arr.splice(i,1);
+                            }
+                        }
+                    },50)
+
+                }
+
+
+            })
+        })
+    </script>
+</head>
+<body>
+</body>
+</html>
