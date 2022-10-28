@@ -339,10 +339,14 @@ window.navigator.vibrate([100,30,100,30,100,200,200,30,200,30,200,200,100,30,100
 参考：[w3c](https://developer.mozilla.org/zh-CN/docs/Web/API/Navigator/sendBeacon)
 
 ## 取色器
-const eyeDropper = new EyeDropper();
 参考： [mdn](https://developer.mozilla.org/en-US/docs/Web/API/EyeDropper)
-  eyeDropper.open().then((result) => {
+
+```
+const eyeDropper = new EyeDropper();
+eyeDropper.open().then((result) => {
     console.log(result)
-  }).catch((e) => {
+}).catch((e) => {
     console.log(e)
-  });
+});
+```
+
