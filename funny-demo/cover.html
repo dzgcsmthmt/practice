@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>封面生成器</title>
+        <style>
+            ul,
+            li {
+                list-style: none;
+                padding: 0;
+            }
+            body {
+                margin: 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+            }
+            .operation-wrapper {
+                width: 400px;
+            }
+            .heading-wrapper {
+                display: flex;
+            }
+            .heading-item {
+                flex: 1;
+            }
+            input[type="text"] {
+                -webkit-font-smoothing: antialiased;
+                -webkit-tap-highlight-color: transparent;
+                font-family: inherit;
+                cursor: pointer;
+                -webkit-appearance: none;
+                background-color: #fff;
+                background-image: none;
+                border-radius: 4px;
+                border: 1px solid #dcdfe6;
+                box-sizing: border-box;
+                color: #606266;
+                display: inline-block;
+                font-size: inherit;
+                height: 40px;
+                line-height: 40px;
+                outline: none;
+                padding: 0 15px;
+                transition: border-color 0.2s
+                    cubic-bezier(0.645, 0.045, 0.355, 1);
+                width: 80%;
+                padding-right: 30px;
+            }
+            .btn {
+                -webkit-font-smoothing: antialiased;
+                -webkit-tap-highlight-color: transparent;
+                font-family: inherit;
+                display: inline-block;
+                line-height: 1;
+                white-space: nowrap;
+                cursor: pointer;
+                background: #fff;
+                border: 1px solid #dcdfe6;
+                color: #606266;
+                -webkit-appearance: none;
+                text-align: center;
+                box-sizing: border-box;
+                outline: none;
+                margin: 0;
+                transition: 0.1s;
+                font-weight: 500;
+                -webkit-user-select: none;
+                padding: 12px 20px;
+                font-size: 14px;
+                border-radius: 4px;
+            }
+            canvas {
+                border: 1px solid lightblue;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="operation-wrapper">
+            <h3>背景色</h3>
+            <div>
+                <input type="color" name="" id="bg-color" />
+            </div>
+            <ul class="heading-wrapper">
+                <li class="heading-item">
+                    <h3>主标题</h3>
+                    <div><input type="text" id="heading" /></div>
+                    <h3>主标题颜色</h3>
+                    <div>
+                        <input
+                            type="color"
+                            value="#ffff00"
+                            name=""
+                            id="heading-color"
+                        />
+                    </div>
+                    <h3>
+                        主标题字号<span id="heading-font-size-value">60</span>
+                    </h3>
+                    <div>
+                        <input
+                            type="range"
+                            min="12"
+                            max="200"
+                            step="4"
+                            name=""
+                            value="60"
+                            id="heading-font-size"
+                        />
+                    </div>
+                </li>
+                <li class="heading-item">
+                    <h3>副标题</h3>
+                    <div><input type="text" id="sub-heading" /></div>
+                    <h3>副标题颜色</h3>
+                    <div>
+                        <input
+                            type="color"
+                            value="#ffff00"
+                            name=""
+                            id="sub-heading-color"
+                        />
+                    </div>
+                    <h3>
+                        副标题字号<span id="sub-heading-font-size-value"
+                            >50</span
+                        >
+                    </h3>
+                    <div>
+                        <input
+                            type="range"
+                            min="12"
+                            max="200"
+                            step="4"
+                            name=""
+                            value="50"
+                            id="sub-heading-font-size"
+                        />
+                    </div>
+                </li>
+            </ul>
+            <div>
+                <button class="btn" id="download">下载</button>
+            </div>
+        </div>
+        <canvas id="cover"></canvas>
+        <script>
+            class CoverGenerator {
+                constructor() {
+                    this.canvas = document.getElementById("cover");
+                    this.ctx = this.canvas.getContext("2d");
+                    this.data = {
+                        bgColor: "#000000",
+                        heading: "canvas实战",
+                        headingColor: "#ffff00",
+                        headingFontSize: "60",
+                        subHeading: "如何制作B站视频封面",
+                        subHeadingColor: "#ffff00",
+                        subHeadingFontSize: "50",
+                    };
+                    this.setReactive();
+                    this.initCanvas();
+                    this.draw();
+                }
+                setReactive() {
+                    const self = this;
+                    this.data = new Proxy(this.data, {
+                        get: function (target, key) {
+                            return Reflect.get(target, key);
+                        },
+                        set: function (target, key, value) {
+                            Reflect.set(target, key, value);
+                            self.draw();
+                        },
+                    });
+                }
+                initCanvas() {
+                    this.width = 1280;
+                    this.height = 720;
+                    let scale = 1;
+                    this.width *= scale;
+                    this.height *= scale;
+                    this.canvas.width = this.width;
+                    this.canvas.height = this.height;
+                }
+
+                draw() {
+                    this.clearRect();
+                    this.drawBackground();
+                    this.drawHeading();
+                    this.drawSubHeading();
+                }
+
+                clearRect() {
+                    this.ctx.clearRect(0, 0, this.width, this.height);
+                }
+
+                drawBackground() {
+                    this.ctx.fillStyle = this.data.bgColor;
+                    this.ctx.fillRect(0, 0, this.width, this.height);
+                }
+
+                drawHeading() {
+                    const data = this.data;
+                    this.drawText(
+                        data.headingFontSize,
+                        data.heading,
+                        data.headingColor,
+                        data.subHeading ? this.height / 3 : this.height / 2
+                    );
+                }
+
+                drawSubHeading() {
+                    const data = this.data;
+                    this.drawText(
+                        data.subHeadingFontSize,
+                        data.subHeading,
+                        data.subHeadingColor,
+                        (this.height * 2) / 3
+                    );
+                }
+
+                drawText(fontSize, text, color, height) {
+                    const ctx = this.ctx;
+                    ctx.font = `${fontSize}px serif`;
+                    ctx.textAlign = "left";
+                    ctx.textBaseline = "middle";
+                    const measure = ctx.measureText(text); // TextMetrics object
+                    ctx.fillStyle = color;
+                    ctx.fillText(
+                        text,
+                        (this.width - measure.width) >> 1,
+                        height
+                    );
+                }
+
+                download(name = "cover") {
+                    const a = document.createElement("a");
+                    a.download = name;
+                    (a.href = this.canvas.toDataURL("image/png", 1)),
+                        document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                }
+            }
+
+            const cover = new CoverGenerator();
+
+            document.querySelectorAll("input").forEach((oInput) => {
+                oInput.addEventListener("input", function () {
+                    if (this.type === "range") {
+                        document.getElementById(
+                            this.id + "-value"
+                        ).textContent = this.value;
+                    }
+                    cover.data[toCamel(this.id)] = this.value;
+                });
+            });
+
+            document
+                .getElementById("download")
+                .addEventListener("click", () => {
+                    cover.download();
+                });
+
+            function toCamel(str) {
+                return str.replace(/\-([a-z])/g, (match, key) => {
+                    return key.toUpperCase();
+                });
+            }
+        </script>
+    </body>
+</html>
