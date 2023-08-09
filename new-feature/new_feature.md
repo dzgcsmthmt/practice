@@ -349,4 +349,5 @@ eyeDropper.open().then((result) => {
     console.log(e)
 });
 ```
+## showDirectoryPicker
 
