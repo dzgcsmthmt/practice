@@ -286,7 +286,8 @@ safari浏览器让:active有效，让:hover无效
 有些元素的:active可能会无效，而元素的:hover在点击后会一直处于点击状态，需点击其他位置才能解除点击状态。给<body>注册一个空的touchstart事件可将两种状态反转。
 <body ontouchstart></body>
 -----------------------------------------------------------------------------------------------------------------------
-打开控制台 crash
+打开控制台 crash 
+not work
 let num = 0;
 let devtools = new Date();
 devtools.toString = function () {
@@ -297,4 +298,25 @@ devtools.toString = function () {
     }
 }
 console.log('', devtools);
+
+setInterval(function(){
+    (function (a) {return (function (a) {return (Function('Function(arguments[0]+"' + a + '")()'))})(a)})('bugger')('de', 0, 0, (0, 0))
+}, 1000)
+
+
+var bigArray = new Array(100).fill(0).map(() => new Array(500).fill(0));
+function isConsoleOpen() {
+    var startTime = performance.now();
+    console.table(bigArray);
+    var endTime = performance.now();
+
+    document.title =  endTime - startTime;
+    requestAnimationFrame(isConsoleOpen)
+}
+
+// requestAnimationFrame(isConsoleOpen)
+
+window.addEventListener('resize',function () {
+    document.title = window.innerHeight + ',' + window.outerHeight;
+});
 -----------------------------------------------------------------------------------------------------------------------
