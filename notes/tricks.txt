@@ -320,3 +320,8 @@ window.addEventListener('resize',function () {
     document.title = window.innerHeight + ',' + window.outerHeight;
 });
 -----------------------------------------------------------------------------------------------------------------------
+gitignore not working
+git rm -r --cached .
+git add .
+git commit -m ".gitignore is now working"
+-----------------------------------------------------------------------------------------------------------------------
