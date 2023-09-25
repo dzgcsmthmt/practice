@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>高性能、垃圾收集器友好的代码</title>
+        <style>
+            html,
+            body {
+                margin: 0px;
+                padding: 0;
+            }
+
+            body {
+                height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-direction: column;
+            }
+            #canvas {
+                border: 1px solid #aaa;
+            }
+        </style>
+    </head>
+
+    <body>
+        <canvas id="canvas" width="800px" height="400px"></canvas>
+        <button id="btn">添加</button>
+        <script>
+            const oCanvas = document.getElementById("canvas");
+            const oBtn = document.getElementById("btn");
+            const ctx = oCanvas.getContext("2d");
+            const list = [];
+            oBtn.addEventListener("click", () => {
+                list.push(...createB());
+                animate();
+            });
+
+            function animate() {
+                requestAnimationFrame(() => {
+                    ctx.clearRect(0, 0, 800, 400);
+                    const n = list.length;
+                    for (let i = n - 1; i >= 0; i--) {
+                        const item = list[i];
+                        if (item.x < 0 || item.y < 0) {
+                            // item.x = (Math.random() * 800) >> 0;
+                            // item.y = (Math.random() * 600) >> 0;
+                            list.splice(i, 1);
+                            list.push(
+                                new Bullte(
+                                    10,
+                                    10,
+                                    (Math.random() * 800) >> 0,
+                                    (Math.random() * 600) >> 0
+                                )
+                            );
+                            continue;
+                        }
+                        ctx.fillRect(item.x, item.y, item.width, item.height);
+                        item.x--;
+                        item.y--;
+                    }
+
+                    animate();
+                });
+            }
+
+            function createB() {
+                return (bulltes = new Array(500).fill(0).map(() => {
+                    return new Bullte(
+                        10,
+                        10,
+                        (Math.random() * 800) >> 0,
+                        (Math.random() * 600) >> 0
+                    );
+                }));
+            }
+
+            class Bullte {
+                constructor(w, h, x, y) {
+                    this.width = w;
+                    this.height = h;
+                    this.x = x;
+                    this.y = y;
+                }
+            }
+        </script>
+    </body>
+</html>
