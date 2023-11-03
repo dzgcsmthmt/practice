@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <title>index</title>
+        <style>
+            body {
+                align-items: center;
+                background: #e3e3e3;
+                display: flex;
+                height: 100vh;
+                justify-content: center;
+            }
+        </style>
+    </head>
+    <body contenteditable="">
+        <canvas id="canvas"></canvas>
+        <ul>
+            <li>1</li>
+            <li>2</li>
+            <li>3</li>
+        </ul>
+        <script>
+            //这三个对象对应了几个hide class
+            var a = { a: 1, b: 2 };
+            var b = { a: 2, b: 3 };
+            var c = { b: 1, a: 2 };
+
+            function Person(name) {
+                this.firstName = name;
+            }
+            // var person = new Person("zhangsan");
+
+            const people = [];
+            for (let i = 0; i < 10; i++) {
+                people.push(new Person("join" + i));
+            }
+
+            //delete 操作
+            people[0].lastName = "james"; //创建新的hide class backto firstName 同时 firstName transtion 指向新的class
+            delete people[0].lastName; //map回退到上一个指针，这个时候创建的hide class没有引用了
+            people[0].lastName = "james"; //会再次创建新的hide class，因为上一个引用没了
+
+            people[0].lastName = "james";
+            people[1].lastName = "james";
+            delete people[0].lastName;
+            people[0].lastName = "james"; //这个时候就不会创建新的hide class，people1保留了引用
+        </script>
+    </body>
+</html>
