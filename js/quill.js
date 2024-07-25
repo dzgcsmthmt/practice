@@ -1,4 +1,4 @@
-//add new custom className
+//add custom class
 let Block = Quill.import("blots/block");
 
 // Create a custom blot for Javascript
@@ -19,3 +19,9 @@ CustomBlot.className = "custom-class";
 CustomBlot.tagName = "div";
 // Register your custom blot with quill.
 Quill.register(CustomBlot);
+
+
+//image add custom class
+var Image = Quill.import('formats/image');
+Image.className = 'img-fluid';
+Quill.register(Image, true);
