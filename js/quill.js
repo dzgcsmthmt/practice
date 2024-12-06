@@ -34,3 +34,23 @@ var Parchment = Quill.import("parchment");
 let config = { scope: Parchment.Scope.BLOCK };
 let SseSpanClass = new Parchment.Attributor.Class("sse-span"/*format name*/,"custom"/*class prefix custom-block custom-inline custom-embed all works*/, config);
 Quill.register(SseSpanClass, true);
+
+
+const Parchment = Quill.import('parchment');
+const IDAttribute = new Parchment.Attributor.Attribute('id-attribute', 'id', {
+  scope: Parchment.Scope.BLOCK,
+});
+Quill.register(
+  {
+    'attributors/attribute/id': IDAttribute,
+  },
+  true
+);
+
+Quill.register(
+  {
+    'formats/id': IDAttribute,
+  },
+  true
+);
+
