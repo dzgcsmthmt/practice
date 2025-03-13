@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>QuillJS 查找高亮与替换</title>
+        <!-- 引入 Quill 的 CSS -->
+        <link
+            href="https://cdn.quilljs.com/1.3.6/quill.snow.css"
+            rel="stylesheet"
+        />
+        <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+        <style>
+            #editor {
+                height: 300px;
+            }
+            .highlight {
+                background-color: yellow;
+            }
+            .search-container {
+                margin-bottom: 10px;
+            }
+            .ql-picker.ql-text-indent .ql-picker-label::before,
+            .ql-picker.ql-text-indent .ql-picker-item::before {
+                content: attr(data-value);
+            }
+            .ql-text-indent {
+                width: 80px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="输入查找内容" />
+            <input type="text" id="replaceInput" placeholder="输入替换内容" />
+            <button onclick="searchAndHighlight()">查找</button>
+            <button onclick="replaceNext()">替换下一个</button>
+            <button onclick="replaceAll()">全部替换</button>
+            <button onclick="clearHighlight()">清除高亮</button>
+        </div>
+        <div id="editor">
+            <p>这是一个测试文本，用于展示 QuillJS 的查找高亮功能。</p>
+            <p style="background-color: lightblue">
+                QuillJS 是一个强大的富文本编辑器，支持多种格式和插件。
+            </p>
+            <p>查找 "QuillJS" 或 "测试"，看看高亮效果吧！</p>
+        </div>
+
+        <script>
+            // 获取 Parchment，用于自定义格式
+            const Parchment = Quill.import("parchment");
+
+            // 定义自定义高亮格式（Blot）
+            const Inline = Quill.import("blots/inline");
+            class HighlightBlot extends Inline {
+                static create() {
+                    let node = super.create();
+                    node.setAttribute("class", "highlight");
+                    return node;
+                }
+
+                static formats() {
+                    return true;
+                }
+            }
+            HighlightBlot.blotName = "highlight";
+            HighlightBlot.tagName = "span";
+
+            // 注册自定义格式
+            Quill.register(HighlightBlot);
+
+            // 定义首行缩进样式
+            class TextIndentAttributor extends Parchment.Attributor.Style {
+                add(node, value) {
+                    return super.add(node, value);
+                }
+
+                value(node) {
+                    return super.value(node) || undefined;
+                }
+            }
+
+            const TextIndentStyle = new TextIndentAttributor(
+                "text-indent",
+                "text-indent",
+                {
+                    scope: Parchment.Scope.BLOCK,
+                    whitelist: ["2em", "1em", "0em"], // 支持的首行缩进值
+                }
+            );
+
+            Quill.register(TextIndentStyle, true);
+
+            // 初始化 Quill 编辑器
+            const quill = new Quill("#editor", {
+                theme: "snow",
+                modules: {
+                    toolbar: {
+                        container: [
+                            [
+                                {
+                                    "text-indent": ["2em", "1em", "0em"],
+                                },
+                            ], // 工具栏按钮
+                        ],
+                        handlers: {
+                            "text-indent": function (value) {
+                                const range = this.quill.getSelection();
+                                if (range) {
+                                    this.quill.format("text-indent", value);
+                                }
+                            },
+                        },
+                    },
+                },
+            });
+
+            // 查找并高亮函数
+            function searchAndHighlight() {
+                // 获取用户输入的查找关键字
+                const searchText = document
+                    .getElementById("searchInput")
+                    .value.trim();
+                if (!searchText) {
+                    alert("请输入查找内容！");
+                    return;
+                }
+
+                // 清除之前的高亮
+                clearHighlight();
+
+                // 获取 Quill 编辑器的内容
+                const text = quill.getText(); // 获取纯文本内容
+                const regex = new RegExp(searchText, "gi");
+                let match;
+
+                // 查找所有匹配的文本并应用高亮格式
+                while ((match = regex.exec(text)) !== null) {
+                    const startIndex = match.index;
+                    const length = match[0].length;
+
+                    // 使用自定义高亮格式包裹匹配文本
+                    quill.formatText(startIndex, length, "highlight", true);
+                }
+            }
+
+            // 清除高亮函数
+            function clearHighlight() {
+                const length = quill.getLength();
+                // 只移除高亮格式，不影响其他格式（如 background）
+                quill.formatText(0, length, "highlight", false);
+            }
+
+            // 替换下一个函数
+            function replaceNext() {
+                const searchText = document
+                    .getElementById("searchInput")
+                    .value.trim();
+                const replaceText =
+                    document.getElementById("replaceInput").value;
+                if (!searchText) {
+                    alert("请输入查找内容！");
+                    return;
+                }
+
+                // 获取当前编辑器内容
+                const text = quill.getText();
+                const regex = new RegExp(searchText, "gi");
+                const match = regex.exec(text);
+
+                if (match) {
+                    const startIndex = match.index;
+                    const length = match[0].length;
+
+                    // 获取匹配文本的格式
+                    const formats = quill.getFormat(startIndex, length);
+
+                    // 删除匹配的文本
+                    quill.deleteText(startIndex, length);
+
+                    // 插入替换文本，并保留原有格式
+                    quill.insertText(startIndex, replaceText, formats);
+                    debugger;
+                    console.log(quill.getLine(startIndex));
+
+                    // 清除高亮并重新高亮
+                    clearHighlight();
+                    searchAndHighlight();
+                } else {
+                    alert("没有找到匹配的内容！");
+                }
+            }
+
+            // 全部替换函数
+            function replaceAll() {
+                const searchText = document
+                    .getElementById("searchInput")
+                    .value.trim();
+                const replaceText =
+                    document.getElementById("replaceInput").value;
+                if (!searchText) {
+                    alert("请输入查找内容！");
+                    return;
+                }
+
+                // 获取当前编辑器内容
+                let text = quill.getText();
+                const regex = new RegExp(searchText, "gi");
+                let match;
+                let offset = 0; // 用于记录替换后文本长度的偏移量
+
+                while ((match = regex.exec(text)) !== null) {
+                    const startIndex = match.index + offset;
+                    const length = match[0].length;
+
+                    // 获取匹配文本的格式
+                    const formats = quill.getFormat(startIndex, length);
+
+                    // 删除匹配的文本
+                    quill.deleteText(startIndex, length);
+
+                    // 插入替换文本，并保留原有格式
+                    quill.insertText(startIndex, replaceText, formats);
+
+                    // 更新偏移量（替换文本长度与原文本长度的差值）
+                    offset += replaceText.length - length;
+
+                    // 更新文本内容，以便继续查找
+                    // text = quill.getText();
+                }
+
+                // 清除高亮并重新高亮
+                clearHighlight();
+                searchAndHighlight();
+            }
+
+            // 监听回车键触发查找
+            document
+                .getElementById("searchInput")
+                .addEventListener("keypress", function (e) {
+                    if (e.key === "Enter") {
+                        searchAndHighlight();
+                    }
+                });
+
+            // 监听回车键触发替换（在替换输入框中）
+            document
+                .getElementById("replaceInput")
+                .addEventListener("keypress", function (e) {
+                    if (e.key === "Enter") {
+                        replaceNext();
+                    }
+                });
+        </script>
+    </body>
+</html>

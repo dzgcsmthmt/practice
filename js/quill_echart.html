@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="UTF-8" />
+        <title>QuillJS 支持 ECharts 图表（带编辑功能）</title>
+        <link
+            href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css"
+            rel="stylesheet"
+        />
+        <style>
+            .ql-echarts {
+                background: url("https://via.placeholder.com/24") no-repeat
+                    center;
+                background-size: contain;
+            }
+            .ql-edit-echarts {
+                background: url("https://via.placeholder.com/24") no-repeat
+                    center;
+                background-size: contain;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="editor" style="height: 600px"></div>
+
+        <!-- 编辑图表的弹窗 -->
+        <div
+            id="chartEditorModal"
+            style="
+                display: none;
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: white;
+                padding: 20px;
+                border: 1px solid #ccc;
+                z-index: 1000;
+            "
+        >
+            <h3>编辑图表数据</h3>
+            <textarea
+                id="chartDataInput"
+                style="width: 400px; height: 200px"
+            ></textarea>
+            <br />
+            <button onclick="saveChartData()">保存</button>
+            <button onclick="closeChartEditor()">取消</button>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+        <script>
+            const BlockEmbed = Quill.import("blots/block/embed");
+
+            class EChartsBlot extends BlockEmbed {
+                static create(value) {
+                    let node = super.create();
+                    const chartId = `echarts-${Date.now()}-${Math.floor(
+                        Math.random() * 1000
+                    )}`;
+                    node.setAttribute("id", chartId);
+                    node.setAttribute(
+                        "data-option",
+                        JSON.stringify(value.option)
+                    );
+                    node.style.width = value.width || "100%";
+                    node.style.height = value.height || "400px";
+                    node.setAttribute("contenteditable", "false"); // 禁止编辑
+
+                    setTimeout(() => {
+                        const chart = echarts.init(
+                            document.getElementById(chartId)
+                        );
+                        chart.setOption(value.option);
+                        window.addEventListener("resize", () => chart.resize());
+                    }, 0);
+
+                    // 添加双击事件监听
+                    node.addEventListener("dblclick", () => {
+                        const chartId = node.getAttribute("id");
+                        openChartEditor(node, chartId);
+                    });
+
+                    return node;
+                }
+
+                static value(node) {
+                    return {
+                        option: JSON.parse(node.getAttribute("data-option")),
+                        width: node.style.width,
+                        height: node.style.height,
+                    };
+                }
+            }
+
+            EChartsBlot.blotName = "echarts";
+            EChartsBlot.tagName = "div";
+            EChartsBlot.className = "ql-echarts";
+
+            Quill.register(EChartsBlot, true);
+
+            var icons = Quill.import("ui/icons");
+            icons["undo"] = `<svg viewbox="0 0 18 18">
+                <polygon class="ql-fill ql-stroke" points="6 10 4 12 2 10 6 10"></polygon>
+                <path class="ql-stroke" d="M8.09,13.91A4.6,4.6,0,0,0,9,14,5,5,0,1,0,4,9"></path>
+            </svg>`;
+            icons["redo"] = `<svg viewbox="0 0 18 18">
+                <polygon class="ql-fill ql-stroke" points="12 10 14 12 16 10 12 10"></polygon>
+                <path class="ql-stroke" d="M9.91,13.91A4.6,4.6,0,0,1,9,14a5,5,0,1,1,5-5"></path>
+            </svg>`;
+
+            const quill = new Quill("#editor", {
+                theme: "snow",
+                modules: {
+                    toolbar: [
+                        ["bold", "italic", "underline"],
+                        [{ header: [1, 2, 3, false] }],
+                        ["link", "image", "echarts", "edit-echarts"],
+                        ["undo", "redo"],
+                    ],
+                    history: {
+                        delay: 1000,
+                        maxStack: 100,
+                        userOnly: true,
+                    },
+                },
+            });
+
+            const toolbar = quill.getModule("toolbar");
+
+            document.querySelector(".ql-undo").addEventListener("click", () => {
+                quill.history.undo();
+            });
+            document.querySelector(".ql-redo").addEventListener("click", () => {
+                quill.history.redo();
+            });
+
+            // 插入图表
+            toolbar.addHandler("echarts", function () {
+                const echartsOption = {
+                    title: { text: "示例图表" },
+                    tooltip: {},
+                    xAxis: { data: ["A", "B", "C", "D", "E"] },
+                    yAxis: {},
+                    series: [
+                        {
+                            name: "数据",
+                            type: "bar",
+                            data: [5, 20, 36, 10, 10],
+                        },
+                    ],
+                };
+
+                const range = quill.getSelection(true);
+                quill.insertEmbed(
+                    range.index,
+                    "echarts",
+                    {
+                        option: echartsOption,
+                        width: "100%",
+                        height: "400px",
+                    },
+                    Quill.sources.USER
+                );
+            });
+
+            // 编辑图表
+            toolbar.addHandler("edit-echarts", function () {
+                debugger;
+                const range = quill.getSelection();
+                if (!range) return;
+
+                const [blot] = quill.scroll.descendant(
+                    EChartsBlot,
+                    range.index
+                );
+                if (!blot) {
+                    alert("请选中一个图表后再点击编辑！");
+                    return;
+                }
+
+                const chartNode = blot.domNode;
+                const chartId = chartNode.getAttribute("id");
+                openChartEditor(chartNode, chartId);
+            });
+
+            // 打开编辑弹窗
+            function openChartEditor(chartNode, chartId) {
+                const currentOption = JSON.parse(
+                    chartNode.getAttribute("data-option")
+                );
+                const modal = document.getElementById("chartEditorModal");
+                const input = document.getElementById("chartDataInput");
+                input.value = JSON.stringify(
+                    currentOption.series[0].data,
+                    null,
+                    2
+                );
+                modal.style.display = "block";
+
+                window.saveChartData = function () {
+                    try {
+                        const newData = JSON.parse(input.value);
+                        currentOption.series[0].data = newData; // 更新数据
+
+                        // 更新图表配置到 DOM 节点
+                        chartNode.setAttribute(
+                            "data-option",
+                            JSON.stringify(currentOption)
+                        );
+
+                        // 重新初始化图表
+                        const chart = echarts.getInstanceByDom(
+                            document.getElementById(chartId)
+                        );
+                        if (chart) {
+                            chart.setOption(currentOption, true); // true 表示覆盖更新
+                        }
+
+                        // 手动更新 QuillJS 的 Delta 内容，并记录到历史栈
+                        const blot = Quill.find(chartNode); // 找到当前图表 Blot
+                        if (blot) {
+                            const index = quill.getIndex(blot); // 获取图表在编辑器中的索引
+                            const newValue = {
+                                option: currentOption,
+                                width: chartNode.style.width,
+                                height: chartNode.style.height,
+                            };
+
+                            quill.updateContents(
+                                [
+                                    { retain: index },
+                                    { delete: 1 },
+                                    { insert: { echarts: newValue } },
+                                ],
+                                Quill.sources.USER
+                            );
+
+                            // 重新选中图表
+                            quill.setSelection(index, 1, Quill.sources.SILENT);
+                        }
+
+                        closeChartEditor();
+                    } catch (e) {
+                        alert("数据格式错误，请输入有效的 JSON 格式！");
+                    }
+                };
+
+                window.closeChartEditor = function () {
+                    modal.style.display = "none";
+                };
+            }
+        </script>
+    </body>
+</html>
